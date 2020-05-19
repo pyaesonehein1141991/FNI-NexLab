@@ -13,10 +13,15 @@ import org.tat.fni.api.domain.MedicalClaim;
 @Component
 public class IDInterceptor extends DescriptorEventAdapter {
 	private static ICustomIDGenerator customIDGenerator;
-	private static IUserProcessService userProcessService;
+
+//	private static IUserProcessService userProcessService;
+
 	private static final String HOSPITALIZED_CLAIM = "org.ace.insurance.medical.claim.HospitalizedClaim";
+
 	private static final String DEATH_CLAIM = "org.ace.insurance.medical.claim.DeathClaim";
+
 	private static final String OPERATION_CLAIM = "org.ace.insurance.medical.claim.OperationClaim";
+
 	private static final String MEDICATION_CLAIM = "org.ace.insurance.medical.claim.MedicationClaim";
 
 	@Autowired(required = true)
@@ -29,11 +34,11 @@ public class IDInterceptor extends DescriptorEventAdapter {
 		return customIDGenerator.getPrefix(cla);
 	}
 
-	@Autowired(required = true)
-	@Qualifier("UserProcessService")
-	public void setUserProcessService(IUserProcessService userProcessService) {
-		IDInterceptor.userProcessService = userProcessService;
-	}
+//	@Autowired(required = true)
+//	@Qualifier("UserProcessService")
+//	public void setUserProcessService(IUserProcessService userProcessService) {
+//		IDInterceptor.userProcessService = userProcessService;
+//	}
 
 	@Override
 	public void preInsert(DescriptorEvent event) {
@@ -49,15 +54,18 @@ public class IDInterceptor extends DescriptorEventAdapter {
 			Field recorderField = cla.getDeclaredField("recorder");
 			recorderField.setAccessible(true);
 			UserRecorder recorder = new UserRecorder();
-			recorder.setCreatedUserId(userProcessService.getLoginUser().getId());
+//			recorder.setCreatedUserId(userProcessService.getLoginUser().getId());
 			recorder.setCreatedDate(new Date());
 			recorderField.set(obj, recorder);
 
-		} catch (SecurityException e) {
+		}
+		catch (SecurityException e) {
 			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
+		}
+		catch (NoSuchFieldException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		}
+		catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}
@@ -71,14 +79,17 @@ public class IDInterceptor extends DescriptorEventAdapter {
 			recorderField.setAccessible(true);
 			UserRecorder recorder = (UserRecorder) recorderField.get(obj);
 			recorder = (recorder == null) ? new UserRecorder() : recorder;
-			recorder.setUpdatedUserId(userProcessService.getLoginUser().getId());
+//			recorder.setUpdatedUserId(userProcessService.getLoginUser().getId());
 			recorder.setUpdatedDate(new Date());
 			recorderField.set(obj, recorder);
-		} catch (SecurityException e) {
+		}
+		catch (SecurityException e) {
 			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
+		}
+		catch (NoSuchFieldException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		}
+		catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}
@@ -101,7 +112,8 @@ public class IDInterceptor extends DescriptorEventAdapter {
 		try {
 			field = c.getDeclaredField(fieldName);
 
-		} catch (NoSuchFieldException e) {
+		}
+		catch (NoSuchFieldException e) {
 			Class<?> sc = c.getSuperclass();
 			field = getClassFiled(sc, fieldName);
 		}
