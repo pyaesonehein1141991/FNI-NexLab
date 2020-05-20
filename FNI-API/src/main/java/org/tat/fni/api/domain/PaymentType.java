@@ -35,6 +35,9 @@ import org.tat.fni.api.common.UserRecorder;
 		@NamedQuery(name = "PaymentType.findById", query = "SELECT p FROM PaymentType p WHERE p.id = :id") })
 @EntityListeners(IDInterceptor.class)
 public class PaymentType implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "PAYMENTTYPE_GEN")
 	private String id;

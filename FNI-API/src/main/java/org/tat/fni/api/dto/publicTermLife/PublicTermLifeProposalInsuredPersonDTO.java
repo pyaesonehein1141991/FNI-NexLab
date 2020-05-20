@@ -9,7 +9,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.tat.fni.api.configuration.DateHandler;
-import org.tat.fni.api.dto.groupFarmerDTO.GroupFarmerProposalInsuredPersonBeneficiariesDTO;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

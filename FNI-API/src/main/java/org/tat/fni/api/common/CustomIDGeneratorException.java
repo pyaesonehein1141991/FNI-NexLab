@@ -3,6 +3,7 @@ package org.tat.fni.api.common;
 import org.springframework.transaction.TransactionSystemException;
 
 public class CustomIDGeneratorException extends TransactionSystemException {
+	private static final long serialVersionUID = 1L;
 	private String errorCode;
 
 	public CustomIDGeneratorException(String errorCode, String message) {

@@ -1,11 +1,4 @@
-/***************************************************************************************
- * @author <<Your Name>>
- * @Date 2013-02-11
- * @Version 1.0
- * @Purpose <<You have to write the comment the main purpose of this class>>
- * 
- *    
- ***************************************************************************************/
+
 package org.tat.fni.api.common;
 
 import java.io.Serializable;
@@ -17,6 +10,9 @@ import org.tat.fni.api.domain.Township;
 
 @Embeddable
 public class PermanentAddress implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	private String permanentAddress;
 
 	@JoinColumn(name = "PERMANENTTOWNSHIPID", referencedColumnName = "ID")

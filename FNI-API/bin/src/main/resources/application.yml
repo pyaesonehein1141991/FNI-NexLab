@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost;databaseName=ggli
+    url: jdbc:sqlserver://DESKTOP-E1RV399\SQLEXPRESS;databaseName=ggli
     username: sa
-    password: 123@ace
+    password: mssql2019
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jackson:
     date-format: dd.MM.yyyy
@@ -18,11 +18,11 @@ spring:
       hibernate: dialect:org.hibernate.dialect.SQLServer2012Dialect
   
 server:
-   port: ${PORT:8081} # This is the default port anyway, but you can change it here
+   port: ${PORT:8082} # This is the default port anyway, but you can change it here
    
 farmerProductId: ISPRD003001000009376125072017
-
 studentLifeProductId: ISPRD003000009607306082019
+publicTermLifeProductId: ISPRD003000009609324022020
 
 
 fileDir: D
@@ -42,7 +42,7 @@ UserController:
   search: Returns specific user by username
   me: Returns current user's data
   submitProposal: Create proposal and return policy no
-GroupFarmerController:
+FarmerController:
   submitproposal: Create Group farmer Proposal and return policy no
 StudentLifeController:
   submitProposal: Create Student Life proposal and return policy no
