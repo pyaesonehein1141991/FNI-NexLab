@@ -1,11 +1,14 @@
-package org.tat.fni.api.dto;
+package org.tat.fni.api.dto.sportManDTO;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.tat.fni.api.configuration.DateHandler;
+import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
+import org.tat.fni.api.domain.ProposalInsuredPerson;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -13,14 +16,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class StudentLifeDTO {
+public class SportManDTO {
 	
 	@ApiModelProperty(position = 0, required = true)
 	@NotNull(message = "Period Month is mandatory")
 	private int periodMonth;
-	
+
 	@ApiModelProperty(position = 1, example = "Agent", required = true)
-	@NotBlank(message = "SaleChannelType is mandatory")
+	@NotBlank(message = "SaleChannel Type is mandatory")
 	private String saleChannelType;
 	
 	@ApiModelProperty(position = 2, example = "ISSYS002001000000000103062019", required = true)
@@ -35,37 +38,43 @@ public class StudentLifeDTO {
 	@NotBlank(message = "Customer ID is mandatory")
 	private String customerId;
 	
-	@ApiModelProperty(position = 5, example = "ISSYS0090001000000000129032013", required = true)
+	@ApiModelProperty(position = 5, example = "ISSYS033001000000000104062019", required = true)
+	@NotBlank(message = "Organization ID is mandatory")
+	private String organizationId;
+	
+	@ApiModelProperty(position = 6, example = "ISPRD0030001000000002331032013", required = true)
+	@NotBlank(message = "Product ID is mandatory")
+	private String productId;
+	
+	@ApiModelProperty(position = 7, example = "ISSYS0090001000000000229032013", required = true)
 	@NotBlank(message = "Payment Type ID is mandatory")
 	private String paymentTypeId;
 	
-	@ApiModelProperty(position = 6, example = "2020-12-16", required = true)
+	@ApiModelProperty(position = 8, example = "2020-12-16", required = true)
 	@NotNull(message = "SubmittedDate is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date submittedDate;
 	
-	@ApiModelProperty(position = 7, example = "2020-12-18", required = true)
+	@ApiModelProperty(position = 9, example = "2020-12-18", required = true)
 	@NotNull(message = "StartDate is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date startDate;
 	
-	@ApiModelProperty(position = 8, example = "2021-12-18", required = true)
+	@ApiModelProperty(position = 10, example = "2021-12-18", required = true)
 	@NotNull(message = "EndDate is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date endDate;
 	
-	@ApiModelProperty(position = 9, example = "ISSYS052001000000000101062019", required = true)
+	@ApiModelProperty(position = 11, example = "ISSYS052001000000000101062019", required = true)
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
 	
-	@ApiModelProperty(position = 10, required = true)
-	@NotNull(message = "Customer Classification Of Health is mandatory")
-	private String customerClsOfHealth;
+	@ApiModelProperty(position = 12, required = true)
+	@NotNull(message = "proposalInsuredPersonList is mandatory")
+	private List<ProposalInsuredPerson> proposalInsuredPersonList;
 	
-//	private List<attachmentList> attachmentList;
-//	private List<customerMedicalCheckUpAttachmentList> customerMedicalCheckUpAttachmentList;
-//	private List<customerSurveyQuestionAnswerList> customerSurveyQuestionAnswerList;
-//	private List<proposalInsuredPersonList> proposalInsuredPersonList;
-	
-	
+	@ApiModelProperty(position = 13, required = true)
+	@NotNull(message = "insuredPersonBeneficiariesList is mandatory")
+	private List<InsuredPersonBeneficiaries> insuredPersonBeneficiariesList;
+
 }

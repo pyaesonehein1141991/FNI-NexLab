@@ -5,9 +5,7 @@ import java.util.List;
 import org.tat.fni.api.common.emumdata.Role;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
-@Data
 public class UserResponseDTO {
 
   @ApiModelProperty(position = 0)
@@ -18,4 +16,41 @@ public class UserResponseDTO {
   private String email;
   @ApiModelProperty(position = 3)
   List<Role> roles;
+  
+
+
+  public Integer getId() {
+    return id;
+  }
+
+  public void setId(Integer id) {
+    this.id = id;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public List<Role> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(List<Role> roles) {
+    this.roles = roles;
+  }
+
+  
+
 }

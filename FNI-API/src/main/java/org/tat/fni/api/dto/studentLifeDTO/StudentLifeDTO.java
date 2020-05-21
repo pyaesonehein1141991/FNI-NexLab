@@ -1,11 +1,18 @@
-package org.tat.fni.api.dto;
+package org.tat.fni.api.dto.studentLifeDTO;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.tat.fni.api.common.emumdata.ClassificationOfHealth;
 import org.tat.fni.api.configuration.DateHandler;
+import org.tat.fni.api.domain.InsuredPersonAttachment;
+import org.tat.fni.api.domain.ProposalInsuredPerson;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -13,7 +20,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class PublicLifeDTO {
+public class StudentLifeDTO {
 	
 	@ApiModelProperty(position = 0, required = true)
 	@NotNull(message = "Period Month is mandatory")
@@ -35,15 +42,11 @@ public class PublicLifeDTO {
 	@NotBlank(message = "Customer ID is mandatory")
 	private String customerId;
 	
-	@ApiModelProperty(position = 5, example = "ISSYS033001000000000104062019", required = true)
-	@NotBlank(message = "Organization ID is mandatory")
-	private String organizationId;
-	
-	@ApiModelProperty(position = 6, example = "ISSYS0090001000000000129032013", required = true)
+	@ApiModelProperty(position = 5, example = "ISSYS0090001000000000129032013", required = true)
 	@NotBlank(message = "Payment Type ID is mandatory")
 	private String paymentTypeId;
 	
-	@ApiModelProperty(position = 7, example = "2020-12-16", required = true)
+	@ApiModelProperty(position = 6, example = "2020-12-16", required = true)
 	@NotNull(message = "SubmittedDate is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date submittedDate;
@@ -62,11 +65,16 @@ public class PublicLifeDTO {
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
 	
-	@ApiModelProperty(position = 0, required = true)
+	@ApiModelProperty(position = 10, example = "FIRSTCLASS", required = true)
 	@NotNull(message = "Customer Classification Of Health is mandatory")
-	private String customerClsOfHealth;
+	private ClassificationOfHealth customerClsOfHealth;
 	
-//	private List<attachmentList> attachmentList;
-//	private List<proposalInsuredPersonList> proposalInsuredPersonList;
-
+	@ApiModelProperty(position = 11, required = false)
+	private List<InsuredPersonAttachment> attachmentList;
+	
+	@ApiModelProperty(position = 12, required = true)
+	@NotNull(message = "proposalInsuredPersonList is mandatory")
+	private List<ProposalInsuredPerson> proposalInsuredPersonList;
+	
+	
 }

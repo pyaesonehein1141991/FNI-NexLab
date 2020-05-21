@@ -1,11 +1,15 @@
-package org.tat.fni.api.dto;
+package org.tat.fni.api.dto.healthInsuranceDTO;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.tat.fni.api.common.emumdata.ClassificationOfHealth;
 import org.tat.fni.api.configuration.DateHandler;
+import org.tat.fni.api.domain.InsuredPersonAttachment;
+import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -13,7 +17,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class IndividualHealthInsuranceDTO {
+public class GroupHealthInsuranceDTO {
 	
 	@ApiModelProperty(position = 0, required = true)
 	@NotNull(message = "Period Month is mandatory")
@@ -72,9 +76,13 @@ public class IndividualHealthInsuranceDTO {
 	
 	@ApiModelProperty(position = 13, required = true)
 	@NotNull(message = "Customer Classification Of Health is mandatory")
-	private String customerClsOfHealth;
+	private ClassificationOfHealth customerClsOfHealth;
 	
-//	private List<attachmentList> attachmentList;
-//	private List<proposalInsuredPersonList> proposalInsuredPersonList;
+	@ApiModelProperty(position = 14, required = false)
+	private List<InsuredPersonAttachment> attachmentList;
+	
+	@ApiModelProperty(position = 15, required = true)
+	@NotNull(message = "insuredPersonBeneficiariesList is mandatory")
+	private List<InsuredPersonBeneficiaries> insuredPersonBeneficiariesList;
 
 }

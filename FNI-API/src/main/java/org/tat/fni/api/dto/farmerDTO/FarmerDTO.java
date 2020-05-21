@@ -1,11 +1,14 @@
-package org.tat.fni.api.dto;
+package org.tat.fni.api.dto.farmerDTO;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.tat.fni.api.configuration.DateHandler;
+import org.tat.fni.api.domain.InsuredPersonAttachment;
+import org.tat.fni.api.domain.ProposalInsuredPerson;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -70,8 +73,11 @@ public class FarmerDTO {
 	@NotNull(message = "Customer Classification Of Health is mandatory")
 	private String customerClsOfHealth;
 
-//	private List<attachmentList> attachmentList;
-//	private List<surveyQuestionAnswerList> surveyQuestionAnswerList;
-//	private List<proposalInsuredPersonList> proposalInsuredPersonList;
+	@ApiModelProperty(position = 13, required = false)
+	private List<InsuredPersonAttachment> attachmentList;
+	
+	@ApiModelProperty(position = 14, required = true)
+	@NotNull(message = "proposalInsuredPersonList is mandatory")
+	private List<ProposalInsuredPerson> proposalInsuredPersonList;
 
 }
