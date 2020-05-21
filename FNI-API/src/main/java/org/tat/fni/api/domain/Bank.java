@@ -34,6 +34,8 @@ import org.tat.fni.api.common.UserRecorder;
 		@NamedQuery(name = "Bank.findById", query = "SELECT b FROM Bank b WHERE b.id = :id") })
 @EntityListeners(IDInterceptor.class)
 public class Bank implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "BANK_GEN")
 	private String id;

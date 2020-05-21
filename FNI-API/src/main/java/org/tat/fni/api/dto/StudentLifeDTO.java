@@ -1,13 +1,11 @@
 package org.tat.fni.api.dto;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.tat.fni.api.configuration.DateHandler;
-import org.tat.fni.api.dto.groupFarmerDTO.GroupFarmerProposalInsuredPersonBeneficiariesDTO;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

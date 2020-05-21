@@ -36,15 +36,12 @@ import org.tat.fni.api.common.KeyFactorChecker;
 import org.tat.fni.api.common.TableName;
 import org.tat.fni.api.common.UserRecorder;
 import org.tat.fni.api.common.Utils;
-import org.tat.fni.api.common.emumdata.ClassificationOfHealth;
 import org.tat.fni.api.common.emumdata.EndorsementStatus;
 import org.tat.fni.api.common.emumdata.ProposalStatus;
 import org.tat.fni.api.common.emumdata.ProposalType;
 import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Attachment;
-import org.tat.fni.api.domain.BankBranch;
-import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Currency;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.LifeProposalAttachment;
@@ -54,6 +51,8 @@ import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.SurveyQuestionAnswer;
 
+import lombok.Data;
+
 @Entity
 @Table(name = TableName.LIFEPROPOSAL)
 @TableGenerator(name = "LIFEPROPOSAL_GEN", table = "ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", pkColumnValue = "LIFEPROPOSAL_GEN", allocationSize = 10)
@@ -61,17 +60,18 @@ import org.tat.fni.api.domain.SurveyQuestionAnswer;
 		@NamedQuery(name = "LifeProposal.findByDate", query = "SELECT m FROM LifeProposal m WHERE m.submittedDate BETWEEN :startDate AND :endDate"),
 		@NamedQuery(name = "LifeProposal.updateCompleteStatus", query = "UPDATE LifeProposal m SET m.complete = :complete WHERE m.id = :id") })
 @EntityListeners(IDInterceptor.class)
+@Data
 public class LifeProposal implements Serializable, IDataModel, IProposal {
 	private static final long serialVersionUID = 7564214263861012292L;
 
 	private boolean complete;
-	private boolean isNonFinancialEndorse;
 
 	@Column(name = "PERIODOFMONTH")
 	private int periodMonth;
+	
 	private int paymentTerm;
 
-	private double specialDiscount;
+	
 	private double currencyRate;
 
 	@Id
@@ -79,8 +79,6 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 	private String id;
 
 	private String proposalNo;
-	private String portalId;
-	private boolean isSkipPaymentTLF;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date submittedDate;
@@ -99,13 +97,6 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 
 	@Enumerated(EnumType.STRING)
 	private ProposalStatus proposalStatus;
-
-	@Enumerated(value = EnumType.STRING)
-	private ClassificationOfHealth customerClsOfHealth;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BRANCHID", referencedColumnName = "ID")
-	private Branch branch;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SALESPOINTSID", referencedColumnName = "ID")
@@ -127,9 +118,6 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 	@JoinColumn(name = "AGENTID", referencedColumnName = "ID")
 	private Agent agent;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SALEBANKID", referencedColumnName = "ID")
-	private BankBranch saleBank;
 
 //	@OneToOne(fetch = FetchType.LAZY)
 //	@JoinColumn(name = "LIFEPOLICYID", referencedColumnName = "ID")
@@ -183,38 +171,6 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 //		}
 //	}
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public UserRecorder getRecorder() {
-		return recorder;
-	}
-
-	public void setRecorder(UserRecorder recorder) {
-		this.recorder = recorder;
-	}
-
-	public Date getSubmittedDate() {
-		return submittedDate;
-	}
-
-	public void setSubmittedDate(Date submittedDate) {
-		this.submittedDate = submittedDate;
-	}
-
-	public int getPeriodMonth() {
-		return periodMonth;
-	}
-
-	public void setPeriodMonth(int periodMonth) {
-		this.periodMonth = periodMonth;
-	}
-
 	public int getPeriodOfInsurance() {
 		if (KeyFactorChecker.isPersonalAccident(proposalInsuredPersonList.get(0).getProduct())) {
 			return periodMonth;
@@ -239,90 +195,11 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 		return getPeriodOfYears() - 3;
 	}
 
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public String getProposalNo() {
-		return proposalNo;
-	}
-
-	public void setProposalNo(String proposalNo) {
-		this.proposalNo = proposalNo;
-	}
-
-	public boolean isSkipPaymentTLF() {
-		return isSkipPaymentTLF;
-	}
-
-	public void setSkipPaymentTLF(boolean isSkipPaymentTLF) {
-		this.isSkipPaymentTLF = isSkipPaymentTLF;
-	}
-
-	public boolean getComplete() {
-		return this.complete;
-	}
-
-	public void setComplete(boolean complete) {
-		this.complete = complete;
-	}
-
-	public boolean isNonFinancialEndorse() {
-		return isNonFinancialEndorse;
-	}
-
-	public void setNonFinancialEndorse(boolean isNonFinancialEndorse) {
-		this.isNonFinancialEndorse = isNonFinancialEndorse;
-	}
-
-	public int getVersion() {
-		return version;
-	}
-
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
 	public List<ProposalInsuredPerson> getProposalInsuredPersonList() {
 		if (this.proposalInsuredPersonList == null) {
 			this.proposalInsuredPersonList = new ArrayList<ProposalInsuredPerson>();
 		}
 		return this.proposalInsuredPersonList;
-	}
-
-	public void setInsuredPersonList(List<ProposalInsuredPerson> proposalInsuredPersonList) {
-		this.proposalInsuredPersonList = proposalInsuredPersonList;
-	}
-
-	public List<LifeProposalAttachment> getAttachmentList() {
-		if (this.attachmentList == null) {
-			this.attachmentList = new ArrayList<LifeProposalAttachment>();
-		}
-		return attachmentList;
-	}
-
-	public void setAttachmentList(List<LifeProposalAttachment> attachmentList) {
-		this.attachmentList = attachmentList;
-	}
-
-	public void addAttachment(LifeProposalAttachment attachment) {
-		if (attachmentList == null) {
-			attachmentList = new ArrayList<LifeProposalAttachment>();
-		}
-		attachment.setLifeProposal(this);
-		attachmentList.add(attachment);
 	}
 
 	public void addCustomerMedicalChkUpAttachment(Attachment attachment) {
@@ -337,90 +214,6 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 		this.proposalInsuredPersonList.add(proposalInsuredPerson);
 	}
 
-	public Branch getBranch() {
-		return branch;
-	}
-
-	public void setBranch(Branch branch) {
-		this.branch = branch;
-	}
-
-	public SalesPoints getSalesPoints() {
-		return salesPoints;
-	}
-
-	public void setSalesPoints(SalesPoints salesPoints) {
-		this.salesPoints = salesPoints;
-	}
-
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-
-	public Organization getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(Organization organization) {
-		this.organization = organization;
-	}
-
-	public PaymentType getPaymentType() {
-		return paymentType;
-	}
-
-	public void setPaymentType(PaymentType paymentType) {
-		this.paymentType = paymentType;
-	}
-
-	public Agent getAgent() {
-		return agent;
-	}
-
-	public void setAgent(Agent agent) {
-		this.agent = agent;
-	}
-
-	public void setProposalInsuredPersonList(List<ProposalInsuredPerson> proposalInsuredPersonList) {
-		this.proposalInsuredPersonList = proposalInsuredPersonList;
-	}
-
-	public SaleChannelType getSaleChannelType() {
-		return saleChannelType;
-	}
-
-	public void setSaleChannelType(SaleChannelType saleChannelType) {
-		this.saleChannelType = saleChannelType;
-	}
-
-	public BankBranch getSaleBank() {
-		return saleBank;
-	}
-
-	public void setSaleBank(BankBranch saleBank) {
-		this.saleBank = saleBank;
-	}
-
-	public String getSalePersonName() {
-		if (agent != null) {
-			return agent.getFullName();
-		} else if (saleBank != null) {
-			return saleBank.getName();
-		}
-		return null;
-	}
-
-	public ProposalStatus getProposalStatus() {
-		return proposalStatus;
-	}
-
-	public void setProposalStatus(ProposalStatus proposalStatus) {
-		this.proposalStatus = proposalStatus;
-	}
 
 	/* System Auto Calculate Process */
 	public double getPremium() {
@@ -682,9 +475,7 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 	public String getSaleChannel() {
 		if (agent != null) {
 			return agent.getFullName();
-		} else if (saleBank != null) {
-			return saleBank.getName();
-		} else if (saleChannelType.equals(SaleChannelType.WALKIN)) {
+		}  else if (saleChannelType.equals(SaleChannelType.WALKIN)) {
 			return SaleChannelType.WALKIN.toString();
 		} else if (saleChannelType.equals(SaleChannelType.DIRECTMARKETING)) {
 			return SaleChannelType.DIRECTMARKETING.toString();
@@ -747,257 +538,12 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 		return interest;
 	}
 
-//	public LifePolicy getLifePolicy() {
-//		return lifePolicy;
-//	}
-//
-//	public void setLifePolicy(LifePolicy lifePolicy) {
-//		this.lifePolicy = lifePolicy;
-//	}
-
-	public ProposalType getProposalType() {
-		return proposalType;
-	}
-
-	public void setProposalType(ProposalType proposalType) {
-		this.proposalType = proposalType;
-	}
-
-	public String getPortalId() {
-		return portalId;
-	}
-
-	public void setPortalId(String portalId) {
-		this.portalId = portalId;
-	}
-
-	public int getPaymentTerm() {
-		return paymentTerm;
-	}
-
-	public void setPaymentTerm(int paymentTerm) {
-		this.paymentTerm = paymentTerm;
-	}
-
-	public double getSpecialDiscount() {
-		return specialDiscount;
-	}
-
-	public void setSpecialDiscount(double specialDiscount) {
-		this.specialDiscount = specialDiscount;
-	}
-
-	public double getSpecialDiscountAmount() {
-		double specialDiscountAmount = Utils.getPercentOf(specialDiscount, getPremium());
-		return Utils.getTwoDecimalPoint(specialDiscountAmount);
-	}
-
-	public double getCurrencyRate() {
-		return currencyRate;
-	}
-
-	public void setCurrencyRate(double currencyRate) {
-		this.currencyRate = currencyRate;
-	}
-
-	public ClassificationOfHealth getCustomerClsOfHealth() {
-		return customerClsOfHealth;
-	}
-
-	public void setCustomerClsOfHealth(ClassificationOfHealth customerClsOfHealth) {
-		this.customerClsOfHealth = customerClsOfHealth;
-	}
-
-	public List<Attachment> getCustomerMedicalCheckUpAttachmentList() {
-		return customerMedicalCheckUpAttachmentList;
-	}
-
-	public void setCustomerMedicalCheckUpAttachmentList(List<Attachment> customerMedicalCheckUpAttachmentList) {
-		this.customerMedicalCheckUpAttachmentList = customerMedicalCheckUpAttachmentList;
-	}
-
-	public List<SurveyQuestionAnswer> getCustomerSurveyQuestionAnswerList() {
-		return customerSurveyQuestionAnswerList;
-	}
-
-	public void setCustomerSurveyQuestionAnswerList(List<SurveyQuestionAnswer> customerSurveyQuestionAnswerList) {
-		this.customerSurveyQuestionAnswerList = customerSurveyQuestionAnswerList;
-	}
-
-	public void addCustomerSurveyQuestionAnswerList(SurveyQuestionAnswer surveyQuestion) {
-		getCustomerSurveyQuestionAnswerList().add(surveyQuestion);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((agent == null) ? 0 : agent.hashCode());
-		result = prime * result + ((branch == null) ? 0 : branch.hashCode());
-		result = prime * result + (complete ? 1231 : 1237);
-		long temp;
-		temp = Double.doubleToLongBits(currencyRate);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + (isNonFinancialEndorse ? 1231 : 1237);
-//		result = prime * result + ((lifePolicy == null) ? 0 : lifePolicy.hashCode());
-		result = prime * result + ((organization == null) ? 0 : organization.hashCode());
-		result = prime * result + paymentTerm;
-		result = prime * result + ((paymentType == null) ? 0 : paymentType.hashCode());
-		result = prime * result + periodMonth;
-		result = prime * result + ((portalId == null) ? 0 : portalId.hashCode());
-		result = prime * result + ((proposalNo == null) ? 0 : proposalNo.hashCode());
-		result = prime * result + ((proposalStatus == null) ? 0 : proposalStatus.hashCode());
-		result = prime * result + ((proposalType == null) ? 0 : proposalType.hashCode());
-		result = prime * result + ((recorder == null) ? 0 : recorder.hashCode());
-		result = prime * result + ((saleBank == null) ? 0 : saleBank.hashCode());
-		result = prime * result + ((saleChannelType == null) ? 0 : saleChannelType.hashCode());
-		result = prime * result + ((salesPoints == null) ? 0 : salesPoints.hashCode());
-		temp = Double.doubleToLongBits(specialDiscount);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-		result = prime * result + ((submittedDate == null) ? 0 : submittedDate.hashCode());
-		result = prime * result + version;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		LifeProposal other = (LifeProposal) obj;
-		if (agent == null) {
-			if (other.agent != null)
-				return false;
-		} else if (!agent.equals(other.agent))
-			return false;
-		if (branch == null) {
-			if (other.branch != null)
-				return false;
-		} else if (!branch.equals(other.branch))
-			return false;
-		if (complete != other.complete)
-			return false;
-		if (Double.doubleToLongBits(currencyRate) != Double.doubleToLongBits(other.currencyRate))
-			return false;
-		if (customer == null) {
-			if (other.customer != null)
-				return false;
-		} else if (!customer.equals(other.customer))
-			return false;
-		if (endDate == null) {
-			if (other.endDate != null)
-				return false;
-		} else if (!endDate.equals(other.endDate))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (isNonFinancialEndorse != other.isNonFinancialEndorse)
-			return false;
-//		if (lifePolicy == null) {
-//			if (other.lifePolicy != null)
-//				return false;
-//		} else if (!lifePolicy.equals(other.lifePolicy))
-//			return false;
-		if (organization == null) {
-			if (other.organization != null)
-				return false;
-		} else if (!organization.equals(other.organization))
-			return false;
-		if (paymentTerm != other.paymentTerm)
-			return false;
-		if (paymentType == null) {
-			if (other.paymentType != null)
-				return false;
-		} else if (!paymentType.equals(other.paymentType))
-			return false;
-		if (periodMonth != other.periodMonth)
-			return false;
-		if (portalId == null) {
-			if (other.portalId != null)
-				return false;
-		} else if (!portalId.equals(other.portalId))
-			return false;
-		if (proposalNo == null) {
-			if (other.proposalNo != null)
-				return false;
-		} else if (!proposalNo.equals(other.proposalNo))
-			return false;
-		if (proposalStatus != other.proposalStatus)
-			return false;
-		if (proposalType != other.proposalType)
-			return false;
-		if (recorder == null) {
-			if (other.recorder != null)
-				return false;
-		} else if (!recorder.equals(other.recorder))
-			return false;
-		if (saleBank == null) {
-			if (other.saleBank != null)
-				return false;
-		} else if (!saleBank.equals(other.saleBank))
-			return false;
-		if (saleChannelType != other.saleChannelType)
-			return false;
-		if (salesPoints == null) {
-			if (other.salesPoints != null)
-				return false;
-		} else if (!salesPoints.equals(other.salesPoints))
-			return false;
-		if (Double.doubleToLongBits(specialDiscount) != Double.doubleToLongBits(other.specialDiscount))
-			return false;
-		if (startDate == null) {
-			if (other.startDate != null)
-				return false;
-		} else if (!startDate.equals(other.startDate))
-			return false;
-		if (submittedDate == null) {
-			if (other.submittedDate != null)
-				return false;
-		} else if (!submittedDate.equals(other.submittedDate))
-			return false;
-		if (version != other.version)
-			return false;
-		return true;
-	}
-
-	@Override
-	public String getUserType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Currency getCurrency() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public double getTotalDiscountAmount() {
-		double specialDiscountAmount = Utils.getPercentOf(specialDiscount, getProposedPremium());
-		return Utils.getTwoDecimalPoint(specialDiscountAmount);
-	}
-
 	public double getNetPremium() {
-		return getTotalPremium() - getTotalDiscountAmount();
-	}
-
-	public double getTotalTermDiscountAmount() {
-		double specialDiscountAmount = Utils.getPercentOf(specialDiscount, getTotalTermPremium());
-		return Utils.getTwoDecimalPoint(specialDiscountAmount);
+		return getTotalPremium();
 	}
 
 	public double getNetTermPremium() {
-		return getTotalTermPremium() - getTotalTermDiscountAmount();
+		return getTotalTermPremium();
 	}
 
 	public String getSalePointName() {
@@ -1021,6 +567,18 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 				premiumRateStr += ", ";
 		}
 		return premiumRateStr;
+	}
+
+	@Override
+	public Currency getCurrency() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getUserType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
