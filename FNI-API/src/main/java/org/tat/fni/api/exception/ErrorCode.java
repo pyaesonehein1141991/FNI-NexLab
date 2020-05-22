@@ -10,7 +10,7 @@ package org.tat.fni.api.exception;
 
 public class ErrorCode {
 	/* Common DB */
-	public static final String SYSTEM_ERROR_RESOURCE_NOT_FOUND = "SYSTEM_ERROR_RESOURCE_NOT_FOUND";
+	public static final String SYSTEM_ERROR = "SYSTEM_ERROR";
 	public static final String DAO_RUNTIME_ERROR = "DAO_RUNTIME_ERROR";
 	public static final String NO_SQL_ERROR_CODE_CONFIG = "NO_SQL_ERROR_CODE_CONFIG";
 	public static final String JOB_IS_ALREADY_RUNNING = "JOB_IS_ALREADY_RUNNING";
@@ -22,7 +22,6 @@ public class ErrorCode {
 	public static final String OLD_PASSWORD_DOES_NOT_MATCH = "OLD_PASSWORD_DOES_NOT_MATCH";
 	public static final String NO_BUILDING_CLASS = "NO_BUILDING_CLASS";
 	public static final String NO_SUM_INSURED_KEYFACTOR = "NO_SUM_INSURED_KEYFACTOR";
-	public static final String NO_LATEST_BC_RECEIPTNO = "NO_LATEST_BC_RECEIPTNO";
 
 	/* For interfaceFile import count mismatch */
 	public static final String INT_FILE_COUNT_MISMATCH = "INT_FILE_COUNT_MISMATCH";
@@ -34,18 +33,7 @@ public class ErrorCode {
 	public static final String NO_INTERFACE_FILE = "NO_INTERFACE_FILE";
 	public static final String NO_PARIED_KEY_CALCULATION_METHOD = "NO_PARIED_KEY_CALCULATION_METHOD";
 
-	
-	/* For farmer proposal duplicate policy */
+	/* New for duplicate policy */
 	public static final String PROPOSAL_ALREADY_CONFIRMED = "PROPOSAL_ALREADY_CONFIRMED";
-
-	/* For Rollback proposal, null proposal no */
-	public static final String FAIL_TOLOAD_PROPOSALNO = "FAIL_TOLOAD_PROPOSALNO";
-	
-	/*No Access For Viewing Report*/
-	public static final String NO_ACCESS_FOR_VIEWING_REPORT = "NO_ACCESS_FOR_VIEWING_REPORT";
-	
-	public static final String NRC_FORMAT_NOT_MATCH= "NRC_FORMAT_NOT_MATCH";
-	
-	public static final String PAYMENT_ALREADY_CONFIRMED = "PAYMENT_ALREADY_CONFIRMED";
 
 }

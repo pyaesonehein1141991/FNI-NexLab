@@ -14,7 +14,7 @@ import org.tat.fni.api.domain.MedicalClaim;
 public class IDInterceptor extends DescriptorEventAdapter {
 	private static ICustomIDGenerator customIDGenerator;
 
-//	private static IUserProcessService userProcessService;
+	private static IUserProcessService userProcessService;
 
 	private static final String HOSPITALIZED_CLAIM = "org.ace.insurance.medical.claim.HospitalizedClaim";
 
@@ -34,11 +34,11 @@ public class IDInterceptor extends DescriptorEventAdapter {
 		return customIDGenerator.getPrefix(cla);
 	}
 
-//	@Autowired(required = true)
-//	@Qualifier("UserProcessService")
-//	public void setUserProcessService(IUserProcessService userProcessService) {
-//		IDInterceptor.userProcessService = userProcessService;
-//	}
+	@Autowired(required = true)
+	@Qualifier("UserProcessService")
+	public void setUserProcessService(IUserProcessService userProcessService) {
+		IDInterceptor.userProcessService = userProcessService;
+	}
 
 	@Override
 	public void preInsert(DescriptorEvent event) {
@@ -54,7 +54,7 @@ public class IDInterceptor extends DescriptorEventAdapter {
 			Field recorderField = cla.getDeclaredField("recorder");
 			recorderField.setAccessible(true);
 			UserRecorder recorder = new UserRecorder();
-//			recorder.setCreatedUserId(userProcessService.getLoginUser().getId());
+			recorder.setCreatedUserId(userProcessService.getLoginUser().getId());
 			recorder.setCreatedDate(new Date());
 			recorderField.set(obj, recorder);
 

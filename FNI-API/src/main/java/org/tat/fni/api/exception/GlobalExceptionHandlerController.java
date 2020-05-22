@@ -70,26 +70,26 @@ public class GlobalExceptionHandlerController {
 		HttpStatus status = null;
 		String message = null;
 
-		if (ErrorCode.SYSTEM_ERROR_RESOURCE_NOT_FOUND.equals(e.getErrorCode())) {
-//			res.sendError(HttpStatus.NOT_FOUND.value(), e.getMessage());
-			status = HttpStatus.NOT_FOUND;
-			message = e.getMessage();
-		}
-		else if (ErrorCode.NRC_FORMAT_NOT_MATCH.equals(e.getErrorCode())) {
-//			res.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-			status = HttpStatus.BAD_REQUEST;
-			message = e.getMessage();
-		}
-		else if (ErrorCode.PAYMENT_ALREADY_CONFIRMED.equals(e.getErrorCode())) {
-//			res.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-			status = HttpStatus.BAD_REQUEST;
-			message = e.getMessage();
-		}
-		else {
-//			res.sendError(HttpStatus.BAD_REQUEST.value(), "Something went wrong");
-			status = HttpStatus.BAD_REQUEST;
-			message = "Something went wrong";
-		}
+//		if (ErrorCode.SYSTEM_ERROR_RESOURCE_NOT_FOUND.equals(e.getErrorCode())) {
+////			res.sendError(HttpStatus.NOT_FOUND.value(), e.getMessage());
+//			status = HttpStatus.NOT_FOUND;
+//			message = e.getMessage();
+//		}
+//		else if (ErrorCode.NRC_FORMAT_NOT_MATCH.equals(e.getErrorCode())) {
+////			res.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+//			status = HttpStatus.BAD_REQUEST;
+//			message = e.getMessage();
+//		}
+//		else if (ErrorCode.PAYMENT_ALREADY_CONFIRMED.equals(e.getErrorCode())) {
+////			res.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+//			status = HttpStatus.BAD_REQUEST;
+//			message = e.getMessage();
+//		}
+//		else {
+////			res.sendError(HttpStatus.BAD_REQUEST.value(), "Something went wrong");
+//			status = HttpStatus.BAD_REQUEST;
+//			message = "Something went wrong";
+//		}
 
 		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status(status.toString()).message(message).build();
 		return ResponseEntity.status(status).body(responseDTO);
