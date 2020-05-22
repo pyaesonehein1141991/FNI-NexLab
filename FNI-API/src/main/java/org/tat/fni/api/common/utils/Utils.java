@@ -1,4 +1,4 @@
-package org.tat.fni.api.common;
+package org.tat.fni.api.common.utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -35,6 +36,9 @@ import org.joda.time.Months;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
 import org.joda.time.chrono.GregorianChronology;
+import org.tat.fni.api.common.DefaultProcessor;
+import org.tat.fni.api.common.Name;
+import org.tat.fni.api.common.ZipFileName;
 import org.tat.fni.api.common.emumdata.MonthType;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 
@@ -787,7 +791,7 @@ public class Utils {
 	public static String getResourceAsString(String filepath) throws IOException {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(filepath);
 		StringWriter writer = new StringWriter();
-		IOUtils.copy(inputStream, writer);
+		IOUtils.copy(inputStream, writer,Charset.defaultCharset());
 		return writer.toString();
 	}
 
@@ -1008,7 +1012,7 @@ public class Utils {
 	public static void removeBlankPages(JasperPrint jp) {
 		List<JRPrintPage> pages = jp.getPages();
 		for (Iterator<JRPrintPage> i = pages.iterator(); i.hasNext();) {
-			JRPrintPage page = (JRPrintPage) i.next();
+			JRPrintPage page = i.next();
 			if (page.getElements().size() == 0)
 				i.remove();
 		}

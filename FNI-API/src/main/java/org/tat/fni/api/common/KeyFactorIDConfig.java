@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.tat.fni.api.common.emumdata.PolicyReferenceType;
+import org.tat.fni.api.common.emumdata.ReferenceType;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.exception.ErrorCode;
 import org.tat.fni.api.exception.SystemException;

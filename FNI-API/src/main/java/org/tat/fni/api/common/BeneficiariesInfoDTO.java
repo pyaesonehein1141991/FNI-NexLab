@@ -3,6 +3,7 @@ package org.tat.fni.api.common;
 import java.util.Date;
 import java.util.StringTokenizer;
 
+import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
 import org.tat.fni.api.domain.RelationShip;

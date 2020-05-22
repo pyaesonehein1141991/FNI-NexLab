@@ -1,4 +1,4 @@
-package org.tat.fni.api.common;
+package org.tat.fni.api.common.emumdata;
 
 import java.util.Arrays;
 import java.util.List;

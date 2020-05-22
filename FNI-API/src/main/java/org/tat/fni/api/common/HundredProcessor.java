@@ -1,6 +1,7 @@
 package org.tat.fni.api.common;
 
 import org.tat.fni.api.common.emumdata.Scale;
+import org.tat.fni.api.common.utils.UnitProcessor;
 
 public class HundredProcessor extends AbstractProcessor {
 	static public Scale SCALE = Scale.SHORT;

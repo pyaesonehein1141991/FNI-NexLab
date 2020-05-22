@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.tat.fni.api.common.FileHandler;
 import org.tat.fni.api.common.IUserProcessService;
 import org.tat.fni.api.common.KeyFactorIDConfig;
-import org.tat.fni.api.common.ReferenceType;
+import org.tat.fni.api.common.emumdata.ReferenceType;
 import org.tat.fni.api.configuration.PropertiesConfiguration;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.User;

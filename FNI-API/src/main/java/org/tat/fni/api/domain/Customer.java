@@ -40,9 +40,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.tat.fni.api.common.FamilyInfo;
-import org.tat.fni.api.common.Gender;
 import org.tat.fni.api.common.IDInterceptor;
-import org.tat.fni.api.common.MaritalStatus;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.OfficeAddress;
 import org.tat.fni.api.common.PermanentAddress;
@@ -51,7 +49,9 @@ import org.tat.fni.api.common.TableName;
 import org.tat.fni.api.common.UserRecorder;
 import org.tat.fni.api.common.emumdata.ContentInfo;
 import org.tat.fni.api.common.emumdata.CustomerStatus;
+import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
+import org.tat.fni.api.common.emumdata.MaritalStatus;
 import org.tat.fni.api.common.emumdata.PassportType;
 
 @Entity
