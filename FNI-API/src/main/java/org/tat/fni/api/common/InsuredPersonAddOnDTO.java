@@ -1,6 +1,7 @@
 package org.tat.fni.api.common;
 
 import org.tat.fni.api.domain.InsuredPersonAddon;
+import org.tat.fni.api.domain.addon.AddOn;
 
 public class InsuredPersonAddOnDTO {
 	private boolean existEntity;

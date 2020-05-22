@@ -27,11 +27,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.tat.fni.api.common.IDInterceptor;
-import org.tat.fni.api.common.IDataModel;
 import org.tat.fni.api.common.PaymentDTO;
 import org.tat.fni.api.common.TableName;
 import org.tat.fni.api.common.UserRecorder;
 import org.tat.fni.api.common.emumdata.PaymentChannel;
+import org.tat.fni.api.common.interfaces.IDataModel;
 
 @Entity
 @Table(name = TableName.PAYMENT)

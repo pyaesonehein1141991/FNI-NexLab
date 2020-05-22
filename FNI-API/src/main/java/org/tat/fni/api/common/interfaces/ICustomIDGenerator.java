@@ -1,5 +1,7 @@
-package org.tat.fni.api.common;
+package org.tat.fni.api.common.interfaces;
 
+import org.tat.fni.api.common.CustomIDGeneratorException;
+import org.tat.fni.api.common.IDGen;
 import org.tat.fni.api.domain.Branch;
 
 public interface ICustomIDGenerator {

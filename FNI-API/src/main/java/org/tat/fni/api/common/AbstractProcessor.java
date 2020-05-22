@@ -11,7 +11,7 @@ public abstract class AbstractProcessor {
 	protected final int NO_VALUE = -1;
 
 	protected List<Integer> getDigits(long value) {
-		ArrayList<Integer> digits = new ArrayList<Integer>();
+		ArrayList<Integer> digits = new ArrayList<>();
 		if (value == 0) {
 			digits.add(0);
 		} else {

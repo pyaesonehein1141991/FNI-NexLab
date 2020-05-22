@@ -8,6 +8,7 @@ import org.eclipse.persistence.descriptors.DescriptorEventAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.tat.fni.api.common.interfaces.IUserProcessService;
 import org.tat.fni.api.domain.MedicalClaim;
 
 @Component

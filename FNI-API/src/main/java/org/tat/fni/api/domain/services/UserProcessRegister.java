@@ -4,7 +4,7 @@ package org.tat.fni.api.domain.services;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
-import org.tat.fni.api.common.IUserProcessService;
+import org.tat.fni.api.common.interfaces.IUserProcessService;
 import org.tat.fni.api.domain.User;
 
 @Service(value = "UserProcessService")

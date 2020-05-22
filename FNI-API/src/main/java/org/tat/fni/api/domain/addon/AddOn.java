@@ -6,7 +6,7 @@
  * 
  *    
  ***************************************************************************************/
-package org.tat.fni.api.common;
+package org.tat.fni.api.domain.addon;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,6 +33,10 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import org.tat.fni.api.common.IDInterceptor;
+import org.tat.fni.api.common.KeyFactor;
+import org.tat.fni.api.common.TableName;
+import org.tat.fni.api.common.UserRecorder;
 import org.tat.fni.api.common.emumdata.PremiumRateType;
 import org.tat.fni.api.common.emumdata.ProductBaseType;
 import org.tat.fni.api.domain.ProductContent;

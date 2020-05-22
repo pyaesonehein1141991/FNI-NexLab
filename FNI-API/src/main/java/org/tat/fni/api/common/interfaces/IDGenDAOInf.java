@@ -1,5 +1,6 @@
-package org.tat.fni.api.common;
+package org.tat.fni.api.common.interfaces;
 
+import org.tat.fni.api.common.IDGen;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.exception.DAOException;
 

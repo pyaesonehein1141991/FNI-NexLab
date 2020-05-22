@@ -30,8 +30,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.tat.fni.api.common.IDInterceptor;
-import org.tat.fni.api.common.IDataModel;
-import org.tat.fni.api.common.IProposal;
 import org.tat.fni.api.common.KeyFactorChecker;
 import org.tat.fni.api.common.TableName;
 import org.tat.fni.api.common.UserRecorder;
@@ -39,6 +37,8 @@ import org.tat.fni.api.common.emumdata.EndorsementStatus;
 import org.tat.fni.api.common.emumdata.ProposalStatus;
 import org.tat.fni.api.common.emumdata.ProposalType;
 import org.tat.fni.api.common.emumdata.SaleChannelType;
+import org.tat.fni.api.common.interfaces.IDataModel;
+import org.tat.fni.api.common.interfaces.IProposal;
 import org.tat.fni.api.common.utils.Utils;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Attachment;

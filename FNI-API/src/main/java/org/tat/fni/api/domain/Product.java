@@ -35,7 +35,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import org.tat.fni.api.common.AddOn;
 import org.tat.fni.api.common.IDInterceptor;
 import org.tat.fni.api.common.KeyFactor;
 import org.tat.fni.api.common.TableName;
@@ -45,6 +44,7 @@ import org.tat.fni.api.common.emumdata.PeriodType;
 import org.tat.fni.api.common.emumdata.PremiumRateType;
 import org.tat.fni.api.common.emumdata.ProductBaseType;
 import org.tat.fni.api.common.emumdata.StampFeeRateType;
+import org.tat.fni.api.domain.addon.AddOn;
 
 
 @Entity

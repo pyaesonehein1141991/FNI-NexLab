@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tat.fni.api.common.emumdata.InputType;
+import org.tat.fni.api.common.interfaces.ISorter;
 import org.tat.fni.api.domain.ResourceQuestion;
 import org.tat.fni.api.domain.SurveyQuestion;
 
