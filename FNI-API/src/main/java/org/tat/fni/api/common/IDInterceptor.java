@@ -12,7 +12,7 @@ import org.tat.fni.api.domain.MedicalClaim;
 
 @Component
 public class IDInterceptor extends DescriptorEventAdapter {
-	private static ICustomIDGenerator customIDGenerator;
+//	private static ICustomIDGenerator customIDGenerator;
 
 	private static IUserProcessService userProcessService;
 
@@ -24,15 +24,15 @@ public class IDInterceptor extends DescriptorEventAdapter {
 
 	private static final String MEDICATION_CLAIM = "org.ace.insurance.medical.claim.MedicationClaim";
 
-	@Autowired(required = true)
-	@Qualifier("CustomIDGenerator")
-	public void setcustomIDGenerator(ICustomIDGenerator generator) {
-		customIDGenerator = generator;
-	}
-
-	private String getPrefix(Class cla) {
-		return customIDGenerator.getPrefix(cla);
-	}
+//	@Autowired(required = true)
+//	@Qualifier("CustomIDGenerator")
+//	public void setcustomIDGenerator(ICustomIDGenerator generator) {
+//		customIDGenerator = generator;
+//	}
+//
+//	private String getPrefix(Class cla) {
+//		return customIDGenerator.getPrefix(cla);
+//	}
 
 	@Autowired(required = true)
 	@Qualifier("UserProcessService")
@@ -49,12 +49,12 @@ public class IDInterceptor extends DescriptorEventAdapter {
 			Field field = getClassFiled(cla, "id");
 			field.setAccessible(true);
 			String id = (String) field.get(obj);
-			id = FormatID.formatId(id, getPrefix(cla), 10);
+//			id = FormatID.formatId(id, getPrefix(cla), 10);
 			field.set(obj, id);
 			Field recorderField = cla.getDeclaredField("recorder");
 			recorderField.setAccessible(true);
 			UserRecorder recorder = new UserRecorder();
-			recorder.setCreatedUserId(userProcessService.getLoginUser().getId());
+//			recorder.setCreatedUserId(userProcessService.getLoginUser().getId());
 			recorder.setCreatedDate(new Date());
 			recorderField.set(obj, recorder);
 

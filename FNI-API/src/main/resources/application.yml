@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://DESKTOP-E1RV399\SQLEXPRESS;databaseName=FNI_LIFE_DB
+    url: jdbc:sqlserver://localhost;databaseName=FNILP(2152020)
     username: sa
-    password: mssql2019
+    password: sasa
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jackson:
     date-format: dd.MM.yyyy

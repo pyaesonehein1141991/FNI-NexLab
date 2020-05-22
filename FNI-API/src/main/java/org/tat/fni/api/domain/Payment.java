@@ -39,8 +39,8 @@ import org.tat.fni.api.common.emumdata.PaymentChannel;
 @NamedQueries(value = { @NamedQuery(name = "Payment.findAll", query = "SELECT m FROM Payment m "),
 		@NamedQuery(name = "Payment.findById", query = "SELECT m FROM Payment m WHERE m.id = :id"),
 		@NamedQuery(name = "Payment.findByReferenceNo", query = "SELECT m FROM Payment m WHERE m.referenceNo = :referenceNo ORDER BY m.paymentDate"),
-		@NamedQuery(name = "Payment.findByReferenceNoAndReferenceType", query = "SELECT m FROM Payment m WHERE m.referenceNo = :referenceNo and m.complete = :complete and m.referenceType = :referenceType"),
-		@NamedQuery(name = "Payment.findByReferenceNoAndReferenceTypeComplete", query = "SELECT m FROM Payment m WHERE m.complete = TRUE and m.referenceNo = :referenceNo and m.referenceType = :referenceType"),
+//		@NamedQuery(name = "Payment.findByReferenceNoAndReferenceType", query = "SELECT m FROM Payment m WHERE m.referenceNo = :referenceNo and m.complete = :complete and m.referenceType = :referenceType"),
+//		@NamedQuery(name = "Payment.findByReferenceNoAndReferenceTypeComplete", query = "SELECT m FROM Payment m WHERE m.complete = TRUE and m.referenceNo = :referenceNo and m.referenceType = :referenceType"),
 		@NamedQuery(name = "Payment.findPaymentByReferenceNoAndMaxDate", query = "select p from Payment p where p.paymentDate=(select MIN(p1.paymentDate) from Payment p1 where  p1.referenceNo = :referenceNo) ") })
 @EntityListeners(IDInterceptor.class)
 public class Payment implements Serializable, IDataModel {

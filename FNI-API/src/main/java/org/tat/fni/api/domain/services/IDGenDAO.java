@@ -1,6 +1,5 @@
 package org.tat.fni.api.domain.services;
 
-import javax.annotation.Resource;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
@@ -9,7 +8,6 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.tat.fni.api.common.IDConfigLoader;
 import org.tat.fni.api.common.IDGen;
 import org.tat.fni.api.common.IDGenDAOInf;
 import org.tat.fni.api.domain.Branch;
@@ -19,8 +17,10 @@ import org.tat.fni.api.exception.DAOException;
 @Repository("IDGenDAO")
 public class IDGenDAO extends BasicDAO implements IDGenDAOInf {
 
-	@Resource(name = "IDConfigLoader")
-	protected IDConfigLoader configLoader;
+	//TODO FIXME PSH
+//	@Resource(name = "IDConfigLoader")
+//	@Autowired
+//	protected IDConfigLoader configLoader;
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public IDGen getNextId(String generateItem, boolean isIgnoreBranch) throws DAOException {
@@ -37,11 +37,12 @@ public class IDGenDAO extends BasicDAO implements IDGenDAOInf {
 			Query selectQuery = em.createQuery(query.toString());
 			selectQuery.setLockMode(LockModeType.PESSIMISTIC_WRITE);
 			selectQuery.setHint("javax.persistence.lock.timeout", 30000);
-			if (configLoader.isCentralizedSystem()) {
-				branchCode = userProcessService.getLoginUser().getBranch().getBranchCode();
-			} else {
-				branchCode = configLoader.getBranchCode();
-			}
+			//TODO FIXME PSH
+//			if (configLoader.isCentralizedSystem()) {
+//				branchCode = userProcessService.getLoginUser().getBranch().getBranchCode();
+//			} else {
+//				branchCode = configLoader.getBranchCode();
+//			}
 			selectQuery.setParameter("generateItem", generateItem);
 			if (!isIgnoreBranch) {
 				selectQuery.setParameter("branchCode", branchCode);
@@ -69,11 +70,12 @@ public class IDGenDAO extends BasicDAO implements IDGenDAOInf {
 					"SELECT g FROM IDGen g WHERE g.generateItem = :generateItem AND g.branch.id IN " + " (SELECT b.id FROM Branch b Where b.branchCode = :branchCode)");
 			selectQuery.setLockMode(LockModeType.PESSIMISTIC_WRITE);
 			selectQuery.setHint("javax.persistence.lock.timeout", 30000);
-			if (configLoader.isCentralizedSystem()) {
-				branchCode = userProcessService.getLoginUser().getBranch().getBranchCode();
-			} else {
-				branchCode = configLoader.getBranchCode();
-			}
+			//TODO FIXME PSH
+//			if (configLoader.isCentralizedSystem()) {
+//				branchCode = userProcessService.getLoginUser().getBranch().getBranchCode();
+//			} else {
+//				branchCode = configLoader.getBranchCode();
+//			}
 			selectQuery.setParameter("generateItem", generateItem);
 			selectQuery.setParameter("branchCode", branchCode);
 			idGen = (IDGen) selectQuery.getSingleResult();
@@ -113,7 +115,8 @@ public class IDGenDAO extends BasicDAO implements IDGenDAOInf {
 			Query selectQuery = em
 					.createQuery("SELECT g FROM IDGen g WHERE g.generateItem = :generateItem AND g.branch.id IN (SELECT b.id FROM Branch b Where b.branchCode = :branchCode)");
 			selectQuery.setParameter("generateItem", generateItem);
-			selectQuery.setParameter("branchCode", configLoader.getBranchCode());
+			//TODO FIXME PSH Branch code will be generate from idconfig
+			selectQuery.setParameter("branchCode", "001");
 			idGen = (IDGen) selectQuery.getSingleResult();
 			em.flush();
 		} catch (PersistenceException pe) {
@@ -200,17 +203,18 @@ public class IDGenDAO extends BasicDAO implements IDGenDAOInf {
 		try {
 			StringBuffer query = new StringBuffer();
 			query.append("SELECT g FROM IDGen g WHERE g.generateItem = :generateItem");
-			if (!isIgnoreBranch) {
-				query.append(" AND g.branch.id IN (SELECT b.id FROM Branch b Where b.branchCode = :branchCode)");
-			} else {
-				query.append(" AND g.branch IS NULL ");
-			}
-
+			
+//			if (!isIgnoreBranch) {
+//				query.append(" AND g.branch.id IN (SELECT b.id FROM Branch b Where b.branchCode = :branchCode)");
+//			} else {
+//				query.append(" AND g.branch IS NULL ");
+//			}
+			query.append(" AND g.branch IS NULL ");
 			Query selectQuery = em.createQuery(query.toString());
 			selectQuery.setParameter("generateItem", generateItem);
-			if (!isIgnoreBranch) {
-				selectQuery.setParameter("branchCode", configLoader.getBranchCode());
-			}
+//			if (!isIgnoreBranch) {
+//				selectQuery.setParameter("branchCode", configLoader.getBranchCode());
+//			}
 			idGen = (IDGen) selectQuery.getSingleResult();
 			em.flush();
 		} catch (PersistenceException pe) {

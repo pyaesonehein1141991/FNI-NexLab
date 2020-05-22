@@ -15,10 +15,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tat.fni.api.common.FileHandler;
 import org.tat.fni.api.common.IUserProcessService;
 import org.tat.fni.api.common.KeyFactorIDConfig;
 import org.tat.fni.api.common.ReferenceType;
+import org.tat.fni.api.configuration.PropertiesConfiguration;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.User;
 import org.tat.fni.api.exception.DAOException;
@@ -29,9 +31,6 @@ import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 
-/**
- * @author Zaw Than Oo
- */
 public class BasicDAO {
 
 	@PersistenceContext
@@ -40,11 +39,13 @@ public class BasicDAO {
 	@Resource(name = "UserProcessService")
 	protected IUserProcessService userProcessService;
 
-	@Resource(name = "KEYFACTOR_ID_CONFIG")
-	private Properties keyFactorConfig;
+//	@Resource(name = "KEYFACTOR_ID_CONFIG")
+	@Autowired
+	private PropertiesConfiguration keyFactorConfig;
 
-	@Resource(name = "SQL_ERROR_CODE")
-	private Properties properties;
+//	@Resource(name = "SQL_ERROR_CODE")
+	@Autowired
+	private PropertiesConfiguration properties;
 
 	private final String FIRE_BUILDING = "FIRE_BUILDING";
 	private final String FIRE_MACHINERY = "FIRE_MACHINERY";
