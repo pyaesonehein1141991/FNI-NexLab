@@ -64,6 +64,7 @@ public class GlobalExceptionHandlerController {
 		return ResponseEntity.badRequest().body(responseDTO);
 	}
 
+	//TODO FIXME PSH ADD Error code
 	@ExceptionHandler(SystemException.class)
 	public ResponseEntity<Object> handleDAOException(HttpServletResponse res, SystemException e) throws IOException {
 		logger.error("SystemException :");

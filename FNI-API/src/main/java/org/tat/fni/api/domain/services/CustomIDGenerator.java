@@ -11,10 +11,8 @@ import org.tat.fni.api.common.CustomIDGeneratorException;
 import org.tat.fni.api.common.IDGen;
 import org.tat.fni.api.common.SystemConstants;
 import org.tat.fni.api.common.interfaces.IDGenDAOInf;
-import org.tat.fni.api.common.interfaces.IUserProcessService;
 import org.tat.fni.api.configuration.PropertiesConfiguration;
 import org.tat.fni.api.domain.Branch;
-import org.tat.fni.api.domain.User;
 import org.tat.fni.api.exception.DAOException;
 
 @Service("CustomIDGenerator")
@@ -32,8 +30,8 @@ public class CustomIDGenerator {
 //	@Autowired
 //	private IDConfigLoader idConfigLoader;
 
-	@Resource(name = "UserProcessService")
-	private IUserProcessService userProcessService;
+//	@Resource(name = "UserProcessService")
+//	private IUserProcessService userProcessService;
 
 	public String getNextId(String key, String productCode) throws CustomIDGeneratorException {
 		String id = null;
@@ -166,7 +164,7 @@ public class CustomIDGenerator {
 //	}
 
 	public String getPrefix(Class cla) {
-		return getPrefixStr(cla, null);
+		return getPrefixStr(cla);
 	}
 
 	// public String getPrefix(Class cla, User user) {
@@ -174,7 +172,7 @@ public class CustomIDGenerator {
 	// }
 
 	//TODO FIXME PSH
-	private String getPrefixStr(Class cla, User user) {
+	private String getPrefixStr(Class cla) {
 //		String branchCode = null;
 //		if (idConfigLoader.isCentralizedSystem()) {
 //			branchCode = user == null ? userProcessService.getLoginUser().getBranch().getBranchCode() : user.getBranch().getBranchCode();

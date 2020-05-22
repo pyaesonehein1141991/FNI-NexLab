@@ -7,9 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
@@ -19,10 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.tat.fni.api.common.FileHandler;
 import org.tat.fni.api.common.KeyFactorIDConfig;
 import org.tat.fni.api.common.emumdata.ReferenceType;
-import org.tat.fni.api.common.interfaces.IUserProcessService;
 import org.tat.fni.api.configuration.PropertiesConfiguration;
 import org.tat.fni.api.domain.Product;
-import org.tat.fni.api.domain.User;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.ErrorCode;
 
@@ -36,8 +32,8 @@ public class BasicDAO {
 	@PersistenceContext
 	protected EntityManager em;
 
-	@Resource(name = "UserProcessService")
-	protected IUserProcessService userProcessService;
+//	@Resource(name = "UserProcessService")
+//	protected IUserProcessService userProcessService;
 
 //	@Resource(name = "KEYFACTOR_ID_CONFIG")
 	@Autowired
@@ -86,12 +82,10 @@ public class BasicDAO {
 	}
 	
 	protected void insertProcessLog(String tableName, String primaryKey) throws PersistenceException {
-		insertProcessLogging(tableName, primaryKey, null);
+		insertProcessLogging(tableName, primaryKey);
 	}
 
-	protected void insertProcessLog(String tableName, String primaryKey, User user) throws PersistenceException {
-		insertProcessLogging(tableName, primaryKey, user);
-	}
+	
 
 	protected boolean isFireProduct(String productId) {
 		if (productId.equals(keyFactorConfig.getProperty(FIRE_BUILDING)) || productId.equals(keyFactorConfig.getProperty(FIRE_DECLARATION_POLICY))
@@ -116,13 +110,11 @@ public class BasicDAO {
 		return false;
 	}
 	
-	private void insertProcessLogging(String tableName, String primaryKey, User user) throws PersistenceException {
+	private void insertProcessLogging(String tableName, String primaryKey) throws PersistenceException {
 		String queryString = "UPDATE " + tableName + " SET CREATEDUSERID = ?, CREATEDDATE = ? WHERE ID = ?";
 		Query query = em.createNativeQuery(queryString);
-		if (user == null)
-			query.setParameter(1, userProcessService.getLoginUser().getId());
-		else
-			query.setParameter(1, user.getId());
+		//TODO FIXME PSH
+		query.setParameter(1, null);
 		query.setParameter(2, new Date());
 		query.setParameter(3, primaryKey);
 		query.executeUpdate();
@@ -131,7 +123,8 @@ public class BasicDAO {
 	protected void updateProcessLog(String tableName, String primaryKey) throws PersistenceException {
 		String queryString = "UPDATE " + tableName + " SET UPDATEDUSERID = ?, UPDATEDDATE = ? WHERE ID = ?";
 		Query query = em.createNativeQuery(queryString);
-		query.setParameter(1, userProcessService.getLoginUser().getId());
+		//TODO FIXME 
+		query.setParameter(1, null);
 		query.setParameter(2, new Date());
 		query.setParameter(3, primaryKey);
 		query.executeUpdate();
@@ -171,7 +164,7 @@ public class BasicDAO {
 		return false;
 	}
 
-	protected static void jasperListPDFExport(List jasperPrintList, String dirPath, String fileName) {
+	protected static void jasperListPDFExport(List<?> jasperPrintList, String dirPath, String fileName) {
 		JRExporter exporter = new JRPdfExporter();
 		exporter.setParameter(JRPdfExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
 		try {
