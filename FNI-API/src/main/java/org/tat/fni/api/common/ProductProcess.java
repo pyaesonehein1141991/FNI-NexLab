@@ -28,6 +28,7 @@ import javax.persistence.Version;
 
 import org.tat.fni.api.common.emumdata.ActiveStatus;
 import org.tat.fni.api.domain.Product;
+import org.tat.fni.api.domain.Process;
 
 
 

@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://DESKTOP-E1RV399\SQLEXPRESS;databaseName=ggli
+    url: jdbc:sqlserver://DESKTOP-E1RV399\SQLEXPRESS;databaseName=FNI_LIFE_DB
     username: sa
     password: mssql2019
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
