@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost;databaseName=FNILP(2152020)
+    url: jdbc:sqlserver://acehawksvr3;databaseName=FNILP
     username: sa
-    password: sasa
+    password: 123@ace
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jackson:
     date-format: dd.MM.yyyy

@@ -1,5 +1,6 @@
 package org.tat.fni.api.dto.shortTermEndowmentLifeDTO;
 
+
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotBlank;

@@ -3,7 +3,6 @@ package org.tat.fni.api.domain.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -229,7 +228,7 @@ public class ShortTermLifeProposalService {
     try {
       Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
       Optional<RelationShip> relationshipOptional =
-          relationshipService.findById(dto.getRelationshipID());
+          relationshipService.findById(dto.getRelationshipId());
       ResidentAddress residentAddress = new ResidentAddress();
       residentAddress.setResidentAddress(dto.getResidentAddress());
       Name name = new Name();
@@ -239,7 +238,6 @@ public class ShortTermLifeProposalService {
 
       InsuredPersonBeneficiaries beneficiary = new InsuredPersonBeneficiaries();
       beneficiary.setInitialId(dto.getInitialId());
-      beneficiary.setDateOfBirth(dto.getDob());
       beneficiary.setPercentage(dto.getPercentage());
       beneficiary.setIdType(IdType.valueOf(dto.getIdType()));
       beneficiary.setIdNo(dto.getIdNo());
