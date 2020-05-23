@@ -33,10 +33,10 @@ import org.tat.fni.api.common.ResourceQuestionDTO;
 import org.tat.fni.api.common.SurveyQuestionDTO;
 import org.tat.fni.api.common.TableName;
 import org.tat.fni.api.common.UserRecorder;
-import org.tat.fni.api.common.ValidationUtil;
 import org.tat.fni.api.common.emumdata.ClaimType;
 import org.tat.fni.api.common.emumdata.InputType;
 import org.tat.fni.api.common.emumdata.SurveyType;
+import org.tat.fni.api.common.utils.ValidationUtil;
 
 @Entity
 @Table(name = TableName.SURVEYQUESTIONANSWER)

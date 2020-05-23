@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.tat.fni.api.common.emumdata.PaymentChannel;
+import org.tat.fni.api.common.interfaces.ISorter;
+import org.tat.fni.api.common.utils.Utils;
 import org.tat.fni.api.domain.Bank;
 import org.tat.fni.api.domain.Payment;
 import org.tat.fni.api.domain.PaymentType;

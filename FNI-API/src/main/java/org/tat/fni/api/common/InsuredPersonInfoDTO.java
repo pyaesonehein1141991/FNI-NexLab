@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 import org.tat.fni.api.common.emumdata.ClaimStatus;
 import org.tat.fni.api.common.emumdata.ClassificationOfHealth;
 import org.tat.fni.api.common.emumdata.EndorsementStatus;
+import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.domain.Attachment;
 import org.tat.fni.api.domain.Customer;

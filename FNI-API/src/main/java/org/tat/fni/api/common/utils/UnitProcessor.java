@@ -1,4 +1,6 @@
-package org.tat.fni.api.common;
+package org.tat.fni.api.common.utils;
+
+import org.tat.fni.api.common.AbstractProcessor;
 
 public class UnitProcessor extends AbstractProcessor {
 	private final String[] TOKENS = new String[] { "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen",

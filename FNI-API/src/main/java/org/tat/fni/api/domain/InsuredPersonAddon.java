@@ -16,11 +16,11 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import org.tat.fni.api.common.AddOn;
 import org.tat.fni.api.common.IDInterceptor;
 import org.tat.fni.api.common.InsuredPersonAddOnDTO;
 import org.tat.fni.api.common.TableName;
 import org.tat.fni.api.common.UserRecorder;
+import org.tat.fni.api.domain.addon.AddOn;
 
 @Entity
 @Table(name = TableName.INSUREDPERSONADDON)

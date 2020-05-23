@@ -6,19 +6,19 @@
  * 
  *    
  ***************************************************************************************/
-package org.tat.fni.api.common;
+package org.tat.fni.api.common.emumdata;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(name = "maritalStatus")
+@XmlType(name = "gender")
 @XmlEnum
-public enum MaritalStatus {
-	MARRIED("Married"), SINGLE("Single"),DIVORCED("Divorced");
+public enum Gender {
+	FEMALE("Female"), MALE("Male");
 
 	private String label;
 
-	private MaritalStatus(String label) {
+	private Gender(String label) {
 		this.label = label;
 	}
 

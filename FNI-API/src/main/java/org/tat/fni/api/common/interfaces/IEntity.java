@@ -1,4 +1,4 @@
-package org.tat.fni.api.common;
+package org.tat.fni.api.common.interfaces;
 
 /**
  * The contract which defines the basic behaviors that all Entities are obliged

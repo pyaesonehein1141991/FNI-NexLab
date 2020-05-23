@@ -49,8 +49,8 @@ public class FormatID {
 		return simpleDateFormat.format(new Date());
 	}
 
-	public static void main(String args[]) {
-		System.out.println(formatId("202", "INSU00010001", 10));
-		System.out.println(formatId("202", "INSU00010001", 10).length());
-	}
+//	public static void main(String args[]) {
+//		System.out.println(formatId("202", "INSU00010001", 10));
+//		System.out.println(formatId("202", "INSU00010001", 10).length());
+//	}
 }

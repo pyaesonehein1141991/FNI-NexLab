@@ -23,12 +23,12 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.tat.fni.api.common.BeneficiariesInfoDTO;
-import org.tat.fni.api.common.Gender;
 import org.tat.fni.api.common.IDInterceptor;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.TableName;
 import org.tat.fni.api.common.UserRecorder;
+import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
 
 

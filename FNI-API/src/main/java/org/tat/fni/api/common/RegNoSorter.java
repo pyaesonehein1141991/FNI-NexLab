@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.tat.fni.api.common.interfaces.ISorter;
+
 /**
  * @author Zaw Than Oo
  * @Use The <code>RegNoSorter</code> class is used to sort the entities which

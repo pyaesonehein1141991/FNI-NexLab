@@ -1,5 +1,7 @@
 package org.tat.fni.api.common;
 
+import org.tat.fni.api.common.utils.UnitProcessor;
+
 public class TensProcessor extends AbstractProcessor {
 	static private final String[] TOKENS = new String[] { "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
 	static private final String UNION_SEPARATOR = "-";

@@ -25,7 +25,7 @@ import org.tat.fni.api.common.MAO01;
 import org.tat.fni.api.common.RegNoSorter;
 import org.tat.fni.api.common.TableName;
 import org.tat.fni.api.common.UserRecorder;
-import org.tat.fni.api.common.Utils;
+import org.tat.fni.api.common.utils.Utils;
 
 
 

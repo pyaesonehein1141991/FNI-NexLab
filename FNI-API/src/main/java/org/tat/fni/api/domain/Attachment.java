@@ -16,9 +16,9 @@ import javax.persistence.Version;
 
 import org.tat.fni.api.common.AttachmentDTO;
 import org.tat.fni.api.common.IDInterceptor;
-import org.tat.fni.api.common.IEntity;
 import org.tat.fni.api.common.TableName;
 import org.tat.fni.api.common.UserRecorder;
+import org.tat.fni.api.common.interfaces.IEntity;
 
 @Entity
 @Table(name = TableName.ATTACHMENT)
