@@ -16,7 +16,7 @@ import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.exception.DAOException;
 
 @Service("CustomIDGenerator")
-public class CustomIDGenerator {
+public class CustomIDGenerator implements ICustomIdGenerator {
 	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M-yyyy");
 
 //	@Resource(name = "ID_CONFIG")

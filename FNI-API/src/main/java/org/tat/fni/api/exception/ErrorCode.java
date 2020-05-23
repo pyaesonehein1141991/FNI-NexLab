@@ -35,5 +35,11 @@ public class ErrorCode {
 
 	/* New for duplicate policy */
 	public static final String PROPOSAL_ALREADY_CONFIRMED = "PROPOSAL_ALREADY_CONFIRMED";
+	
+	/**
+	 * SYSTEM_ERROR_RESOURCE_NOT_FOUND
+	 */
+	
+	public static final String SYSTEM_ERROR_RESOURCE_NOT_FOUND = "SYSTEM_ERROR_RESOURCE_NOT_FOUND";
 
 }
