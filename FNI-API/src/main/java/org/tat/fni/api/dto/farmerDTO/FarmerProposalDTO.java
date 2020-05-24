@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class FarmerDTO {
+public class FarmerProposalDTO {
 	
 	@ApiModelProperty(position = 0, required = true)
 	@NotNull(message = "Period Month is mandatory")

@@ -796,4 +796,8 @@ public class TableName {
 	public static final String DISABILITYPART = "DISABILITYPART";
 
 	public static final String LIFECLAIMMONTHLYREPORT_VIEW = "VWT_LIFECLAIMMONTHLYREPORT";
+
+	/* Farmer Proposal */
+	public static final String FARMERPROPOSAL = "FARMERPROPOSAL";
+	public static final String FARMERPROPOSAL_ATTACH_LINK = "FARMERPROPOSAL_ATTACH_LINK";
 }

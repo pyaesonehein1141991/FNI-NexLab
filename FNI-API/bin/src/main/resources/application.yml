@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://DESKTOP-E1RV399\SQLEXPRESS;databaseName=ggli
+    url: jdbc:sqlserver://acehawksvr3;databaseName=FNILP
     username: sa
-    password: mssql2019
+    password: 123@ace
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jackson:
     date-format: dd.MM.yyyy
@@ -23,6 +23,7 @@ server:
 farmerProductId: ISPRD003001000009376125072017
 studentLifeProductId: ISPRD003000009607306082019
 publicTermLifeProductId: ISPRD003000009609324022020
+shorttermLifeProductId: ISPRD003001000009589529032019
 
 
 fileDir: D
@@ -48,3 +49,5 @@ StudentLifeController:
   submitProposal: Create Student Life proposal and return policy no
 BillCollectionController:
   payment: Create Subsequent Payment
+  ShortTermEndowmentLifeController:
+  submitProposal: Create ShortTermEndowment Life DTO and return proposal no
