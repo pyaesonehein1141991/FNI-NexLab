@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.tat.fni.api.common.CustomIDGeneratorException;
 import org.tat.fni.api.common.IDGen;
@@ -16,6 +17,7 @@ import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.exception.DAOException;
 
 @Service("CustomIDGenerator")
+@PropertySource(ignoreResourceNotFound=true,value="classpath:id-config.properties")
 public class CustomIDGenerator implements ICustomIdGenerator {
 	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M-yyyy");
 
@@ -77,7 +79,8 @@ public class CustomIDGenerator implements ICustomIdGenerator {
 		String prefix = idGen.getPrefix();
 		String suffix = idGen.getSuffix();
 		int maxLength = idGen.getLength();
-		String branchCode = null;
+		//TODO FIXME PSH Change Branch code
+		String branchCode = "001";
 //		if (idConfigLoader.isCentralizedSystem()) {
 //			branchCode = userProcessService.getLoginUser().getBranch().getPreFix();
 //		} else {

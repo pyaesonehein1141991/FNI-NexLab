@@ -76,6 +76,8 @@ public class IDGenDAO extends BasicDAO implements IDGenDAOInf {
 //			} else {
 //				branchCode = configLoader.getBranchCode();
 //			}
+			//TODO FIXME PSH Change Branch Code
+			branchCode = "001";
 			selectQuery.setParameter("generateItem", generateItem);
 			selectQuery.setParameter("branchCode", branchCode);
 			idGen = (IDGen) selectQuery.getSingleResult();

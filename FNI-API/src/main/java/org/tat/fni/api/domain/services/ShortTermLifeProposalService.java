@@ -141,7 +141,7 @@ public class ShortTermLifeProposalService {
         }
 
 
-        String proposalNo = customIdRepo.getNextId("SHORT_ENDOWMENT_PROPOSAL_ID_GEN", null);
+        String proposalNo = customIdRepo.getNextId("SHORT_ENDOWMENT_PROPOSAL_NO", null);
         lifeProposal.setStartDate(shortTermEndowmentLifeDto.getStartDate());
         lifeProposal.setEndDate(shortTermEndowmentLifeDto.getEndDate());
         lifeProposal.setProposalNo(proposalNo);
@@ -197,7 +197,7 @@ public class ShortTermLifeProposalService {
 
       }
 
-      String insPersonCodeNo = customIdRepo.getNextId("LIFE_INSUREDPERSON_CODENO_ID_GEN", null);
+      String insPersonCodeNo = customIdRepo.getNextId("LIFE_INSUREDPERSON_CODENO", null);
       insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
       dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
         insuredPerson.getInsuredPersonBeneficiariesList()
@@ -254,7 +254,7 @@ public class ShortTermLifeProposalService {
       if (relationshipOptional.isPresent()) {
         beneficiary.setRelationship(relationshipOptional.get());
       }
-      String beneficiaryNo = customIdRepo.getNextId("LIFE_BENEFICIARY_ID_GEN", null);
+      String beneficiaryNo = customIdRepo.getNextId("LIFE_BENEFICIARY_NO", null);
       beneficiary.setBeneficiaryNo(beneficiaryNo);
       return beneficiary;
     } catch (DAOException e) {
