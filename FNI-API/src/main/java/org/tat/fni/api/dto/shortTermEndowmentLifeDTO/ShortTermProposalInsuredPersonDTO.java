@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import org.tat.fni.api.configuration.DateHandler;
-import org.tat.fni.api.domain.InsuredPersonAttachment;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,7 +25,7 @@ public class ShortTermProposalInsuredPersonDTO {
 
   @ApiModelProperty(position = 2, example = "true", required = true)
   @NotNull(message = "approve is mandatory")
-  private double approve;
+  private boolean approve;
 
   @ApiModelProperty(position = 3, example = "100000", required = true)
   @NotNull(message = "proposedSumInsured is mandatory")
@@ -82,7 +81,7 @@ public class ShortTermProposalInsuredPersonDTO {
   @NotNull(message = "residentAddress is mandatory")
   private String residentAddress;
 
-  @ApiModelProperty(position = 26, example = "ISSYS004000009724620062019", required = true)
+  @ApiModelProperty(position = 26, example = "ISSYS004001000000731326012017", required = true)
   @NotBlank(message = "townshipId is mandatory")
   @NotEmpty
   private String townshipId;
@@ -92,12 +91,14 @@ public class ShortTermProposalInsuredPersonDTO {
   private String occupationID;
 
 
-  @ApiModelProperty(position = 18, example = "ISSYS001000005575112092016")
+  @ApiModelProperty(position = 18, example = "ISSYS001001000000000103062019")
   private String customerID;
 
 
-  @ApiModelProperty(position = 19, required = false)
-  private List<InsuredPersonAttachment> attachmentList;
+  /*
+   * @ApiModelProperty(position = 19, required = false) private List<InsuredPersonAttachment>
+   * attachmentList;
+   */
 
 
   @Valid

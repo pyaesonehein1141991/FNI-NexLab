@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.tat.fni.api.common.emumdata.ClassificationOfHealth;
 import org.tat.fni.api.configuration.DateHandler;
-import org.tat.fni.api.domain.InsuredPersonAttachment;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -65,9 +64,10 @@ public class ShortTermEndowmentLifeDTO {
   @ApiModelProperty(position = 11, required = true)
   @NotNull(message = "Customer Classification Of Health is mandatory")
   private ClassificationOfHealth customerClsOfHealth;
-
-  @ApiModelProperty(position = 12, required = false)
-  private List<InsuredPersonAttachment> attachmentList;
+  /*
+   * @ApiModelProperty(position = 12, required = false) private List<InsuredPersonAttachment>
+   * attachmentList;
+   */
 
   @ApiModelProperty(position = 13, required = true)
   @NotNull(message = "proposalInsuredPersonList is mandatory")

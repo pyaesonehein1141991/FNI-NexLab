@@ -61,7 +61,7 @@ public class ShortTermProposalInsuredPersonBeneficiariesDTO {
   @NotBlank(message = "residentAddress is mandatory")
   private String residentAddress;
 
-  @ApiModelProperty(position = 13, example = "ISSYS004002000000127620082014", required = true)
+  @ApiModelProperty(position = 13, example = "ISSYS004001000000731326012017", required = true)
   @NotBlank(message = "townshipId is mandatory")
   @NotEmpty
   private String townshipId;

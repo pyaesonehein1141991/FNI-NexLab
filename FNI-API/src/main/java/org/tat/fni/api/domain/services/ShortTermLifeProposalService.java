@@ -26,6 +26,7 @@ import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
+import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
@@ -63,6 +64,8 @@ public class ShortTermLifeProposalService {
   @Autowired
   private AgentService agentService;
 
+  @Autowired
+  private SalePointService salePointService;
 
   @Autowired
   private ProductService productService;
@@ -112,7 +115,8 @@ public class ShortTermLifeProposalService {
       Optional<PaymentType> paymentTypeOptional =
           paymentTypeService.findById(shortTermEndowmentLifeDto.getPaymentTypeId());
       Optional<Agent> agentOptional = agentService.findById(shortTermEndowmentLifeDto.getAgentId());
-
+      Optional<SalesPoints> salesPointsOptional =
+          salePointService.findById(shortTermEndowmentLifeDto.getSalesPointsId());
 
       shortTermEndowmentLifeDto.getProposalInsuredPersonList().forEach(insuredPerson -> {
         LifeProposal lifeProposal = new LifeProposal();
@@ -136,7 +140,10 @@ public class ShortTermLifeProposalService {
           lifeProposal.setPaymentType(paymentTypeOptional.get());
         }
 
+
         String proposalNo = customIdRepo.getNextId("SHORT_ENDOWMENT_PROPOSAL_ID_GEN", null);
+        lifeProposal.setStartDate(shortTermEndowmentLifeDto.getStartDate());
+        lifeProposal.setEndDate(shortTermEndowmentLifeDto.getEndDate());
         lifeProposal.setProposalNo(proposalNo);
         lifeProposalList.add(lifeProposal);
       });
