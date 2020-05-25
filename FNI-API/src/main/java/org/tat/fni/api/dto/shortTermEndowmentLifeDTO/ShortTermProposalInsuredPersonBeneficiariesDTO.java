@@ -42,7 +42,7 @@ public class ShortTermProposalInsuredPersonBeneficiariesDTO {
   private String idNo;
 
   @ApiModelProperty(position = 9, example = "ISSYS0120001000000000129032013      ", required = true)
-  @NotBlank(message = "Branch ID is mandatory")
+  @NotBlank(message = "relationship is mandatory")
   private String relationshipId;
 
 
