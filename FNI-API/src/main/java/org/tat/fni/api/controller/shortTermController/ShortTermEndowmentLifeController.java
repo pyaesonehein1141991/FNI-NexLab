@@ -39,11 +39,10 @@ public class ShortTermEndowmentLifeController {
   public ResponseDTO<Object> submitproposal(
       @ApiParam("Submit ShortTerm Proposal") @Valid @RequestBody ShortTermEndowmentLifeDTO shortTermEndowmentLifeDto) {
     List<LifeProposal> proposallist = new ArrayList<>();
-    ShortTermEndowmentLifeDTO a =
-        mapper.map(shortTermEndowmentLifeDto, ShortTermEndowmentLifeDTO.class);
+    ShortTermEndowmentLifeDTO shortTermEndowmentDTO = mapper.map(shortTermEndowmentLifeDto, ShortTermEndowmentLifeDTO.class);
 
     // create shortTermEndowmentlife proposal
-    proposallist = lifeProposalService.createShortTermEndowmentLifeDtoToProposal(a);
+    proposallist = lifeProposalService.createShortTermEndowmentLifeDtoToProposal(shortTermEndowmentDTO);
 
     // create response object
     List<ShortTermEndowmentLifeReponseDTO> responseList = new ArrayList<>();
