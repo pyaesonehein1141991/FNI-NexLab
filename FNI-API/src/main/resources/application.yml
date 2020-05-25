@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost;databaseName=FNILP(2152020)
+    url: jdbc:sqlserver://acehawksvr3;databaseName=FNILP
     username: sa
-    password: sasa
+    password: 123@ace
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jackson:
     date-format: dd.MM.yyyy
@@ -44,7 +44,9 @@ UserController:
   me: Returns current user's data
   submitProposal: Create proposal and return policy no
 FarmerController:
-  submitproposal: Create Group farmer Proposal and return policy no
+  submitproposal: Create Farmer Life Proposal and return policy no
+ShortTermEndowmentLifeController:
+  submitproposal: Create Short Term Endowment Life proposal and return policy no
 StudentLifeController:
   submitProposal: Create Student Life proposal and return policy no
 BillCollectionController:

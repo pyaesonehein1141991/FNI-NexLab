@@ -6,9 +6,8 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.tat.fni.api.common.emumdata.ClassificationOfHealth;
 import org.tat.fni.api.configuration.DateHandler;
-import org.tat.fni.api.domain.InsuredPersonAttachment;
-import org.tat.fni.api.domain.ProposalInsuredPerson;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -46,7 +45,7 @@ public class FarmerProposalDTO {
 	@NotBlank(message = "Organization ID is mandatory")
 	private String organizationId;
 	
-	@ApiModelProperty(position = 7, example = "ISSYS0090001000000000229032013", required = true)
+	@ApiModelProperty(position = 7, example = "ISSYS0090001000000000429032013", required = true)
 	@NotBlank(message = "Payment Type ID is mandatory")
 	private String paymentTypeId;
 	
@@ -69,15 +68,15 @@ public class FarmerProposalDTO {
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
 	
-	@ApiModelProperty(position = 12, required = true)
+	@ApiModelProperty(position = 12, example = "SECONDCLASS", required = true)
 	@NotNull(message = "Customer Classification Of Health is mandatory")
-	private String customerClsOfHealth;
+	private ClassificationOfHealth customerClsOfHealth;
 
-	@ApiModelProperty(position = 13, required = false)
-	private List<InsuredPersonAttachment> attachmentList;
+//	@ApiModelProperty(position = 13, required = false)
+//	private List<InsuredPersonAttachment> attachmentList;
 	
 	@ApiModelProperty(position = 14, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
-	private List<ProposalInsuredPerson> proposalInsuredPersonList;
+	private List<FarmerProposalInsuredPersonDTO> proposalInsuredPersonList;
 
 }
