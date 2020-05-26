@@ -204,7 +204,7 @@ public class FarmerLifeProposalService {
 //				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
 //			}
 
-			String insPersonCodeNo = customId.getNextId("LIFE_INSUREDPERSON_CODENO_ID_GEN", null);
+			String insPersonCodeNo = customId.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
 
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
