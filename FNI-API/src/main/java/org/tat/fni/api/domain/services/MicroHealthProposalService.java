@@ -27,7 +27,7 @@ import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.CustomerRepository;
-import org.tat.fni.api.domain.repository.LifeProposalRepository;
+import org.tat.fni.api.domain.repository.MedicalProposalRepository;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonDTO;
@@ -39,8 +39,9 @@ public class MicroHealthProposalService {
 
 
   Logger logger = LoggerFactory.getLogger(this.getClass());
+
   @Autowired
-  private LifeProposalRepository lifeProposalRepo;
+  private MedicalProposalRepository medicalProposalRepo;
 
   @Autowired
   private BranchService branchService;
@@ -90,6 +91,7 @@ public class MicroHealthProposalService {
       // convert MicroHealthProposalDTO to lifeproposal
       List<MedicalProposal> microHealthProposalList =
           convertMicroHealthProposalDTOToProposal(microHealthInsuranceDTO);
+      medicalProposalRepo.saveAll(microHealthProposalList);
       return microHealthProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
@@ -135,7 +137,13 @@ public class MicroHealthProposalService {
         if (paymentTypeOptional.isPresent()) {
           medicalProposal.setPaymentType(paymentTypeOptional.get());
         }
+        if (branchOptional.isPresent()) {
+          medicalProposal.setBranch(branchOptional.get());
+        }
 
+        if (customerOptional.isPresent()) {
+          medicalProposal.setCustomer(customerOptional.get());
+        }
 
         String proposalNo = customIdRepo.getNextId("HEALTH_PROPOSAL_NO", null);
         medicalProposal.setStartDate(microHealthInsuranceDTO.getStartDate());

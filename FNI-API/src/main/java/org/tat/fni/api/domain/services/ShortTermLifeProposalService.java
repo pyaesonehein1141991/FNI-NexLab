@@ -94,7 +94,7 @@ public class ShortTermLifeProposalService {
       // convert shortTermEndowmentlifeProposalDTO to lifeproposal
       List<LifeProposal> shortTermEndowmentLifeProposalList =
           convertShortTermEndowmentLifeProposalDTOToProposal(shortTermEndowmentLifeDto);
-      shortTermEndowmentLifeProposalList = lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
+      lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
       return shortTermEndowmentLifeProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
@@ -103,16 +103,21 @@ public class ShortTermLifeProposalService {
   }
 
   // ForshortTermEndowmentlifeDto to proposal
-	public List<LifeProposal> convertShortTermEndowmentLifeProposalDTOToProposal(
+  public List<LifeProposal> convertShortTermEndowmentLifeProposalDTOToProposal(
       ShortTermEndowmentLifeDTO shortTermEndowmentLifeDto) {
     List<LifeProposal> lifeProposalList = new ArrayList<>();
     try {
-      Optional<Organization> organizationOptional = organizationService.findById(shortTermEndowmentLifeDto.getOrganizationId());
-      Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(shortTermEndowmentLifeDto.getPaymentTypeId());
+      Optional<Organization> organizationOptional =
+          organizationService.findById(shortTermEndowmentLifeDto.getOrganizationId());
+      Optional<PaymentType> paymentTypeOptional =
+          paymentTypeService.findById(shortTermEndowmentLifeDto.getPaymentTypeId());
       Optional<Agent> agentOptional = agentService.findById(shortTermEndowmentLifeDto.getAgentId());
-      Optional<Customer> customerOptional = customerService.findById(shortTermEndowmentLifeDto.getCustomerId());
-      Optional<Branch> branchOptional = branchService.findById(shortTermEndowmentLifeDto.getBranchId());
-      Optional<SalesPoints> salesPointsOptional = salePointService.findById(shortTermEndowmentLifeDto.getSalesPointsId());
+      Optional<Customer> customerOptional =
+          customerService.findById(shortTermEndowmentLifeDto.getCustomerId());
+      Optional<Branch> branchOptional =
+          branchService.findById(shortTermEndowmentLifeDto.getBranchId());
+      Optional<SalesPoints> salesPointsOptional =
+          salePointService.findById(shortTermEndowmentLifeDto.getSalesPointsId());
 
       shortTermEndowmentLifeDto.getProposalInsuredPersonList().forEach(insuredPerson -> {
         LifeProposal lifeProposal = new LifeProposal();

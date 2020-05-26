@@ -27,7 +27,7 @@ import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.CustomerRepository;
-import org.tat.fni.api.domain.repository.LifeProposalRepository;
+import org.tat.fni.api.domain.repository.MedicalProposalRepository;
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
@@ -38,8 +38,9 @@ import org.tat.fni.api.exception.SystemException;
 public class CriticalillnessProposalService {
 
   Logger logger = LoggerFactory.getLogger(this.getClass());
+
   @Autowired
-  private LifeProposalRepository lifeProposalRepo;
+  private MedicalProposalRepository medicalProposalRepo;
 
   @Autowired
   private BranchService branchService;
@@ -89,6 +90,7 @@ public class CriticalillnessProposalService {
       // convert CriticalProposalDTO to lifeproposal
       List<MedicalProposal> criticalillnessProposalList =
           convertCriticalillnessProposalDTOToProposal(criticalIllnessDTO);
+      medicalProposalRepo.saveAll(criticalillnessProposalList);
       return criticalillnessProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
@@ -133,7 +135,13 @@ public class CriticalillnessProposalService {
         if (paymentTypeOptional.isPresent()) {
           medicalProposal.setPaymentType(paymentTypeOptional.get());
         }
+        if (branchOptional.isPresent()) {
+          medicalProposal.setBranch(branchOptional.get());
+        }
 
+        if (customerOptional.isPresent()) {
+          medicalProposal.setCustomer(customerOptional.get());
+        }
 
         String proposalNo = customIdRepo.getNextId("HEALTH_PROPOSAL_NO", null);
         medicalProposal.setStartDate(criticalIllnessDTO.getStartDate());
