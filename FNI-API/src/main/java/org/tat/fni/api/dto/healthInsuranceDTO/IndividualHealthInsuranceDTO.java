@@ -21,7 +21,7 @@ public class IndividualHealthInsuranceDTO {
   @NotBlank(message = "SaleChannel Type is mandatory")
   private String saleChannelType;
 
-  @ApiModelProperty(position = 2, example = "Critical illness", required = true)
+  @ApiModelProperty(position = 2, example = "Individual Health", required = true)
   @NotBlank(message = "Health Type is mandatory")
   private String healthType;
 
