@@ -28,15 +28,14 @@ import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
-import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonBeneficiariesDTO;
-import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonBeneficiariesDTO;
+import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
 @Service
-public class MicroHealthProposalService {
-
+public class CriticalillnessProposalService {
 
   Logger logger = LoggerFactory.getLogger(this.getClass());
   @Autowired
@@ -80,17 +79,17 @@ public class MicroHealthProposalService {
 
 
 
-  @Value("${microHealthProductId}")
-  private String microHealthProductId;
+  @Value("${criticalillnessProductID}")
+  private String criticalillnessProductID;
 
   @Transactional(propagation = Propagation.REQUIRED)
-  public List<MedicalProposal> createMicroHealthDtoToProposal(
-      MicroHealthDTO microHealthInsuranceDTO) {
+  public List<MedicalProposal> criticalillnessDTOToProposal(
+      IndividualCriticalIllnessDTO criticalIllnessDTO) {
     try {
-      // convert MicroHealthProposalDTO to lifeproposal
-      List<MedicalProposal> microHealthProposalList =
-          convertMicroHealthProposalDTOToProposal(microHealthInsuranceDTO);
-      return microHealthProposalList;
+      // convert CriticalProposalDTO to lifeproposal
+      List<MedicalProposal> criticalillnessProposalList =
+          convertCriticalillnessProposalDTOToProposal(criticalIllnessDTO);
+      return criticalillnessProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
       throw e;
@@ -98,30 +97,29 @@ public class MicroHealthProposalService {
   }
 
 
-  public List<MedicalProposal> convertMicroHealthProposalDTOToProposal(
-      MicroHealthDTO microHealthInsuranceDTO) {
+  public List<MedicalProposal> convertCriticalillnessProposalDTOToProposal(
+      IndividualCriticalIllnessDTO criticalIllnessDTO) {
     List<MedicalProposal> medicalProposalList = new ArrayList<>();
     try {
-      Optional<Branch> branchOptional =
-          branchService.findById(microHealthInsuranceDTO.getBranchId());
+      Optional<Branch> branchOptional = branchService.findById(criticalIllnessDTO.getBranchId());
       Optional<Organization> organizationOptional =
-          organizationService.findById(microHealthInsuranceDTO.getOrganizationId());
+          organizationService.findById(criticalIllnessDTO.getOrganizationId());
       Optional<Customer> customerOptional =
-          customerService.findById(microHealthInsuranceDTO.getCustomerId());
+          customerService.findById(criticalIllnessDTO.getCustomerId());
       Optional<PaymentType> paymentTypeOptional =
-          paymentTypeService.findById(microHealthInsuranceDTO.getPaymentTypeId());
-      Optional<Agent> agentOptional = agentService.findById(microHealthInsuranceDTO.getAgentId());
+          paymentTypeService.findById(criticalIllnessDTO.getPaymentTypeId());
+      Optional<Agent> agentOptional = agentService.findById(criticalIllnessDTO.getAgentId());
       Optional<SalesPoints> salesPointsOptional =
-          salePointService.findById(microHealthInsuranceDTO.getSalesPointsId());
+          salePointService.findById(criticalIllnessDTO.getSalesPointsId());
 
-      microHealthInsuranceDTO.getMicrohealthproposalInsuredPersonList().forEach(insuredPerson -> {
+      criticalIllnessDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
         MedicalProposal medicalProposal = new MedicalProposal();
 
         medicalProposal.getMedicalProposalInsuredPersonList()
-            .add(createInsuredPersonForMicroHealth(insuredPerson));
+            .add(createInsuredPersonForCriticalillness(insuredPerson));
         medicalProposal.setComplete(true);
         medicalProposal.setProposalType(ProposalType.UNDERWRITING);
-        medicalProposal.setSubmittedDate(microHealthInsuranceDTO.getSubmittedDate());
+        medicalProposal.setSubmittedDate(criticalIllnessDTO.getSubmittedDate());
 
 
         if (organizationOptional.isPresent()) {
@@ -138,8 +136,8 @@ public class MicroHealthProposalService {
 
 
         String proposalNo = customIdRepo.getNextId("HEALTH_PROPOSAL_NO", null);
-        medicalProposal.setStartDate(microHealthInsuranceDTO.getStartDate());
-        medicalProposal.setEndDate(microHealthInsuranceDTO.getEndDate());
+        medicalProposal.setStartDate(criticalIllnessDTO.getStartDate());
+        medicalProposal.setEndDate(criticalIllnessDTO.getEndDate());
         medicalProposal.setProposalNo(proposalNo);
         medicalProposalList.add(medicalProposal);
       });
@@ -150,10 +148,10 @@ public class MicroHealthProposalService {
   }
 
 
-  private MedicalProposalInsuredPerson createInsuredPersonForMicroHealth(
-      MicroHealthProposalInsuredPersonDTO dto) {
+  private MedicalProposalInsuredPerson createInsuredPersonForCriticalillness(
+      CriticalillnessProposalInsuredPersonDTO dto) {
     try {
-      Optional<Product> productOptional = productService.findById(microHealthProductId);
+      Optional<Product> productOptional = productService.findById(criticalillnessProductID);
       Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
       Optional<RelationShip> relationShipOptional =
           relationshipService.findById(dto.getRelationshipId());
@@ -192,7 +190,7 @@ public class MicroHealthProposalService {
 
 
   private MedicalProposalInsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
-      MicroHealthProposalInsuredPersonBeneficiariesDTO dto) {
+      CriticalillnessProposalInsuredPersonBeneficiariesDTO dto) {
     try {
       Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
       Optional<RelationShip> relationshipOptional =
@@ -222,6 +220,7 @@ public class MicroHealthProposalService {
       throw new SystemException(e.getErrorCode(), e.getMessage());
     }
   }
+
 
 
 }
