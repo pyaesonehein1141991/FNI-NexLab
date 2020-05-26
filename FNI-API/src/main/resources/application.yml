@@ -44,13 +44,15 @@ UserController:
   delete: Deletes specific user by username
   search: Returns specific user by username
   me: Returns current user's data
-  submitProposal: Create proposal and return policy no
+  submitProposal: Create proposal and return proposal no
 FarmerController:
-  submitproposal: Create Farmer Life Proposal and return policy no
+  submitproposal: Create Farmer Life Proposal and return proposal no
+GroupLifeController:
+  submitproposal: Create Group Life Proposal and return proposal no
 ShortTermEndowmentLifeController:
-  submitproposal: Create Short Term Endowment Life proposal and return policy no
+  submitproposal: Create Short Term Endowment Life proposal and return proposal no
 StudentLifeController:
-  submitProposal: Create Student Life proposal and return policy no
+  submitProposal: Create Student Life proposal and return proposal no
 BillCollectionController:
   payment: Create Subsequent Payment
   ShortTermEndowmentLifeController:

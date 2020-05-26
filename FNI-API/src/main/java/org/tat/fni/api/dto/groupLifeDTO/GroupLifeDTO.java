@@ -66,14 +66,14 @@ public class GroupLifeDTO {
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
 	
-	@ApiModelProperty(position = 11, required = true)
+	@ApiModelProperty(position = 11, example = "FIRSTCLASS", required = true)
 	@NotNull(message = "Customer Classification Of Health is mandatory")
 	private ClassificationOfHealth customerClsOfHealth;
 	
-	@ApiModelProperty(position = 12, required = false)
-	private List<InsuredPersonAttachment> attachmentList;
+//	@ApiModelProperty(position = 12, required = false)
+//	private List<InsuredPersonAttachment> attachmentList;
 	
 	@ApiModelProperty(position = 13, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
-	private List<ProposalInsuredPerson> proposalInsuredPersonList;
+	private List<GroupLifeProposalInsuredPersonDTO> proposalInsuredPersonList;
 }

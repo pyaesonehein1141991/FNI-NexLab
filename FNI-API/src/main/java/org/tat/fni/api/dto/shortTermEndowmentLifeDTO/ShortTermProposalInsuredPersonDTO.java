@@ -39,7 +39,6 @@ public class ShortTermProposalInsuredPersonDTO {
   @NotNull(message = "approvedSumInsured is mandatory")
   private double approvedSumInsured;
 
-
   @ApiModelProperty(position = 6, example = "10000", required = true)
   @NotNull(message = "basicTermPremium is mandatory")
   private double basicTermPremium;

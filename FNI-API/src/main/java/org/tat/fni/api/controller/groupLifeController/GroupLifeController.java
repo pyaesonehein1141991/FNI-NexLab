@@ -1,4 +1,4 @@
-package org.tat.fni.api.controller.farmerController;
+package org.tat.fni.api.controller.groupLifeController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.FarmerLifeProposalService;
+import org.tat.fni.api.domain.services.GroupLifeProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerResponseDTO;
-import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermEndowmentLifeDTO;
+import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
+import org.tat.fni.api.dto.groupLifeDTO.GroupLifeResponseDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,35 +27,35 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/farmer")
-@Api(tags = "Farmer Proposal")
-public class FarmerController {
-
+@RequestMapping("/groupLife")
+@Api(tags = "Group Life Proposal")
+public class GroupLifeController {
+	
 	@Autowired
-	private FarmerLifeProposalService farmerLifeProposalService;
+	private GroupLifeProposalService groupLifeProposalService;
 
 	@Autowired
 	private ModelMapper mapper;
-
+	
 	@PostMapping("/submitproposal")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 	@ApiResponse(code = 403, message = "Access denied"),
 	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${FarmerController.submitproposal}")
-	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Farmer Proposal") 
-	@Valid @RequestBody FarmerProposalDTO farmerProposalDTO) {
+	@ApiOperation(value = "${GroupLifeController.submitproposal}")
+	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Group Life Proposal")
+	@Valid @RequestBody GroupLifeDTO groupLifeDTO) {
 
 		List<LifeProposal> proposallist = new ArrayList<>();
-		FarmerProposalDTO dto = mapper.map(farmerProposalDTO, FarmerProposalDTO.class);
+		GroupLifeDTO dto = mapper.map(groupLifeDTO, GroupLifeDTO.class);
 
-		proposallist = farmerLifeProposalService.createFarmerProposalDTOToProposal(dto);
+		proposallist = groupLifeProposalService.createGroupLifeProposalDTOToProposal(dto);
 
-		List<FarmerResponseDTO> responseList = new ArrayList<FarmerResponseDTO>();
+		List<GroupLifeResponseDTO> responseList = new ArrayList<GroupLifeResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			FarmerResponseDTO farmerResponseDto = FarmerResponseDTO.builder().proposalID(proposal.getId())
+			GroupLifeResponseDTO groupLifeResponsedto = GroupLifeResponseDTO.builder().proposalID(proposal.getId())
 					.proposalNo(proposal.getProposalNo()).proposedPremium(proposal.getProposedPremium()).build();
-			responseList.add(farmerResponseDto);
+			responseList.add(groupLifeResponsedto);
 		});
 
 		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();

@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
@@ -15,7 +14,6 @@ import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.common.emumdata.ProposalType;
 import org.tat.fni.api.common.emumdata.SaleChannelType;
-import org.tat.fni.api.common.interfaces.ICustomIDGenerators;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
@@ -27,45 +25,34 @@ import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
-import org.tat.fni.api.domain.RiskyOccupation;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.repository.LifeProposalRepository;
-//import org.tat.fni.api.domain.repository.FarmerRepository;
+import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonDTO;
-import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonBeneficiariesDTO;
+import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
+import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonBeneficiariesDTO;
+import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthinsuredPersonPolicyHistoryRecordDTO;
+import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
-import org.tat.fni.api.common.interfaces.ICustomIDGenerators;
 
 @Service
-public class FarmerLifeProposalService {
+public class GroupLifeProposalService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	private LifeProposalRepository lifeProposalRepo;
-
-	@Autowired
 	private PaymentTypeService paymentTypeService;
-
-	@Autowired
-	private ProductService productService;
 
 	@Autowired
 	private AgentService agentService;
 
 	@Autowired
 	private BranchService branchService;
-
-	@Autowired
-	private TownShipService townShipService;
-
-	@Autowired
-	private OccupationService occupationService;
 
 	@Autowired
 	private CustomerService customerService;
@@ -77,23 +64,26 @@ public class FarmerLifeProposalService {
 	private SalePointService salePointService;
 
 	@Autowired
+	private TownShipService townShipService;
+
+	@Autowired
+	private OccupationService occupationService;
+
+	@Autowired
 	private RelationshipService relationshipService;
 
-//	@Autowired
-//	private RiskyOccupationService riskyOccupationService;
+	@Autowired
+	private CustomerRepository customerRepo;
 
 	@Autowired
 	private ICustomIdGenerator customId;
 
-	@Value("${farmerProductId}")
-	private String farmerpProductId;
-
-	public List<LifeProposal> createFarmerProposalDTOToProposal(FarmerProposalDTO farmerProposalDTO) {
+	public List<LifeProposal> createGroupLifeProposalDTOToProposal(GroupLifeDTO groupLifeDTO) {
 		try {
 
-			List<LifeProposal> farmerProposalList = convertFarmerProposalDTOToProposal(farmerProposalDTO);
+			List<LifeProposal> groupLifeProposalList = convertGroupLifeProposalDTOToProposal(groupLifeDTO);
 
-			return farmerProposalList;
+			return groupLifeProposalList;
 
 		} catch (DAOException e) {
 
@@ -102,34 +92,27 @@ public class FarmerLifeProposalService {
 		}
 	}
 
-	private List<LifeProposal> convertFarmerProposalDTOToProposal(FarmerProposalDTO farmerProposalDTO) {
+	private List<LifeProposal> convertGroupLifeProposalDTOToProposal(GroupLifeDTO groupLifeDTO) {
 
-		Optional<Product> productOptional = productService
-				.findById(farmerProposalDTO.getProductId());
-		Optional<Branch> branchOptional = branchService
-				.findById(farmerProposalDTO.getBranchId());
-		Optional<Customer> customerOptional = customerService
-				.findById(farmerProposalDTO.getCustomerId());
-		Optional<Organization> organizationOptional = organizationService
-				.findById(farmerProposalDTO.getOrganizationId());
-		Optional<PaymentType> paymentTypeOptional = paymentTypeService
-				.findById(farmerProposalDTO.getPaymentTypeId());
-		Optional<Agent> agentOptional = agentService
-				.findById(farmerProposalDTO.getAgentId());
-		Optional<SalesPoints> salePointOptional = salePointService
-				.findById(farmerProposalDTO.getSalesPointsId());
-		
+		Optional<Branch> branchOptional = branchService.findById(groupLifeDTO.getBranchId());
+		Optional<Customer> customerOptional = customerService.findById(groupLifeDTO.getCustomerId());
+		Optional<Organization> organizationOptional = organizationService.findById(groupLifeDTO.getOrganizationId());
+		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(groupLifeDTO.getPaymentTypeId());
+		Optional<Agent> agentOptional = agentService.findById(groupLifeDTO.getAgentId());
+		Optional<SalesPoints> salePointOptional = salePointService.findById(groupLifeDTO.getSalesPointsId());
+
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
-		
+
 		try {
-			farmerProposalDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
+			groupLifeDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
+
 				LifeProposal lifeProposal = new LifeProposal();
 
-				lifeProposal.getProposalInsuredPersonList().add(createInsuredPersonForFarmer(insuredPerson));
+				lifeProposal.getProposalInsuredPersonList().add(createInsuredPersonForGroupLife(insuredPerson));
 				lifeProposal.setComplete(true);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
-				lifeProposal.setSubmittedDate(farmerProposalDTO.getSubmittedDate());
-				lifeProposal.setPeriodMonth(farmerProposalDTO.getPeriodMonth());
+				lifeProposal.setSubmittedDate(groupLifeDTO.getSubmittedDate());
+				lifeProposal.setPeriodMonth(groupLifeDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 
 				if (organizationOptional.isPresent()) {
@@ -148,9 +131,9 @@ public class FarmerLifeProposalService {
 					lifeProposal.setCustomer(customerOptional.get());
 				}
 
-				String proposalNo = customId.getNextId("FARMER_PROPOSAL_NO", null);
-				lifeProposal.setStartDate(farmerProposalDTO.getStartDate());
-				lifeProposal.setEndDate(farmerProposalDTO.getEndDate());
+				String proposalNo = customId.getNextId("GROUPLIFE_PROPOSAL_NO", null);
+				lifeProposal.setStartDate(groupLifeDTO.getStartDate());
+				lifeProposal.setEndDate(groupLifeDTO.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
 
 				lifeProposalList.add(lifeProposal);
@@ -162,17 +145,16 @@ public class FarmerLifeProposalService {
 		}
 
 		return lifeProposalList;
+
 	}
 
-	private ProposalInsuredPerson createInsuredPersonForFarmer(FarmerProposalInsuredPersonDTO dto) {
+	private ProposalInsuredPerson createInsuredPersonForGroupLife(GroupLifeProposalInsuredPersonDTO dto) {
 		try {
 
-			Optional<Product> productOptional = productService.findById(farmerpProductId);
+			Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-//			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
-//					.findRiskyOccupationById(dto.getRiskyOccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -184,7 +166,6 @@ public class FarmerLifeProposalService {
 			name.setLastName(dto.getLastName());
 
 			ProposalInsuredPerson insuredPerson = new ProposalInsuredPerson();
-			insuredPerson.setProduct(productOptional.get());
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
@@ -199,18 +180,22 @@ public class FarmerLifeProposalService {
 			insuredPerson.setPhone(dto.getPhone());
 			insuredPerson.setAge(DateUtils.getAgeForNextYear(dto.getDateOfBirth()));
 			insuredPerson.setGender(Gender.valueOf(dto.getGender()));
+			insuredPerson.setWeight(dto.getWeight());
+			insuredPerson.setHeight(dto.getHeight());
 			insuredPerson.setResidentAddress(residentAddress);
 			insuredPerson.setName(name);
 
+			if (customerOptional.isPresent()) {
+				insuredPerson.setCustomer(customerOptional.get());
+			} else {
+				insuredPerson.setCustomer(createNewCustomer(insuredPerson));
+			}
 			if (occupationOptional.isPresent()) {
 				insuredPerson.setOccupation(occupationOptional.get());
 			}
 			if (relationshipOptional.isPresent()) {
 				insuredPerson.setRelationship(relationshipOptional.get());
 			}
-//			if (riskyOccupationOptional.isPresent()) {
-//				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
-//			}
 
 			String insPersonCodeNo = customId.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
@@ -225,8 +210,28 @@ public class FarmerLifeProposalService {
 		}
 	}
 
+	private Customer createNewCustomer(ProposalInsuredPerson dto) {
+		Customer customer = new Customer();
+		try {
+			customer.setInitialId(dto.getInitialId());
+			customer.setFatherName(dto.getFatherName());
+			customer.setIdNo(dto.getIdNo());
+			customer.setDateOfBirth(dto.getDateOfBirth());
+			customer.setGender(dto.getGender());
+			customer.setIdType(dto.getIdType());
+			customer.setResidentAddress(dto.getResidentAddress());
+			customer.setName(dto.getName());
+			customer.setOccupation(dto.getOccupation());
+			customer.setRecorder(dto.getRecorder());
+			customer = customerRepo.save(customer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return customer;
+	}
+
 	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
-			FarmerProposalInsuredPersonBeneficiariesDTO dto) {
+			GroupLifeProposalInsuredPersonBeneficiariesDTO dto) {
 		try {
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
