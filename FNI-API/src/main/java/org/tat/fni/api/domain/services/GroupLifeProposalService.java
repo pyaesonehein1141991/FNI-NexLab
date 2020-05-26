@@ -29,6 +29,7 @@ import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
+import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonDTO;
@@ -44,6 +45,9 @@ import org.tat.fni.api.exception.SystemException;
 public class GroupLifeProposalService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	private LifeProposalRepository lifeProposalRepo;
 
 	@Autowired
 	private PaymentTypeService paymentTypeService;
@@ -82,6 +86,7 @@ public class GroupLifeProposalService {
 		try {
 
 			List<LifeProposal> groupLifeProposalList = convertGroupLifeProposalDTOToProposal(groupLifeDTO);
+			lifeProposalRepo.saveAll(groupLifeProposalList);
 
 			return groupLifeProposalList;
 

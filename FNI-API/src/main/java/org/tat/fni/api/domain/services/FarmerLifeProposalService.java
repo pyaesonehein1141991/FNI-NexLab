@@ -92,7 +92,8 @@ public class FarmerLifeProposalService {
 		try {
 
 			List<LifeProposal> farmerProposalList = convertFarmerProposalDTOToProposal(farmerProposalDTO);
-
+			lifeProposalRepo.saveAll(farmerProposalList);
+			
 			return farmerProposalList;
 
 		} catch (DAOException e) {
