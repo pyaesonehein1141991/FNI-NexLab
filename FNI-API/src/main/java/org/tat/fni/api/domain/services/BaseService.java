@@ -25,10 +25,10 @@ public class BaseService {
 	protected final String PAYMENT = "PAYMENT";
 	protected final String FARMER = "FARMER";
 
-	@Resource(name = "CustomIDGenerator")
-	protected ICustomIDGenerators customIDGenerators;
+//	@Resource(name = "CustomIDGenerator")
+//	protected ICustomIDGenerators customIDGenerators;
 
-	@Resource(name = "KEYFACTOR_ID_CONFIG")
+//	@Resource(name = "KEYFACTOR_ID_CONFIG")
 	private Properties keyFactorConfig;
 
 //	@Resource(name = "UserProcessService")

@@ -79,8 +79,8 @@ public class FarmerLifeProposalService {
 	@Autowired
 	private RelationshipService relationshipService;
 
-//	@Autowired
-//	private RiskyOccupationService riskyOccupationService;
+	@Autowired
+	private RiskyOccupationService riskyOccupationService;
 
 	@Autowired
 	private ICustomIdGenerator customId;
@@ -175,8 +175,8 @@ public class FarmerLifeProposalService {
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-//			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
-//					.findRiskyOccupationById(dto.getRiskyOccupationID());
+			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
+					.findRiskyOccupationById(dto.getRiskyOccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -212,9 +212,9 @@ public class FarmerLifeProposalService {
 			if (relationshipOptional.isPresent()) {
 				insuredPerson.setRelationship(relationshipOptional.get());
 			}
-//			if (riskyOccupationOptional.isPresent()) {
-//				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
-//			}
+			if (riskyOccupationOptional.isPresent()) {
+				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
+			}
 
 			String insPersonCodeNo = customId.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);

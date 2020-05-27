@@ -25,6 +25,7 @@ import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
+import org.tat.fni.api.domain.RiskyOccupation;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
@@ -76,8 +77,8 @@ public class SnakeBiteProposalService {
 	@Autowired
 	private RelationshipService relationshipService;
 
-//	@Autowired
-//	private RiskyOccupationService riskyOccupationService;
+	@Autowired
+	private RiskyOccupationService riskyOccupationService;
 
 	@Autowired
 	private ICustomIdGenerator customId;
@@ -168,9 +169,10 @@ public class SnakeBiteProposalService {
 			Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
-			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-//			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
-//					.findRiskyOccupationById(dto.getRiskyOccupationID());
+			Optional<RelationShip> relationshipOptional = relationshipService
+					.findById(dto.getRelationshipId());
+			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
+					.findRiskyOccupationById(dto.getRiskyOccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -208,9 +210,9 @@ public class SnakeBiteProposalService {
 			if (customerOptional.isPresent()) {
 				insuredPerson.setCustomer(customerOptional.get());
 			}
-//			if (riskyOccupationOptional.isPresent()) {
-//				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
-//			}
+			if (riskyOccupationOptional.isPresent()) {
+				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
+			}
 
 			String insPersonCodeNo = customId.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
