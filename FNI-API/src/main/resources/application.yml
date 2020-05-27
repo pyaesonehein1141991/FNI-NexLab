@@ -56,5 +56,5 @@ StudentLifeController:
   submitProposal: Create Student Life proposal and return proposal no
 BillCollectionController:
   payment: Create Subsequent Payment
-  ShortTermEndowmentLifeController:
-  submitProposal: Create ShortTermEndowment Life DTO and return proposal no
+SnakeBiteController:
+  submitproposal: Create Snake Bite Life proposal and return proposal no

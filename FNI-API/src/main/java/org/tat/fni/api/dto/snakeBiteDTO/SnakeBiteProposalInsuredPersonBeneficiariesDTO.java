@@ -1,4 +1,4 @@
-package org.tat.fni.api.dto.farmerDTO;
+package org.tat.fni.api.dto.snakeBiteDTO;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -8,8 +8,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class FarmerProposalInsuredPersonBeneficiariesDTO {
-	
+public class SnakeBiteProposalInsuredPersonBeneficiariesDTO {
+
 	@ApiModelProperty(position = 0, example = "U", required = true)
 	@NotBlank(message = "InitialId is mandatory")
 	private String initialId;
@@ -59,5 +59,5 @@ public class FarmerProposalInsuredPersonBeneficiariesDTO {
 	@NotBlank(message = "residentTownshipId is mandatory")
 	@NotEmpty
 	private String residentTownshipId;
-
+	
 }

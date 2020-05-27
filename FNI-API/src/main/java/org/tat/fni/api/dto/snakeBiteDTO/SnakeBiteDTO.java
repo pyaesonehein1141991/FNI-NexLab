@@ -21,7 +21,7 @@ public class SnakeBiteDTO {
 	@NotNull(message = "Period Month is mandatory")
 	private int periodMonth;
 	
-	@ApiModelProperty(position = 1, example = "ISPRD0030001000000000129032013", required = true)
+	@ApiModelProperty(position = 1, example = "ISPRD0030001000000002231032013", required = true)
 	@NotBlank(message = "Product ID is mandatory")
 	private String productId;
 
@@ -70,7 +70,7 @@ public class SnakeBiteDTO {
 	
 	@ApiModelProperty(position = 12, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
-	private List<ProposalInsuredPerson> proposalInsuredPersonList;
+	private List<SnakeBiteProposalInsuredPersonDTO> proposalInsuredPersonList;
 
 
 }
