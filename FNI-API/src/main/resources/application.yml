@@ -60,3 +60,11 @@ BillCollectionController:
   payment: Create Subsequent Payment
 SnakeBiteController:
   submitproposal: Create Snake Bite Life proposal and return proposal no
+IndividualHealthController:
+  submitproposal: Create Individual Health proposal and return proposal no
+CriticalillnessController:
+  submitproposal: Create Critical Illness proposal and return proposal no
+MicroHealthController:
+  submitproposal: Create Micro Health proposal and return proposal no
+PersonalAccidentController:
+  submitproposal: Create Personal Accident proposal and return proposal no

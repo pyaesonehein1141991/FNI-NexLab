@@ -21,8 +21,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/personalaccident")
-@Api(tags = "Personalaccident Proposal")
+@RequestMapping("/personalAccident")
+@Api(tags = "personalAccident Proposal")
 public class PersonalAccidentController {
 
   @Autowired
