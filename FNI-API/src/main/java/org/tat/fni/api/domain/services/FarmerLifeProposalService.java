@@ -136,6 +136,9 @@ public class FarmerLifeProposalService {
 				lifeProposal.setPeriodMonth(farmerProposalDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 
+				if(branchOptional.isPresent()) {
+					lifeProposal.setBranch(branchOptional.get());
+				}
 				if (organizationOptional.isPresent()) {
 					lifeProposal.setOrganization(organizationOptional.get());
 				}

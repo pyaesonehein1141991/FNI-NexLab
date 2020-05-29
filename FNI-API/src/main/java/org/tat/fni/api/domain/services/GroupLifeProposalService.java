@@ -120,6 +120,9 @@ public class GroupLifeProposalService {
 				lifeProposal.setPeriodMonth(groupLifeDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 
+				if(branchOptional.isPresent()) {
+					lifeProposal.setBranch(branchOptional.get());
+				}
 				if (organizationOptional.isPresent()) {
 					lifeProposal.setOrganization(organizationOptional.get());
 				}

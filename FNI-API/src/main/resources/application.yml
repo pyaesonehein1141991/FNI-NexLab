@@ -68,3 +68,5 @@ MicroHealthController:
   submitproposal: Create Micro Health proposal and return proposal no
 PersonalAccidentController:
   submitproposal: Create Personal Accident proposal and return proposal no
+SportManController:
+  submitproposal: Create Sportman proposal and return proposal no

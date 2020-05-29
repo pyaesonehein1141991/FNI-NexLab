@@ -131,6 +131,9 @@ public class SnakeBiteProposalService {
 				lifeProposal.setPeriodMonth(snakeBiteDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 				
+				if(branchOptional.isPresent()) {
+					lifeProposal.setBranch(branchOptional.get());
+				}
 				if (organizationOptional.isPresent()) {
 					lifeProposal.setOrganization(organizationOptional.get());
 				}
