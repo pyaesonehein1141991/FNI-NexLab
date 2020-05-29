@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
-import org.tat.fni.api.domain.User;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
@@ -93,12 +91,6 @@ public class ShortTermLifeProposalService {
   @Value("${shorttermLifeProductId}")
   private String shorttermLifeProductId;
 
-  private String remark;
-
-  private User responsiblePerson;
-
-  private User user;
-
 
 
   @Transactional(propagation = Propagation.REQUIRED)
@@ -109,23 +101,21 @@ public class ShortTermLifeProposalService {
       List<LifeProposal> shortTermEndowmentLifeProposalList =
           convertShortTermEndowmentLifeProposalDTOToProposal(shortTermEndowmentLifeDto);
 
-      /*
-       * WorkFlowDTO workFlowDTO = null; WorkflowTask workflowTask = null; LifeProposal lifeproposal
-       * = new LifeProposal(); ReferenceType referenceType = ReferenceType.SHORT_ENDOWMENT_LIFE;
-       * workflowTask = WorkflowTask.SURVEY; workFlowDTO = new WorkFlowDTO(lifeproposal.getId(),
-       * lifeproposal.getBranch().getId(), remark, workflowTask, referenceType,
-       * TransactionType.UNDERWRITING, user, responsiblePerson);
-       * workFlowDTOService.addNewWorkFlow(workFlowDTO);
-       */
-      shortTermEndowmentLifeProposalList = lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
-      
-      String id = DateUtils.formattedSqlDate(new Date()).concat(shortTermEndowmentLifeProposalList.get(0).getProposalNo());
+
+      shortTermEndowmentLifeProposalList =
+          lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
+
+      String id = DateUtils.formattedSqlDate(new Date())
+          .concat(shortTermEndowmentLifeProposalList.get(0).getProposalNo());
       String referenceNo = shortTermEndowmentLifeProposalList.get(0).getId();
-      //TODO FIXME PSH Modify for All product
+      // TODO FIXME PSH Modify for All product
       String referenceType = "SHORT_ENDOWMENT_LIFE";
       String createdDate = DateUtils.formattedSqlDate(new Date());
-      
+      String workflowDate = DateUtils.formattedSqlDate(new Date());
+
       lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
+      lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,
+          workflowDate);
 
       return shortTermEndowmentLifeProposalList;
     } catch (Exception e) {

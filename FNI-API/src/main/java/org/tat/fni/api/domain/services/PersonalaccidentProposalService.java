@@ -1,6 +1,7 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -95,6 +96,17 @@ public class PersonalaccidentProposalService {
       List<LifeProposal> personalaccidentProposalList =
           convertPersonalAccidentProposalDTOToProposal(personalaccidentdto);
       lifeProposalRepo.saveAll(personalaccidentProposalList);
+
+      String id = DateUtils.formattedSqlDate(new Date())
+          .concat(personalaccidentProposalList.get(0).getProposalNo());
+      String referenceNo = personalaccidentProposalList.get(0).getId();
+      String referenceType = "PA";
+      String createdDate = DateUtils.formattedSqlDate(new Date());
+      String workflowDate = DateUtils.formattedSqlDate(new Date());
+
+      lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
+      lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,
+          workflowDate);
       return personalaccidentProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);

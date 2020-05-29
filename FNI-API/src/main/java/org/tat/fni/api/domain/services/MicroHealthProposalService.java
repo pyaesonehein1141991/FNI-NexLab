@@ -1,6 +1,7 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
+import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.MedicalProposalInsuredPerson;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonBeneficiaries;
@@ -28,6 +30,7 @@ import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.CustomerRepository;
+import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonBeneficiariesDTO;
@@ -80,6 +83,8 @@ public class MicroHealthProposalService {
   @Autowired
   private ICustomIdGenerator customIdRepo;
 
+  @Autowired
+  private LifeProposalRepository lifeProposalRepo;
 
 
   @Value("${microHealthProductId}")
@@ -93,6 +98,18 @@ public class MicroHealthProposalService {
       List<MedicalProposal> microHealthProposalList =
           convertMicroHealthProposalDTOToProposal(microHealthInsuranceDTO);
       medicalProposalRepo.saveAll(microHealthProposalList);
+
+      String id = DateUtils.formattedSqlDate(new Date())
+          .concat(microHealthProposalList.get(0).getProposalNo());
+      String referenceNo = microHealthProposalList.get(0).getId();
+      String referenceType = "MICRO_HEALTH";
+      String createdDate = DateUtils.formattedSqlDate(new Date());
+      String workflowDate = DateUtils.formattedSqlDate(new Date());
+
+      lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
+      lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,
+          workflowDate);
+
       return microHealthProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
