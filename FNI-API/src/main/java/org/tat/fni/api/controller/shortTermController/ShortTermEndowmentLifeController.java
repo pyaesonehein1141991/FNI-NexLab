@@ -36,14 +36,17 @@ public class ShortTermEndowmentLifeController {
       @ApiResponse(code = 403, message = "Access denied"),
       @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
   @ApiOperation(value = "${ShortTermEndowmentLifeController.submitproposal}")
-  public ResponseDTO<Object> submitproposal(@ApiParam("Submit ShortTerm Proposal") @Valid @RequestBody ShortTermEndowmentLifeDTO shortTermEndowmentLifeDto) {
-	  
+  public ResponseDTO<Object> submitproposal(
+      @ApiParam("Submit ShortTerm Proposal") @Valid @RequestBody ShortTermEndowmentLifeDTO shortTermEndowmentLifeDto) {
+
     List<LifeProposal> proposallist = new ArrayList<>();
-    
-    ShortTermEndowmentLifeDTO shortTermEndowmentDTO = mapper.map(shortTermEndowmentLifeDto, ShortTermEndowmentLifeDTO.class);
+
+    ShortTermEndowmentLifeDTO shortTermEndowmentDTO =
+        mapper.map(shortTermEndowmentLifeDto, ShortTermEndowmentLifeDTO.class);
 
     // create shortTermEndowmentlife proposal
-    proposallist = lifeProposalService.createShortTermEndowmentLifeDtoToProposal(shortTermEndowmentDTO);
+    proposallist =
+        lifeProposalService.createShortTermEndowmentLifeDtoToProposal(shortTermEndowmentDTO);
 
     // create response object
     List<ShortTermEndowmentLifeReponseDTO> responseList = new ArrayList<>();

@@ -15,6 +15,9 @@ import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.common.emumdata.ProposalType;
+import org.tat.fni.api.common.emumdata.ReferenceType;
+import org.tat.fni.api.common.emumdata.TransactionType;
+import org.tat.fni.api.common.emumdata.WorkflowTask;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
@@ -28,6 +31,8 @@ import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
+import org.tat.fni.api.domain.User;
+import org.tat.fni.api.domain.WorkFlowDTO;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
@@ -82,8 +87,18 @@ public class ShortTermLifeProposalService {
   @Autowired
   private ICustomIdGenerator customIdRepo;
 
+  @Autowired
+  private IWorkFlowService workFlowDTOService;
+
+
   @Value("${shorttermLifeProductId}")
   private String shorttermLifeProductId;
+
+  private String remark;
+
+  private User responsiblePerson;
+
+  private User user;
 
 
 
@@ -94,7 +109,17 @@ public class ShortTermLifeProposalService {
       // convert shortTermEndowmentlifeProposalDTO to lifeproposal
       List<LifeProposal> shortTermEndowmentLifeProposalList =
           convertShortTermEndowmentLifeProposalDTOToProposal(shortTermEndowmentLifeDto);
+
+      WorkFlowDTO workFlowDTO = null;
+      WorkflowTask workflowTask = null;
+      LifeProposal lifeproposal = new LifeProposal();
+      ReferenceType referenceType = ReferenceType.SHORT_ENDOWMENT_LIFE;
+      workflowTask = WorkflowTask.SURVEY;
+      workFlowDTO = new WorkFlowDTO(lifeproposal.getId(), lifeproposal.getBranch().getId(), remark,
+          workflowTask, referenceType, TransactionType.UNDERWRITING, user, responsiblePerson);
       lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
+
+      workFlowDTOService.addNewWorkFlow(workFlowDTO);
       return shortTermEndowmentLifeProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
