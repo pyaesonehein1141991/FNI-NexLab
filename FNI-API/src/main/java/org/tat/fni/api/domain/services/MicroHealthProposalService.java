@@ -14,6 +14,7 @@ import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.common.emumdata.ProposalType;
+import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
@@ -144,10 +145,15 @@ public class MicroHealthProposalService {
         if (customerOptional.isPresent()) {
           medicalProposal.setCustomer(customerOptional.get());
         }
+        if (salesPointsOptional.isPresent()) {
+          medicalProposal.setSalesPoints(salesPointsOptional.get());
+        }
+
 
         String proposalNo = customIdRepo.getNextId("HEALTH_PROPOSAL_NO", null);
         medicalProposal.setStartDate(microHealthInsuranceDTO.getStartDate());
         medicalProposal.setEndDate(microHealthInsuranceDTO.getEndDate());
+        medicalProposal.setSaleChannelType(SaleChannelType.DIRECTMARKETING);
         medicalProposal.setProposalNo(proposalNo);
         medicalProposalList.add(medicalProposal);
       });

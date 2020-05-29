@@ -15,6 +15,7 @@ import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.common.emumdata.ProposalType;
+import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
@@ -154,6 +155,8 @@ public class PersonalaccidentProposalService {
         String proposalNo = customIdRepo.getNextId("PERSONAL_ACCIDENT_PROPOSAL_NO", null);
         lifeProposal.setStartDate(personalaccidentdto.getStartDate());
         lifeProposal.setEndDate(personalaccidentdto.getEndDate());
+        lifeProposal.setSaleChannelType(SaleChannelType.DIRECTMARKETING);
+        lifeProposal.setPeriodMonth(personalaccidentdto.getPeriodMonth());
         lifeProposal.setProposalNo(proposalNo);
         lifeProposalList.add(lifeProposal);
       });

@@ -15,6 +15,7 @@ import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.common.emumdata.ProposalType;
+import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
@@ -158,6 +159,8 @@ public class SportManProposalService {
         String proposalNo = customIdRepo.getNextId("LIFE_SPORTMAN_PROPOSAL_NO", null);
         lifeProposal.setStartDate(sportMandto.getStartDate());
         lifeProposal.setEndDate(sportMandto.getEndDate());
+        lifeProposal.setSaleChannelType(SaleChannelType.WALKIN);
+        lifeProposal.setPeriodMonth(sportMandto.getPeriodMonth());
         lifeProposal.setProposalNo(proposalNo);
         lifeProposalList.add(lifeProposal);
       });
