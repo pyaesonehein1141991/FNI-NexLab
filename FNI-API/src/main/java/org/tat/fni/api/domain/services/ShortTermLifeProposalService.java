@@ -1,8 +1,10 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,8 +117,15 @@ public class ShortTermLifeProposalService {
        * TransactionType.UNDERWRITING, user, responsiblePerson);
        * workFlowDTOService.addNewWorkFlow(workFlowDTO);
        */
-
-      lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
+      shortTermEndowmentLifeProposalList = lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
+      
+      String id = DateUtils.formattedSqlDate(new Date()).concat(shortTermEndowmentLifeProposalList.get(0).getProposalNo());
+      String referenceNo = shortTermEndowmentLifeProposalList.get(0).getId();
+      //TODO FIXME PSH Modify for All product
+      String referenceType = "SHORT_ENDOWMENT_LIFE";
+      String createdDate = DateUtils.formattedSqlDate(new Date());
+      
+      lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
 
       return shortTermEndowmentLifeProposalList;
     } catch (Exception e) {
