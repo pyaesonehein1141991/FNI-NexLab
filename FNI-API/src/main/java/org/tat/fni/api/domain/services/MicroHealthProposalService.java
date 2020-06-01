@@ -171,6 +171,7 @@ public class MicroHealthProposalService {
         medicalProposal.setStartDate(microHealthInsuranceDTO.getStartDate());
         medicalProposal.setEndDate(microHealthInsuranceDTO.getEndDate());
         medicalProposal.setSaleChannelType(SaleChannelType.DIRECTMARKETING);
+        medicalProposal.setPeriodMonth(microHealthInsuranceDTO.getPeriodMonth());
         medicalProposal.setProposalNo(proposalNo);
         medicalProposalList.add(medicalProposal);
       });

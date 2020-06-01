@@ -27,19 +27,19 @@ public class ShortTermProposalInsuredPersonDTO {
   @NotNull(message = "approve is mandatory")
   private boolean approve;
 
-  @ApiModelProperty(position = 3, example = "100000", required = true)
+  @ApiModelProperty(position = 3, example = "1000000", required = true)
   @NotNull(message = "proposedSumInsured is mandatory")
   private double proposedSumInsured;
 
-  @ApiModelProperty(position = 4, example = "100000", required = true)
+  @ApiModelProperty(position = 4, example = "1000000", required = true)
   @NotNull(message = "proposedPremium is mandatory")
   private double proposedPremium;
 
-  @ApiModelProperty(position = 5, example = "10000", required = true)
+  @ApiModelProperty(position = 5, example = "1000000", required = true)
   @NotNull(message = "approvedSumInsured is mandatory")
   private double approvedSumInsured;
 
-  @ApiModelProperty(position = 6, example = "10000", required = true)
+  @ApiModelProperty(position = 6, example = "1000000", required = true)
   @NotNull(message = "basicTermPremium is mandatory")
   private double basicTermPremium;
 

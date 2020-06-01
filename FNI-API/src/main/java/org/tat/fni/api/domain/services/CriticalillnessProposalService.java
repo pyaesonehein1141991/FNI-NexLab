@@ -139,6 +139,7 @@ public class CriticalillnessProposalService {
         medicalProposal.getMedicalProposalInsuredPersonList()
             .add(createInsuredPersonForCriticalillness(insuredPerson));
         medicalProposal.setComplete(true);
+        medicalProposal.setPeriodMonth(criticalIllnessDTO.getPeriodMonth());
         medicalProposal.setProposalType(ProposalType.UNDERWRITING);
         medicalProposal.setSubmittedDate(criticalIllnessDTO.getSubmittedDate());
 
