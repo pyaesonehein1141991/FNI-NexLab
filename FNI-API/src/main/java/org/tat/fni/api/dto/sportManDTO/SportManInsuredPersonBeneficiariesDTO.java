@@ -35,12 +35,12 @@ public class SportManInsuredPersonBeneficiariesDTO {
 
   @ApiModelProperty(position = 6, example = "0996543423", required = true)
   @NotNull(message = "phone is mandatory")
-  private int phone;
+  private String phone;
 
 
   @ApiModelProperty(position = 7, example = "0996543423", required = true)
   @NotNull(message = "mobile is mandatory")
-  private int mobile;
+  private String mobile;
 
 
   @ApiModelProperty(position = 7, example = "NRCNO", required = true)
@@ -50,7 +50,7 @@ public class SportManInsuredPersonBeneficiariesDTO {
   @ApiModelProperty(position = 8, example = "123123123", required = true)
   private String idNo;
 
-  @ApiModelProperty(position = 9, example = "ISSYS0120001000000000129032013      ", required = true)
+  @ApiModelProperty(position = 9, example = "ISSYS0120001000000000129032013", required = true)
   @NotBlank(message = "relationship is mandatory")
   private String relationshipId;
 

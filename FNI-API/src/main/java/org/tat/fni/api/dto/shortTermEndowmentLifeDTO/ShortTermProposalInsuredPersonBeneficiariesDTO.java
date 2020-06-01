@@ -30,8 +30,8 @@ public class ShortTermProposalInsuredPersonBeneficiariesDTO {
   private String gender;
 
   @ApiModelProperty(position = 6, example = "0996543423", required = true)
-  @NotNull(message = "age is mandatory")
-  private int phone;
+  @NotNull(message = "phone is mandatory")
+  private String phone;
 
 
   @ApiModelProperty(position = 7, example = "NRCNO", required = true)

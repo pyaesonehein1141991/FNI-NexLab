@@ -96,18 +96,18 @@ public class SportManProposalInsuredPersonDTO {
   private int unit;
 
   @ApiModelProperty(position = 20, example = "ISSYS044001000000000121062019", required = true)
-  @NotBlank(message = "typeofSprotId is mandatory")
+  @NotBlank(message = "typeofSportId is mandatory")
   @NotEmpty
-  private String typeofSprotId;
+  private String typeofSportId;
 
   @ApiModelProperty(position = 21, required = true)
   @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
   private List<SportManInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 
-  @Valid
-  @ApiModelProperty(position = 22)
-  @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-  private List<SportManinsuredPersonPolicyHistoryRecordDTO> insuredPersonPolicyHistoryRecordList;
+//  @Valid
+//  @ApiModelProperty(position = 22)
+//  @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
+//  private List<SportManinsuredPersonPolicyHistoryRecordDTO> insuredPersonPolicyHistoryRecordList;
 
 
 

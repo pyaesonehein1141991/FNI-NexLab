@@ -64,7 +64,7 @@ public class ShortTermProposalInsuredPersonDTO {
   @NotNull(message = "idType is mandatory")
   private String idType;
 
-  @ApiModelProperty(position = 12, example = "AUNG ", required = true)
+  @ApiModelProperty(position = 12, example = "AUNG", required = true)
   @NotNull(message = "firstName is mandatory")
   private String firstName;
 
@@ -80,7 +80,7 @@ public class ShortTermProposalInsuredPersonDTO {
   @NotNull(message = "residentAddress is mandatory")
   private String residentAddress;
 
-  @ApiModelProperty(position = 26, example = "ISSYS004001000000731326012017", required = true)
+  @ApiModelProperty(position = 16, example = "ISSYS004001000000731326012017", required = true)
   @NotBlank(message = "townshipId is mandatory")
   @NotEmpty
   private String townshipId;
@@ -101,15 +101,15 @@ public class ShortTermProposalInsuredPersonDTO {
 
 
   @Valid
-  @ApiModelProperty(position = 20)
+  @ApiModelProperty(position = 19)
   @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
   private List<ShortTermProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 
 
-  @Valid
-  @ApiModelProperty(position = 21)
-  @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-  private List<ShortTerminsuredPersonPolicyHistoryRecordDTO> insuredPersonPolicyHistoryRecordList;
+//  @Valid
+//  @ApiModelProperty(position = 21)
+//  @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
+//  private List<ShortTerminsuredPersonPolicyHistoryRecordDTO> insuredPersonPolicyHistoryRecordList;
 
 
 

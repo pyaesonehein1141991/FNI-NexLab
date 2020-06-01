@@ -61,7 +61,7 @@ public class ShortTermEndowmentLifeDTO {
   @NotBlank(message = "Sales Points ID is mandatory")
   private String salesPointsId;
 
-  @ApiModelProperty(position = 11, required = true)
+  @ApiModelProperty(position = 11, example = "FIRSTCLASS", required = true)
   @NotNull(message = "Customer Classification Of Health is mandatory")
   private ClassificationOfHealth customerClsOfHealth;
   /*

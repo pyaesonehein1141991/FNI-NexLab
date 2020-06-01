@@ -39,7 +39,7 @@ public class GroupLifeProposalInsuredPersonBeneficiariesDTO {
 	@ApiModelProperty(position = 8, example = "123123123", required = true)
 	private String idNo;
 
-	@ApiModelProperty(position = 9, example = "ISSYS0120001000000000129032013      ", required = true)
+	@ApiModelProperty(position = 9, example = "ISSYS0120001000000000129032013", required = true)
 	@NotBlank(message = "Branch ID is mandatory")
 	private String relationshipId;
 
