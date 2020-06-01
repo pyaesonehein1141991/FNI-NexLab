@@ -129,7 +129,7 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
   // @JoinColumn(name = "LIFEPOLICYID", referencedColumnName = "ID")
   // private LifePolicy lifePolicy;
 
-
+  // TODO FIXME THK
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "LIFEPROPOSALID", referencedColumnName = "ID")
   private List<ProposalInsuredPerson> proposalInsuredPersonList;
