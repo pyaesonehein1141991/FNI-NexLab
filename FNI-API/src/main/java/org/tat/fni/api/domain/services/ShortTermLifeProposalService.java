@@ -147,6 +147,7 @@ public class ShortTermLifeProposalService {
         lifeProposal.getProposalInsuredPersonList()
             .add(createInsuredPersonForShortTerm(insuredPerson));
         lifeProposal.setComplete(true);
+        lifeProposal.setPeriodMonth(shortTermEndowmentLifeDto.getPeriodMonth());
         lifeProposal.setProposalType(ProposalType.UNDERWRITING);
         lifeProposal.setSubmittedDate(shortTermEndowmentLifeDto.getSubmittedDate());
 
