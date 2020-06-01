@@ -1,6 +1,7 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,6 +89,16 @@ public class SnakeBiteProposalService {
 
 			List<LifeProposal> snakeBiteProposalList = convertSnakeBiteProposalDTOToProposal(snakeBiteDTO);
 			lifeProposalRepo.saveAll(snakeBiteProposalList);
+			
+			String id = DateUtils.formattedSqlDate(new Date())
+			          .concat(snakeBiteProposalList.get(0).getProposalNo());
+			String referenceNo = snakeBiteProposalList.get(0).getId();
+			String referenceType = "SNAKE_BITE";
+			String createdDate = DateUtils.formattedSqlDate(new Date());
+			String workflowDate = DateUtils.formattedSqlDate(new Date());
+
+			lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
+			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,workflowDate);
 
 			return snakeBiteProposalList;
 		} catch (DAOException e) {
