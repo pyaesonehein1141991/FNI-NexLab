@@ -193,7 +193,7 @@ public class SportManProposalService {
       Optional<RiskyOccupation> riskyOptional =
           riskyoccupationService.findRiskyOccupationById(dto.getRiskoccupationID());
       Optional<TypesOfSport> typeofsportOptional =
-          typeofsportService.findById(dto.getTypeofSprotId());
+          typeofsportService.findById(dto.getTypeofSportId());
       ResidentAddress residentAddress = new ResidentAddress();
       residentAddress.setResidentAddress(dto.getResidentAddress());
 
