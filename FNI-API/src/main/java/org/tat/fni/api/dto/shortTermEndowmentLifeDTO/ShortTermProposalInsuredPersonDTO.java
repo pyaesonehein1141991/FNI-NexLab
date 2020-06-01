@@ -22,7 +22,6 @@ public class ShortTermProposalInsuredPersonDTO {
   @NotNull(message = "age is mandatory")
   private int age;
 
-
   @ApiModelProperty(position = 2, example = "true", required = true)
   @NotNull(message = "approve is mandatory")
   private boolean approve;
@@ -56,13 +55,16 @@ public class ShortTermProposalInsuredPersonDTO {
   @NotNull(message = "gender is mandatory")
   private String gender;
 
-
   @ApiModelProperty(position = 10, example = "123123123")
   private String idNo;
 
   @ApiModelProperty(position = 11, example = "NRCNO", required = true)
   @NotNull(message = "idType is mandatory")
   private String idType;
+  
+  //needMedicalCheckup
+  
+  //rejectReason
 
   @ApiModelProperty(position = 12, example = "AUNG", required = true)
   @NotNull(message = "firstName is mandatory")
@@ -75,7 +77,6 @@ public class ShortTermProposalInsuredPersonDTO {
   @ApiModelProperty(position = 14, example = "AUNG")
   private String lastName;
 
-
   @ApiModelProperty(position = 15, example = "Yangon", required = true)
   @NotNull(message = "residentAddress is mandatory")
   private String residentAddress;
@@ -85,9 +86,14 @@ public class ShortTermProposalInsuredPersonDTO {
   @NotEmpty
   private String townshipId;
 
+  //relationshipId
 
   @ApiModelProperty(position = 17, example = "ISSYS011000009823001042019", required = true)
   private String occupationID;
+  
+  //riskyOccupationId
+  
+  //phone
 
 
   @ApiModelProperty(position = 18, example = "ISSYS001001000000000103062019")

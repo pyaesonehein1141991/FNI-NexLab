@@ -16,7 +16,6 @@ public class PersonalAccidentProposalInsuredPersonBeneficiariesDTO {
   @NotBlank(message = "InitialId is mandatory")
   private String initialId;
 
-
   @ApiModelProperty(position = 2, example = "Aung", required = true)
   @NotBlank(message = "firstName is mandatory")
   private String firstName;
@@ -27,21 +26,9 @@ public class PersonalAccidentProposalInsuredPersonBeneficiariesDTO {
   @ApiModelProperty(position = 4, example = "Aung", required = true)
   private String lastName;
 
-
-  @ApiModelProperty(position = 5, example = "1999-12-16", required = true)
-  @NotNull(message = "dateOfBirth is mandatory")
-  @JsonDeserialize(using = DateHandler.class)
-  private Date dateOfBirth;
-
   @ApiModelProperty(position = 6, example = "0996543423", required = true)
   @NotNull(message = "phone is mandatory")
   private int phone;
-
-
-  @ApiModelProperty(position = 7, example = "0996543423", required = true)
-  @NotNull(message = "mobile is mandatory")
-  private int mobile;
-
 
   @ApiModelProperty(position = 7, example = "NRCNO", required = true)
   @NotBlank(message = "idType is mandatory")
@@ -54,8 +41,6 @@ public class PersonalAccidentProposalInsuredPersonBeneficiariesDTO {
   @NotBlank(message = "relationship is mandatory")
   private String relationshipId;
 
-
-
   @ApiModelProperty(position = 10, example = "5", required = true)
   @NotNull(message = "percentage is mandatory")
   private float percentage;
@@ -63,8 +48,6 @@ public class PersonalAccidentProposalInsuredPersonBeneficiariesDTO {
   @ApiModelProperty(position = 11, example = "23", required = true)
   @NotNull(message = "age is mandatory")
   private int age;
-
-
 
   @ApiModelProperty(position = 12, example = "Yangon", required = true)
   @NotBlank(message = "residentAddress is mandatory")

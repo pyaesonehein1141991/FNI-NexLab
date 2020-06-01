@@ -45,8 +45,6 @@ public class ShortTermProposalInsuredPersonBeneficiariesDTO {
   @NotBlank(message = "relationship is mandatory")
   private String relationshipId;
 
-
-
   @ApiModelProperty(position = 10, example = "5", required = true)
   @NotNull(message = "percentage is mandatory")
   private float percentage;
@@ -54,8 +52,6 @@ public class ShortTermProposalInsuredPersonBeneficiariesDTO {
   @ApiModelProperty(position = 11, example = "23", required = true)
   @NotNull(message = "age is mandatory")
   private int age;
-
-
 
   @ApiModelProperty(position = 12, example = "Yangon", required = true)
   @NotBlank(message = "residentAddress is mandatory")
@@ -65,6 +61,5 @@ public class ShortTermProposalInsuredPersonBeneficiariesDTO {
   @NotBlank(message = "townshipId is mandatory")
   @NotEmpty
   private String townshipId;
-
 
 }
