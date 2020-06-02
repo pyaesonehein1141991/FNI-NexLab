@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.tat.fni.api.common.KeyFactorChecker;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
@@ -102,9 +103,11 @@ public class ShortTermLifeProposalService {
       List<LifeProposal> shortTermEndowmentLifeProposalList =
           convertShortTermEndowmentLifeProposalDTOToProposal(shortTermEndowmentLifeDto);
 
+      ;
 
       shortTermEndowmentLifeProposalList =
           lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
+
 
       String id = DateUtils.formattedSqlDate(new Date())
           .concat(shortTermEndowmentLifeProposalList.get(0).getProposalNo());
@@ -184,6 +187,10 @@ public class ShortTermLifeProposalService {
         lifeProposal.setEndDate(shortTermEndowmentLifeDto.getEndDate());
         lifeProposal.setProposalNo(proposalNo);
         lifeProposalList.add(lifeProposal);
+
+        // calculatePremium(lifeProposal);
+        calculateTermPremium(lifeProposal);
+
       });
     } catch (DAOException e) {
       throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -313,4 +320,43 @@ public class ShortTermLifeProposalService {
     }
   }
 
+
+  public void calculateTermPremium(LifeProposal lifeProposal) {
+    int paymentType = lifeProposal.getPaymentType().getMonth();
+    // boolean isStudentLife = KeyFactorChecker
+    // .isStudentLife(lifeProposal.getProposalInsuredPersonList().get(0).getProduct().getId());
+    int paymentTerm = 0;
+    double premium = 0, termPremium = 0, addOnPremium = 0;
+    for (ProposalInsuredPerson pv : lifeProposal.getProposalInsuredPersonList()) {
+      premium = pv.getProposedPremium();
+      if (paymentType > 0) {
+        // if (isStudentLife) {
+        // paymentTerm = (lifeProposal.getPeriodOfYears() - 3) * 12 / paymentType;
+        // } else
+        paymentTerm = lifeProposal.getPeriodMonth() / paymentType;// lifeProposal.getPeriodOfYear()*12
+
+        termPremium = (paymentType * premium) / 12;
+        pv.setBasicTermPremium(termPremium);
+      } else {
+        // *** Calculation for Lump Sum ***
+        if (KeyFactorChecker
+            .isPersonalAccident(lifeProposal.getProposalInsuredPersonList().get(0).getProduct()))
+          termPremium = (premium / 12) * lifeProposal.getPeriodMonth();
+        else
+          termPremium = (lifeProposal.getPeriodOfYears() * premium);
+        pv.setBasicTermPremium(termPremium);
+      }
+      lifeProposal.setPaymentTerm(paymentTerm);
+
+      addOnPremium = pv.getAddOnPremium();
+      if (paymentType > 0) {
+        termPremium = (paymentType * addOnPremium) / 12;
+        pv.setAddOnTermPremium(termPremium);
+      } else {
+        // *** Calculation for Lump Sum AddOn Premium***
+        termPremium = (lifeProposal.getPeriodMonth() * addOnPremium);
+        pv.setAddOnTermPremium(termPremium);
+      }
+    }
+  }
 }

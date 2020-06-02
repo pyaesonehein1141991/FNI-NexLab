@@ -106,7 +106,7 @@ public class SportManProposalService {
       String id = DateUtils.formattedSqlDate(new Date())
           .concat(sportmanproposalList.get(0).getProposalNo());
       String referenceNo = sportmanproposalList.get(0).getId();
-      String referenceType = "SPORT_MANSPORT_MAN";
+      String referenceType = "SPORT_MAN";
       String createdDate = DateUtils.formattedSqlDate(new Date());
       String workflowDate = DateUtils.formattedSqlDate(new Date());
 
