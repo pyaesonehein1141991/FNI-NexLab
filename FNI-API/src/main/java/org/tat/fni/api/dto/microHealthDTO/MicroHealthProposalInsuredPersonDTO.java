@@ -39,10 +39,14 @@ public class MicroHealthProposalInsuredPersonDTO {
 
   @ApiModelProperty(position = 18, example = "ISSYS001001000000000103062019")
   private String customerID;
-  
-  //rejectReason
-  
-  //guardianId
+
+
+  @ApiModelProperty(position = 18, example = "some reason")
+  private String rejectReason;
+
+
+  @ApiModelProperty(position = 21, example = "ISMED023001000000000110062019")
+  private String guardianId;
 
   @Valid
   @ApiModelProperty(position = 20)
@@ -50,10 +54,11 @@ public class MicroHealthProposalInsuredPersonDTO {
   private List<MicroHealthProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 
 
-//  @Valid
-//  @ApiModelProperty(position = 21)
-//  @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-//  private List<MicroHealthinsuredPersonPolicyHistoryRecordDTO> insuredPersonPolicyHistoryRecordList;
+  // @Valid
+  // @ApiModelProperty(position = 21)
+  // @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
+  // private List<MicroHealthinsuredPersonPolicyHistoryRecordDTO>
+  // insuredPersonPolicyHistoryRecordList;
 
 
 

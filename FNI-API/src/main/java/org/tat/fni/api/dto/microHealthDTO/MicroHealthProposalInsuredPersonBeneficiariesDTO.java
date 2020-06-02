@@ -26,8 +26,9 @@ public class MicroHealthProposalInsuredPersonBeneficiariesDTO {
 
   @ApiModelProperty(position = 4, example = "Aung", required = true)
   private String lastName;
-  
-  //fatherName
+
+  @ApiModelProperty(position = 13, example = "Aung", required = true)
+  private String fatherName;
 
   @ApiModelProperty(position = 5, example = "1999-12-16", required = true)
   @NotNull(message = "dateOfBirth is mandatory")
@@ -41,8 +42,10 @@ public class MicroHealthProposalInsuredPersonBeneficiariesDTO {
   @ApiModelProperty(position = 7, example = "0996543423", required = true)
   @NotNull(message = "mobile is mandatory")
   private int mobile;
-  
-  //fullIdNo
+
+  @ApiModelProperty(position = 7, example = "098166", required = true)
+  @NotBlank(message = "idNo is mandatory")
+  private String idNo;
 
   @ApiModelProperty(position = 7, example = "NRCNO", required = true)
   @NotBlank(message = "idType is mandatory")

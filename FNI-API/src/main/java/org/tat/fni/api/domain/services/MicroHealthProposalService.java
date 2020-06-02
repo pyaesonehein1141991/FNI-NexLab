@@ -23,6 +23,7 @@ import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.MedicalProposalInsuredPerson;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonBeneficiaries;
+import org.tat.fni.api.domain.MedicalProposalInsuredPersonGuardian;
 import org.tat.fni.api.domain.Organization;
 import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
@@ -49,6 +50,9 @@ public class MicroHealthProposalService {
 
   @Autowired
   private BranchService branchService;
+
+  @Autowired
+  private GuardainService guardainService;
 
   @Autowired
   private CustomerRepository customerRepo;
@@ -189,6 +193,8 @@ public class MicroHealthProposalService {
       Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
       Optional<RelationShip> relationShipOptional =
           relationshipService.findById(dto.getRelationshipId());
+      Optional<MedicalProposalInsuredPersonGuardian> guardianOptional =
+          guardainService.findById(dto.getGuardianId());
 
       MedicalProposalInsuredPerson insuredPerson = new MedicalProposalInsuredPerson();
 
@@ -197,6 +203,8 @@ public class MicroHealthProposalService {
       insuredPerson.setUnit(dto.getUnit());
       insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
       insuredPerson.setCustomer(customerOptional.get());
+      insuredPerson.setGuardian(guardianOptional.get());
+      insuredPerson.setRejectReason(dto.getRejectReason());
 
 
       String insPersonCodeNo = customIdRepo.getNextId("HEALTH_INSUPERSON_CODE_NO", null);
@@ -241,6 +249,7 @@ public class MicroHealthProposalService {
       beneficiary.setInitialId(dto.getInitialId());
       beneficiary.setPercentage(dto.getPercentage());
       beneficiary.setIdType(IdType.valueOf(dto.getIdType()));
+      beneficiary.setFatherName(dto.getFatherName());
       beneficiary.setIdNo(dto.getIdNo());
       beneficiary.setResidentAddress(residentAddress);
       beneficiary.setName(name);

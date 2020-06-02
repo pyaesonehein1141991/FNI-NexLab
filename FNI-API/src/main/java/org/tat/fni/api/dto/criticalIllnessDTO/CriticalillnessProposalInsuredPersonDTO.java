@@ -36,14 +36,17 @@ public class CriticalillnessProposalInsuredPersonDTO {
   @NotNull(message = "unit is mandatory")
   private int unit;
 
-  //rejectReason
-  
+  @ApiModelProperty(position = 21, example = "incorrect")
+  private String rejectReason;
+
   @ApiModelProperty(position = 7, example = "ISSYS0120001000000000129032013", required = true)
   @NotBlank(message = "relationshipId is mandatory")
   @NotEmpty
   private String relationshipId;
-  
-  //guardianId
+
+
+  @ApiModelProperty(position = 18, example = "ISMED023001000000000110062019")
+  private String guardianId;
 
   @ApiModelProperty(position = 18, example = "ISSYS001001000000000103062019")
   private String customerID;
@@ -54,10 +57,11 @@ public class CriticalillnessProposalInsuredPersonDTO {
   private List<CriticalillnessProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 
 
-//  @Valid
-//  @ApiModelProperty(position = 21)
-//  @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-//  private List<CriticalillnessinsuredPersonPolicyHistoryRecordDTO> insuredPersonPolicyHistoryRecordList;
+  // @Valid
+  // @ApiModelProperty(position = 21)
+  // @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
+  // private List<CriticalillnessinsuredPersonPolicyHistoryRecordDTO>
+  // insuredPersonPolicyHistoryRecordList;
 
 
 

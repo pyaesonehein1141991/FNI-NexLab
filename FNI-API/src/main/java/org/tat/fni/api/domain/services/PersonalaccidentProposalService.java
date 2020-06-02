@@ -28,6 +28,7 @@ import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
+import org.tat.fni.api.domain.RiskyOccupation;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
@@ -77,6 +78,9 @@ public class PersonalaccidentProposalService {
 
   @Autowired
   private OccupationService occupationService;
+
+  @Autowired
+  private RiskyOccupationService riskyoccupationService;
 
   @Autowired
   private RelationshipService relationshipService;
@@ -186,6 +190,8 @@ public class PersonalaccidentProposalService {
       Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
       Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
       Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
+      Optional<RiskyOccupation> riskyOptional =
+          riskyoccupationService.findRiskyOccupationById(dto.getRiskoccupationID());
 
       ResidentAddress residentAddress = new ResidentAddress();
       residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -211,9 +217,14 @@ public class PersonalaccidentProposalService {
       insuredPerson.setAge(DateUtils.getAgeForNextYear(dto.getDateOfBirth()));
       insuredPerson.setGender(Gender.valueOf(dto.getGender()));
       insuredPerson.setResidentAddress(residentAddress);
+      insuredPerson.setApproved(dto.isApprove());
       insuredPerson.setName(name);
       if (occupationOptional.isPresent()) {
         insuredPerson.setOccupation(occupationOptional.get());
+      }
+
+      if (riskyOptional.isPresent()) {
+        insuredPerson.setRiskyOccupation(riskyOptional.get());
       }
       if (customerOptional.isPresent()) {
         insuredPerson.setCustomer(customerOptional.get());

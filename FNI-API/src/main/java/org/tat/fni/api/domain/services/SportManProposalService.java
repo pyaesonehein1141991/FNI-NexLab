@@ -212,6 +212,7 @@ public class SportManProposalService {
       insuredPerson.setProposedPremium(dto.getProposedPremium());
 
 
+
       insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));
       insuredPerson.setIdNo(dto.getIdNo());
       insuredPerson.setFatherName(dto.getFatherName());

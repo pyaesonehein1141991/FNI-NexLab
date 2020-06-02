@@ -61,10 +61,13 @@ public class ShortTermProposalInsuredPersonDTO {
   @ApiModelProperty(position = 11, example = "NRCNO", required = true)
   @NotNull(message = "idType is mandatory")
   private String idType;
-  
-  //needMedicalCheckup
-  
-  //rejectReason
+
+  @ApiModelProperty(position = 16, example = "some reason")
+  private String rejectReason;
+
+  @ApiModelProperty(position = 17, example = "false", required = true)
+  @NotNull(message = "needMedicalCheckup is mandatory")
+  private boolean needMedicalCheckup;
 
   @ApiModelProperty(position = 12, example = "AUNG", required = true)
   @NotNull(message = "firstName is mandatory")
@@ -86,14 +89,20 @@ public class ShortTermProposalInsuredPersonDTO {
   @NotEmpty
   private String townshipId;
 
-  //relationshipId
+
+  @ApiModelProperty(position = 10, example = "ISSYS0120001000000000129032013", required = true)
+  @NotBlank(message = "relationshipId is mandatory")
+  @NotEmpty
+  private String relationshipId;
 
   @ApiModelProperty(position = 17, example = "ISSYS011000009823001042019", required = true)
   private String occupationID;
-  
-  //riskyOccupationId
-  
-  //phone
+
+  @ApiModelProperty(position = 18, example = "ISSYSO52001000000000123052019", required = true)
+  private String riskoccupationID;
+
+  @ApiModelProperty(position = 10, example = "0987654333")
+  private String phone;
 
 
   @ApiModelProperty(position = 18, example = "ISSYS001001000000000103062019")
@@ -112,10 +121,11 @@ public class ShortTermProposalInsuredPersonDTO {
   private List<ShortTermProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 
 
-//  @Valid
-//  @ApiModelProperty(position = 21)
-//  @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-//  private List<ShortTerminsuredPersonPolicyHistoryRecordDTO> insuredPersonPolicyHistoryRecordList;
+  // @Valid
+  // @ApiModelProperty(position = 21)
+  // @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
+  // private List<ShortTerminsuredPersonPolicyHistoryRecordDTO>
+  // insuredPersonPolicyHistoryRecordList;
 
 
 

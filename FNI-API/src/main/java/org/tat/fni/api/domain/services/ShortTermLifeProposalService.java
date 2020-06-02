@@ -28,6 +28,7 @@ import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
+import org.tat.fni.api.domain.RiskyOccupation;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
@@ -85,7 +86,7 @@ public class ShortTermLifeProposalService {
   private ICustomIdGenerator customIdRepo;
 
   @Autowired
-  private IWorkFlowService workFlowDTOService;
+  private RiskyOccupationService riskyOccupationService;
 
 
   @Value("${shorttermLifeProductId}")
@@ -198,6 +199,10 @@ public class ShortTermLifeProposalService {
       Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
       Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
       Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
+      Optional<RelationShip> relationshipOptional =
+          relationshipService.findById(dto.getRelationshipId());
+      Optional<RiskyOccupation> riskyOccupationOptional =
+          riskyOccupationService.findRiskyOccupationById(dto.getRiskoccupationID());
 
       ResidentAddress residentAddress = new ResidentAddress();
       residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -218,11 +223,14 @@ public class ShortTermLifeProposalService {
       insuredPerson.setBasicTermPremium(dto.getBasicTermPremium());
       insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));
       insuredPerson.setIdNo(dto.getIdNo());
+      insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
+      insuredPerson.setRejectReason(dto.getRejectReason());
       insuredPerson.setFatherName(dto.getFatherName());
       insuredPerson.setDateOfBirth(dto.getDateOfBirth());
       insuredPerson.setAge(DateUtils.getAgeForNextYear(dto.getDateOfBirth()));
       insuredPerson.setGender(Gender.valueOf(dto.getGender()));
       insuredPerson.setResidentAddress(residentAddress);
+      insuredPerson.setPhone(dto.getPhone());
       insuredPerson.setName(name);
       if (occupationOptional.isPresent()) {
         insuredPerson.setOccupation(occupationOptional.get());
@@ -232,6 +240,12 @@ public class ShortTermLifeProposalService {
       } else {
         insuredPerson.setCustomer(createNewCustomer(insuredPerson));
 
+      }
+      if (riskyOccupationOptional.isPresent()) {
+        insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
+      }
+      if (relationshipOptional.isPresent()) {
+        insuredPerson.setRelationship(relationshipOptional.get());
       }
 
       String insPersonCodeNo = customIdRepo.getNextId("LIFE_INSUREDPERSON_CODENO", null);
