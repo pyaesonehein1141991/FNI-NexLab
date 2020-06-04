@@ -105,6 +105,7 @@ public class ShortTermProposalInsuredPersonDTO {
   private String phone;
 
 
+
   @ApiModelProperty(position = 18, example = "ISSYS001001000000000103062019")
   private String customerID;
 
