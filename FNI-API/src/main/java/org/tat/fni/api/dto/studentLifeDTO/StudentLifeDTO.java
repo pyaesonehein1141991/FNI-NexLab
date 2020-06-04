@@ -66,12 +66,12 @@ public class StudentLifeDTO {
 	@NotNull(message = "Customer Classification Of Health is mandatory")
 	private ClassificationOfHealth customerClsOfHealth;
 	
-	@ApiModelProperty(position = 11, required = false)
-	private List<InsuredPersonAttachment> attachmentList;
+//	@ApiModelProperty(position = 11, required = false)
+//	private List<InsuredPersonAttachment> attachmentList;
 	
-	@ApiModelProperty(position = 12, required = true)
+	@ApiModelProperty(position = 11, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
-	private List<ProposalInsuredPerson> proposalInsuredPersonList;
+	private List<StudentLifeProposalInsuredPersonDTO> proposalInsuredPersonList;
 	
 	
 }
