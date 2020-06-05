@@ -167,10 +167,10 @@ public class ShortTermLifeProposalService {
         lifeProposal.getProposalInsuredPersonList()
             .add(createInsuredPersonForShortTerm(insuredPerson));
 
-        setKeyFactorValue(insuredPersonInfoDTO.getSumInsuredInfo(),
-            insuredPersonInfoDTO.getAgeForNextYear(), lifeProposal.getPeriodOfYears(),
-            insuredPersonInfoDTO.getIsRiskyOccupation(), insuredPersonInfoDTO.getPounds(),
-            insuredPersonInfoDTO.getRiskyOccupation().getExtraRate());
+//        setKeyFactorValue(insuredPersonInfoDTO.getSumInsuredInfo(),
+//            insuredPersonInfoDTO.getAgeForNextYear(), lifeProposal.getPeriodOfYears(),
+//            insuredPersonInfoDTO.getIsRiskyOccupation(), insuredPersonInfoDTO.getPounds(),
+//            insuredPersonInfoDTO.getRiskyOccupation().getExtraRate());
 
         lifeProposal.setComplete(true);
         lifeProposal.setPeriodMonth(shortTermEndowmentLifeDto.getPeriodMonth());

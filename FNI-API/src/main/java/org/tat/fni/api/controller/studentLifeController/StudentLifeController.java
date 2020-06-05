@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.StudentLifeProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerResponseDTO;
+import org.tat.fni.api.dto.proposalResponseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.studentLifeDTO.StudentLifeDTO;
-import org.tat.fni.api.dto.studentLifeDTO.StudentLifeResponseDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,7 +25,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/studentLife")
-@Api(tags = "Student Life Proposal")
+@Api(tags = "studentLife")
 public class StudentLifeController {
 	
 	@Autowired
@@ -47,17 +45,22 @@ public class StudentLifeController {
 		List<LifeProposal> proposallist = new ArrayList<>();
 		StudentLifeDTO dto = mapper.map(studentLifeDTO, StudentLifeDTO.class);
 
+		// create student life proposal
 		proposallist = studentLifeProposalService.createStudentLifeProposalDTOToProposal(dto);
 
-		List<StudentLifeResponseDTO> responseList = new ArrayList<StudentLifeResponseDTO>();
+		// create response object
+		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			StudentLifeResponseDTO studentLifeResponseDto = StudentLifeResponseDTO.builder().proposalID(proposal.getId())
-					.proposalNo(proposal.getProposalNo()).proposedPremium(proposal.getProposedPremium()).build();
+			ProposalResponseDTO studentLifeResponseDto = ProposalResponseDTO.builder()
+					.proposalID(proposal.getId())
+					.proposalNo(proposal.getProposalNo())
+					.proposedPremium(proposal.getProposedPremium()).build();
 			responseList.add(studentLifeResponseDto);
 		});
 
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
+				.responseBody(responseList).build();
 		return responseDTO;
 	}
 

@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.ShortTermLifeProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
+import org.tat.fni.api.dto.proposalResponseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermEndowmentLifeDTO;
-import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermEndowmentLifeReponseDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/shortterm")
-@Api(tags = "ShortTermEndowment Proposal")
+@Api(tags = "shortTermEndowment")
 public class ShortTermEndowmentLifeController {
 
   @Autowired
@@ -41,25 +41,27 @@ public class ShortTermEndowmentLifeController {
 
     List<LifeProposal> proposallist = new ArrayList<>();
 
-    ShortTermEndowmentLifeDTO shortTermEndowmentDTO =
+    ShortTermEndowmentLifeDTO dto =
         mapper.map(shortTermEndowmentLifeDto, ShortTermEndowmentLifeDTO.class);
 
     // create shortTermEndowmentlife proposal
     proposallist =
-        lifeProposalService.createShortTermEndowmentLifeDtoToProposal(shortTermEndowmentDTO);
+        lifeProposalService.createShortTermEndowmentLifeDtoToProposal(dto);
 
     // create response object
-    List<ShortTermEndowmentLifeReponseDTO> responseList = new ArrayList<>();
+    List<ProposalResponseDTO> responseList = new ArrayList<>();
 
     proposallist.forEach(proposal -> {
-      ShortTermEndowmentLifeReponseDTO dto =
-          ShortTermEndowmentLifeReponseDTO.builder().proposalID(proposal.getId())
-              .proposalNo(proposal.getProposalNo()).proposedPremium(proposal.getPremium()).build();
-      responseList.add(dto);
+      ProposalResponseDTO shortTermEndowmentResponseDto = ProposalResponseDTO.builder()
+    		  .proposalID(proposal.getId())
+    		  .proposalNo(proposal.getProposalNo())
+    		  .proposedPremium(proposal.getPremium()).build();
+      
+      responseList.add(shortTermEndowmentResponseDto);
     });
 
-    ResponseDTO<Object> responseDTO =
-        ResponseDTO.builder().status("Success!").responseBody(responseList).build();
+    ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
+    		.responseBody(responseList).build();
 
     return responseDTO;
   }

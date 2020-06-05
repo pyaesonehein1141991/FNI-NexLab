@@ -13,7 +13,8 @@ import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.services.IndividualHealthProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthInsuranceDTO;
-import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthReponseDTO;
+import org.tat.fni.api.dto.proposalResponseDTO.ProposalResponseDTO;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -23,7 +24,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/individualHealth")
-@Api(tags = "IndividualHealth Proposal")
+@Api(tags = "individualHealth")
 public class IndividualHealthController {
 
   @Autowired
@@ -34,30 +35,32 @@ public class IndividualHealthController {
 
   @PostMapping("/submitproposal")
   @ApiResponses(value = {@ApiResponse(code = 400, message = "Something went wrong"),
-      @ApiResponse(code = 403, message = "Access denied"),
-      @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  @ApiResponse(code = 403, message = "Access denied"),
+  @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
   @ApiOperation(value = "${IndividualHealthController.submitproposal}")
-  public ResponseDTO<Object> submitproposal(
-      @ApiParam("Submit IndividualHealth Proposal") @Valid @RequestBody IndividualHealthInsuranceDTO individualHealthInsuranceDTO) {
+  public ResponseDTO<Object> submitproposal(@ApiParam("Submit IndividualHealth Proposal") 
+  @Valid @RequestBody IndividualHealthInsuranceDTO individualHealthInsuranceDTO) {
+	  
     List<MedicalProposal> proposallist = new ArrayList<>();
-    IndividualHealthInsuranceDTO a =
+    IndividualHealthInsuranceDTO dto =
         mapper.map(individualHealthInsuranceDTO, IndividualHealthInsuranceDTO.class);
 
-    // create shortTermEndowmentlife proposal
-    proposallist = medicalProposalService.createIndividualHealthDtoToProposal(a);
+    // create individual health proposal
+    proposallist = medicalProposalService.createIndividualHealthDtoToProposal(dto);
 
     // create response object
-    List<IndividualHealthReponseDTO> responseList = new ArrayList<>();
+    List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
     proposallist.forEach(proposal -> {
-      IndividualHealthReponseDTO dto = IndividualHealthReponseDTO.builder()
-          .proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
+    	ProposalResponseDTO individualHealthResponseDto = ProposalResponseDTO.builder()
+          .proposalID(proposal.getId())
+          .proposalNo(proposal.getProposalNo())
           .proposedPremium(proposal.getTotalPremium()).build();
-      responseList.add(dto);
+      responseList.add(individualHealthResponseDto);
     });
 
-    ResponseDTO<Object> responseDTO =
-        ResponseDTO.builder().status("Success!").responseBody(responseList).build();
+    ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
+    		.responseBody(responseList).build();
 
     return responseDTO;
   }

@@ -12,13 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.services.FarmerLifeProposalService;
 import org.tat.fni.api.domain.services.GroupLifeProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerResponseDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
-import org.tat.fni.api.dto.groupLifeDTO.GroupLifeResponseDTO;
+import org.tat.fni.api.dto.proposalResponseDTO.ProposalResponseDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +25,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/groupLife")
-@Api(tags = "Group Life Proposal")
+@Api(tags = "groupLife")
 public class GroupLifeController {
 	
 	@Autowired
@@ -48,17 +45,22 @@ public class GroupLifeController {
 		List<LifeProposal> proposallist = new ArrayList<>();
 		GroupLifeDTO dto = mapper.map(groupLifeDTO, GroupLifeDTO.class);
 
+		// create group life proposal
 		proposallist = groupLifeProposalService.createGroupLifeProposalDTOToProposal(dto);
 
-		List<GroupLifeResponseDTO> responseList = new ArrayList<GroupLifeResponseDTO>();
+		// create response object
+		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			GroupLifeResponseDTO groupLifeResponsedto = GroupLifeResponseDTO.builder().proposalID(proposal.getId())
-					.proposalNo(proposal.getProposalNo()).proposedPremium(proposal.getProposedPremium()).build();
+			ProposalResponseDTO groupLifeResponsedto = ProposalResponseDTO.builder()
+					.proposalID(proposal.getId())
+					.proposalNo(proposal.getProposalNo())
+					.proposedPremium(proposal.getProposedPremium()).build();
 			responseList.add(groupLifeResponsedto);
 		});
 
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
+				.responseBody(responseList).build();
 		return responseDTO;
 	}
 

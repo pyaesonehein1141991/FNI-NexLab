@@ -72,8 +72,6 @@ public class IndividualHealthInsuranceDTO {
   @NotNull(message = "Customer Classification Of Health is mandatory")
   private ClassificationOfHealth customerClsOfHealth;
 
-
-
   @ApiModelProperty(position = 14, required = true)
   @NotNull(message = "proposalInsuredPersonList is mandatory")
   private List<IndividualHealthProposalInsuredPersonDTO> proposalInsuredPersonList;

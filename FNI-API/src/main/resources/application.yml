@@ -47,26 +47,26 @@ UserController:
   delete: Deletes specific user by username
   search: Returns specific user by username
   me: Returns current user's data
-  submitProposal: Create proposal and return proposal no
+  submitProposal: Create proposal and return proposal number
 FarmerController:
-  submitproposal: Create Farmer Life Proposal and return proposal no
+  submitproposal: Create Farmer Life Proposal and return proposal number
 GroupLifeController:
-  submitproposal: Create Group Life Proposal and return proposal no
+  submitproposal: Create Group Life Proposal and return proposal number
 ShortTermEndowmentLifeController:
-  submitproposal: Create Short Term Endowment Life proposal and return proposal no
+  submitproposal: Create Short Term Endowment Life proposal and return proposal number
 StudentLifeController:
-  submitProposal: Create Student Life proposal and return proposal no
+  submitproposal: Create Student Life proposal and return proposal number
 BillCollectionController:
   payment: Create Subsequent Payment
 SnakeBiteController:
-  submitproposal: Create Snake Bite Life proposal and return proposal no
+  submitproposal: Create Snake Bite Life proposal and return proposal number
 IndividualHealthController:
-  submitproposal: Create Individual Health proposal and return proposal no
+  submitproposal: Create Individual Health proposal and return proposal number
 CriticalillnessController:
-  submitproposal: Create Critical Illness proposal and return proposal no
+  submitproposal: Create Critical Illness proposal and return proposal number
 MicroHealthController:
-  submitproposal: Create Micro Health proposal and return proposal no
+  submitproposal: Create Micro Health proposal and return proposal number
 PersonalAccidentController:
-  submitproposal: Create Personal Accident proposal and return proposal no
+  submitproposal: Create Personal Accident proposal and return proposal number
 SportManController:
-  submitproposal: Create Sportman proposal and return proposal no
+  submitproposal: Create Sportman proposal and return proposal number
