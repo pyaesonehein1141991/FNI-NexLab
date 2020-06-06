@@ -1,6 +1,7 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
+import org.tat.fni.api.domain.RiskyOccupation;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
@@ -78,6 +80,9 @@ public class PersonalaccidentProposalService {
   private OccupationService occupationService;
 
   @Autowired
+  private RiskyOccupationService riskyoccupationService;
+
+  @Autowired
   private RelationshipService relationshipService;
 
   @Autowired
@@ -95,6 +100,17 @@ public class PersonalaccidentProposalService {
       List<LifeProposal> personalaccidentProposalList =
           convertPersonalAccidentProposalDTOToProposal(personalaccidentdto);
       lifeProposalRepo.saveAll(personalaccidentProposalList);
+
+      String id = DateUtils.formattedSqlDate(new Date())
+          .concat(personalaccidentProposalList.get(0).getProposalNo());
+      String referenceNo = personalaccidentProposalList.get(0).getId();
+      String referenceType = "PA";
+      String createdDate = DateUtils.formattedSqlDate(new Date());
+      String workflowDate = DateUtils.formattedSqlDate(new Date());
+
+      lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
+      lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,
+          workflowDate);
       return personalaccidentProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
@@ -174,6 +190,8 @@ public class PersonalaccidentProposalService {
       Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
       Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
       Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
+      Optional<RiskyOccupation> riskyOptional =
+          riskyoccupationService.findRiskyOccupationById(dto.getRiskoccupationID());
 
       ResidentAddress residentAddress = new ResidentAddress();
       residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -199,9 +217,14 @@ public class PersonalaccidentProposalService {
       insuredPerson.setAge(DateUtils.getAgeForNextYear(dto.getDateOfBirth()));
       insuredPerson.setGender(Gender.valueOf(dto.getGender()));
       insuredPerson.setResidentAddress(residentAddress);
+      insuredPerson.setApproved(dto.isApprove());
       insuredPerson.setName(name);
       if (occupationOptional.isPresent()) {
         insuredPerson.setOccupation(occupationOptional.get());
+      }
+
+      if (riskyOptional.isPresent()) {
+        insuredPerson.setRiskyOccupation(riskyOptional.get());
       }
       if (customerOptional.isPresent()) {
         insuredPerson.setCustomer(customerOptional.get());

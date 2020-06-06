@@ -1,6 +1,7 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -18,9 +19,11 @@ import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
+import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.MedicalProposalInsuredPerson;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonBeneficiaries;
+import org.tat.fni.api.domain.MedicalProposalInsuredPersonGuardian;
 import org.tat.fni.api.domain.Organization;
 import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
@@ -28,6 +31,7 @@ import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.CustomerRepository;
+import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
 import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthInsuranceDTO;
 import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthProposalInsuredPersonBeneficiariesDTO;
@@ -76,8 +80,15 @@ public class IndividualHealthProposalService {
   @Autowired
   private RelationshipService relationshipService;
 
+
+  @Autowired
+  private GuardainService guardainService;
+
   @Autowired
   private ICustomIdGenerator customIdRepo;
+
+  @Autowired
+  private LifeProposalRepository lifeProposalRepo;
 
 
 
@@ -92,6 +103,19 @@ public class IndividualHealthProposalService {
       List<MedicalProposal> individualHealthProposalList =
           convertIndividualHealthProposalDTOToProposal(individualHealthInsuranceDTO);
       medicalProposalRepo.saveAll(individualHealthProposalList);
+
+
+      String id = DateUtils.formattedSqlDate(new Date())
+          .concat(individualHealthProposalList.get(0).getProposalNo());
+      String referenceNo = individualHealthProposalList.get(0).getId();
+      String referenceType = "HEALTH";
+      String createdDate = DateUtils.formattedSqlDate(new Date());
+      String workflowDate = DateUtils.formattedSqlDate(new Date());
+
+      lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
+      lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,
+          workflowDate);
+
       return individualHealthProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
@@ -172,6 +196,8 @@ public class IndividualHealthProposalService {
       Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
       Optional<RelationShip> relationShipOptional =
           relationshipService.findById(dto.getRelationshipId());
+      Optional<MedicalProposalInsuredPersonGuardian> guardianOptional =
+          guardainService.findById(dto.getGuardianId());
 
       MedicalProposalInsuredPerson insuredPerson = new MedicalProposalInsuredPerson();
 
@@ -180,6 +206,8 @@ public class IndividualHealthProposalService {
       insuredPerson.setUnit(dto.getUnit());
       insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
       insuredPerson.setCustomer(customerOptional.get());
+      insuredPerson.setGuardian(guardianOptional.get());
+      insuredPerson.setRejectReason(dto.getRejectReason());
 
 
       String insPersonCodeNo = customIdRepo.getNextId("HEALTH_INSUPERSON_CODE_NO", null);
@@ -225,6 +253,7 @@ public class IndividualHealthProposalService {
       beneficiary.setPercentage(dto.getPercentage());
       beneficiary.setIdType(IdType.valueOf(dto.getIdType()));
       beneficiary.setIdNo(dto.getIdNo());
+      beneficiary.setFatherName(dto.getFatherName());
       beneficiary.setResidentAddress(residentAddress);
       beneficiary.setName(name);
       if (relationshipOptional.isPresent()) {

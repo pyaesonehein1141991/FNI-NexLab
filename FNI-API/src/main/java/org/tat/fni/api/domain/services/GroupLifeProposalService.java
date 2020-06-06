@@ -1,6 +1,7 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,6 @@ import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
 import org.tat.fni.api.domain.Occupation;
 import org.tat.fni.api.domain.Organization;
 import org.tat.fni.api.domain.PaymentType;
-import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
@@ -30,14 +30,9 @@ import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonBeneficiariesDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonDTO;
-import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthinsuredPersonPolicyHistoryRecordDTO;
-import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -87,6 +82,17 @@ public class GroupLifeProposalService {
 
 			List<LifeProposal> groupLifeProposalList = convertGroupLifeProposalDTOToProposal(groupLifeDTO);
 			lifeProposalRepo.saveAll(groupLifeProposalList);
+			
+			String id = DateUtils.formattedSqlDate(new Date())
+			          .concat(groupLifeProposalList.get(0).getProposalNo());
+			String referenceNo = groupLifeProposalList.get(0).getId();
+			String referenceType = "GROUP_LIFE";
+			String createdDate = DateUtils.formattedSqlDate(new Date());
+			String workflowDate = DateUtils.formattedSqlDate(new Date());
+
+			lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
+			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,
+			    workflowDate);
 
 			return groupLifeProposalList;
 

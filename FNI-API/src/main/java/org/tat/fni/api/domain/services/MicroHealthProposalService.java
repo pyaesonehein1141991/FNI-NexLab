@@ -1,6 +1,7 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -18,9 +19,11 @@ import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
+import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.MedicalProposalInsuredPerson;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonBeneficiaries;
+import org.tat.fni.api.domain.MedicalProposalInsuredPersonGuardian;
 import org.tat.fni.api.domain.Organization;
 import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
@@ -28,6 +31,7 @@ import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.CustomerRepository;
+import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonBeneficiariesDTO;
@@ -46,6 +50,9 @@ public class MicroHealthProposalService {
 
   @Autowired
   private BranchService branchService;
+
+  @Autowired
+  private GuardainService guardainService;
 
   @Autowired
   private CustomerRepository customerRepo;
@@ -80,6 +87,8 @@ public class MicroHealthProposalService {
   @Autowired
   private ICustomIdGenerator customIdRepo;
 
+  @Autowired
+  private LifeProposalRepository lifeProposalRepo;
 
 
   @Value("${microHealthProductId}")
@@ -93,6 +102,18 @@ public class MicroHealthProposalService {
       List<MedicalProposal> microHealthProposalList =
           convertMicroHealthProposalDTOToProposal(microHealthInsuranceDTO);
       medicalProposalRepo.saveAll(microHealthProposalList);
+
+      String id = DateUtils.formattedSqlDate(new Date())
+          .concat(microHealthProposalList.get(0).getProposalNo());
+      String referenceNo = microHealthProposalList.get(0).getId();
+      String referenceType = "MICRO_HEALTH";
+      String createdDate = DateUtils.formattedSqlDate(new Date());
+      String workflowDate = DateUtils.formattedSqlDate(new Date());
+
+      lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
+      lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,
+          workflowDate);
+
       return microHealthProposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
@@ -154,6 +175,7 @@ public class MicroHealthProposalService {
         medicalProposal.setStartDate(microHealthInsuranceDTO.getStartDate());
         medicalProposal.setEndDate(microHealthInsuranceDTO.getEndDate());
         medicalProposal.setSaleChannelType(SaleChannelType.DIRECTMARKETING);
+        medicalProposal.setPeriodMonth(microHealthInsuranceDTO.getPeriodMonth());
         medicalProposal.setProposalNo(proposalNo);
         medicalProposalList.add(medicalProposal);
       });
@@ -171,6 +193,8 @@ public class MicroHealthProposalService {
       Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
       Optional<RelationShip> relationShipOptional =
           relationshipService.findById(dto.getRelationshipId());
+      Optional<MedicalProposalInsuredPersonGuardian> guardianOptional =
+          guardainService.findById(dto.getGuardianId());
 
       MedicalProposalInsuredPerson insuredPerson = new MedicalProposalInsuredPerson();
 
@@ -179,6 +203,8 @@ public class MicroHealthProposalService {
       insuredPerson.setUnit(dto.getUnit());
       insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
       insuredPerson.setCustomer(customerOptional.get());
+      insuredPerson.setGuardian(guardianOptional.get());
+      insuredPerson.setRejectReason(dto.getRejectReason());
 
 
       String insPersonCodeNo = customIdRepo.getNextId("HEALTH_INSUPERSON_CODE_NO", null);
@@ -223,6 +249,7 @@ public class MicroHealthProposalService {
       beneficiary.setInitialId(dto.getInitialId());
       beneficiary.setPercentage(dto.getPercentage());
       beneficiary.setIdType(IdType.valueOf(dto.getIdType()));
+      beneficiary.setFatherName(dto.getFatherName());
       beneficiary.setIdNo(dto.getIdNo());
       beneficiary.setResidentAddress(residentAddress);
       beneficiary.setName(name);

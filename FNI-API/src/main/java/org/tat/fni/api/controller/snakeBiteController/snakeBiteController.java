@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.SnakeBiteProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerResponseDTO;
+import org.tat.fni.api.dto.proposalResponseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteDTO;
-import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteResponseDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,7 +25,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/snakeBite")
-@Api(tags = "Snake Bite Proposal")
+@Api(tags = "snakeBite")
 public class snakeBiteController {
 	
 	@Autowired
@@ -47,17 +45,22 @@ public class snakeBiteController {
 		List<LifeProposal> proposallist = new ArrayList<>();
 		SnakeBiteDTO dto = mapper.map(snakeBiteDTO, SnakeBiteDTO.class);
 
+		// create snake bite proposal
 		proposallist = snakeBiteProposalService.createSnakeBiteProposalDTOToProposal(dto);
 
-		List<SnakeBiteResponseDTO> responseList = new ArrayList<SnakeBiteResponseDTO>();
+		// create response object
+		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			SnakeBiteResponseDTO snakeBiteResponseDto = SnakeBiteResponseDTO.builder().proposalID(proposal.getId())
-					.proposalNo(proposal.getProposalNo()).proposedPremium(proposal.getProposedPremium()).build();
+			ProposalResponseDTO snakeBiteResponseDto = ProposalResponseDTO.builder()
+					.proposalID(proposal.getId())
+					.proposalNo(proposal.getProposalNo())
+					.proposedPremium(proposal.getProposedPremium()).build();
 			responseList.add(snakeBiteResponseDto);
 		});
 
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
+				.responseBody(responseList).build();
 		return responseDTO;
 		
 	}

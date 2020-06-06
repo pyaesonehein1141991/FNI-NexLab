@@ -12,19 +12,13 @@ import lombok.Data;
 @Data
 public class MicroHealthProposalInsuredPersonDTO {
 
-  @ApiModelProperty(position = 0, example = "U", required = true)
-  @NotBlank(message = "InitialId is mandatory")
-  private String initialId;
-
   @ApiModelProperty(position = 1, example = "23", required = true)
   @NotNull(message = "age is mandatory")
   private int age;
 
-
   @ApiModelProperty(position = 2, example = "true", required = true)
   @NotNull(message = "approve is mandatory")
   private boolean approve;
-
 
   @ApiModelProperty(position = 4, example = "100000", required = true)
   @NotNull(message = "premium is mandatory")
@@ -38,19 +32,21 @@ public class MicroHealthProposalInsuredPersonDTO {
   @NotNull(message = "unit is mandatory")
   private int unit;
 
-
-
   @ApiModelProperty(position = 7, example = "ISSYS0120001000000000129032013", required = true)
   @NotBlank(message = "relationshipId is mandatory")
   @NotEmpty
   private String relationshipId;
 
-
-
   @ApiModelProperty(position = 18, example = "ISSYS001001000000000103062019")
   private String customerID;
 
 
+  @ApiModelProperty(position = 18, example = "some reason")
+  private String rejectReason;
+
+
+  @ApiModelProperty(position = 21, example = "ISMED023001000000000110062019")
+  private String guardianId;
 
   @Valid
   @ApiModelProperty(position = 20)
@@ -58,10 +54,11 @@ public class MicroHealthProposalInsuredPersonDTO {
   private List<MicroHealthProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 
 
-  @Valid
-  @ApiModelProperty(position = 21)
-  @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-  private List<MicroHealthinsuredPersonPolicyHistoryRecordDTO> insuredPersonPolicyHistoryRecordList;
+  // @Valid
+  // @ApiModelProperty(position = 21)
+  // @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
+  // private List<MicroHealthinsuredPersonPolicyHistoryRecordDTO>
+  // insuredPersonPolicyHistoryRecordList;
 
 
 

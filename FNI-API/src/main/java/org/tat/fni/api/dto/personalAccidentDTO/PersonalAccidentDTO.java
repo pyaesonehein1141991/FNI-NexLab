@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class PersonalAccidentDTO {
 
-  @ApiModelProperty(position = 0, required = true)
+  @ApiModelProperty(position = 0, example = "12", required = true)
   @NotNull(message = "Period Month is mandatory")
   private int periodMonth;
 

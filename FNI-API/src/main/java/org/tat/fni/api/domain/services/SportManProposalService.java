@@ -1,6 +1,7 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -101,6 +102,17 @@ public class SportManProposalService {
       // convert SportManDTOToProposal to lifeproposal
       List<LifeProposal> sportmanproposalList = convertSportManDTOToProposal(sportmandto);
       lifeProposalRepo.saveAll(sportmanproposalList);
+
+      String id = DateUtils.formattedSqlDate(new Date())
+          .concat(sportmanproposalList.get(0).getProposalNo());
+      String referenceNo = sportmanproposalList.get(0).getId();
+      String referenceType = "SPORT_MAN";
+      String createdDate = DateUtils.formattedSqlDate(new Date());
+      String workflowDate = DateUtils.formattedSqlDate(new Date());
+
+      lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
+      lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,
+          workflowDate);
       return sportmanproposalList;
     } catch (Exception e) {
       logger.error("JOEERROR:" + e.getMessage(), e);
@@ -181,7 +193,7 @@ public class SportManProposalService {
       Optional<RiskyOccupation> riskyOptional =
           riskyoccupationService.findRiskyOccupationById(dto.getRiskoccupationID());
       Optional<TypesOfSport> typeofsportOptional =
-          typeofsportService.findById(dto.getTypeofSprotId());
+          typeofsportService.findById(dto.getTypeofSportId());
       ResidentAddress residentAddress = new ResidentAddress();
       residentAddress.setResidentAddress(dto.getResidentAddress());
 
@@ -198,6 +210,7 @@ public class SportManProposalService {
       insuredPerson.setUnit(dto.getUnit());
       insuredPerson.setApprovedUnit(dto.getApprovedUnit());
       insuredPerson.setProposedPremium(dto.getProposedPremium());
+
 
 
       insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));

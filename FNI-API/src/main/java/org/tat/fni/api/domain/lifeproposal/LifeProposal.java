@@ -129,8 +129,9 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
   // @JoinColumn(name = "LIFEPOLICYID", referencedColumnName = "ID")
   // private LifePolicy lifePolicy;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "lifeProposal",
-      orphanRemoval = true)
+  // TODO FIXME THK
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "LIFEPROPOSALID", referencedColumnName = "ID")
   private List<ProposalInsuredPerson> proposalInsuredPersonList;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "lifeProposal",

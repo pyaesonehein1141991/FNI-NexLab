@@ -1,4 +1,4 @@
-package org.tat.fni.api.controller.farmerController;
+package org.tat.fni.api.controller.studentLifeController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.services.FarmerLifeProposalService;
+import org.tat.fni.api.domain.services.StudentLifeProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.proposalResponseDTO.ProposalResponseDTO;
+import org.tat.fni.api.dto.studentLifeDTO.StudentLifeDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,39 +24,39 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/farmer")
-@Api(tags = "farmer")
-public class FarmerController {
-
+@RequestMapping("/studentLife")
+@Api(tags = "studentLife")
+public class StudentLifeController {
+	
 	@Autowired
-	private FarmerLifeProposalService farmerLifeProposalService;
-
+	private StudentLifeProposalService studentLifeProposalService;
+	
 	@Autowired
 	private ModelMapper mapper;
-
+	
 	@PostMapping("/submitproposal")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 	@ApiResponse(code = 403, message = "Access denied"),
 	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${FarmerController.submitproposal}")
-	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Farmer Proposal") 
-	@Valid @RequestBody FarmerProposalDTO farmerProposalDTO) {
+	@ApiOperation(value = "${StudentLifeController.submitproposal}")
+	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Student Life Proposal") 
+	@Valid @RequestBody StudentLifeDTO studentLifeDTO) {
 
 		List<LifeProposal> proposallist = new ArrayList<>();
-		FarmerProposalDTO dto = mapper.map(farmerProposalDTO, FarmerProposalDTO.class);
+		StudentLifeDTO dto = mapper.map(studentLifeDTO, StudentLifeDTO.class);
 
-		// create Farmer proposal
-		proposallist = farmerLifeProposalService.createFarmerProposalDTOToProposal(dto);
+		// create student life proposal
+		proposallist = studentLifeProposalService.createStudentLifeProposalDTOToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			ProposalResponseDTO farmerResponseDto = ProposalResponseDTO.builder()
+			ProposalResponseDTO studentLifeResponseDto = ProposalResponseDTO.builder()
 					.proposalID(proposal.getId())
 					.proposalNo(proposal.getProposalNo())
 					.proposedPremium(proposal.getProposedPremium()).build();
-			responseList.add(farmerResponseDto);
+			responseList.add(studentLifeResponseDto);
 		});
 
 		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")

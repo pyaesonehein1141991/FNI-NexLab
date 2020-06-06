@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 public class ShortTermEndowmentLifeDTO {
 
-  @ApiModelProperty(position = 0, required = true)
+  @ApiModelProperty(position = 0, example = "60", required = true)
   @NotNull(message = "Period Month is mandatory")
   private int periodMonth;
 
@@ -61,7 +61,7 @@ public class ShortTermEndowmentLifeDTO {
   @NotBlank(message = "Sales Points ID is mandatory")
   private String salesPointsId;
 
-  @ApiModelProperty(position = 11, required = true)
+  @ApiModelProperty(position = 11, example = "FIRSTCLASS", required = true)
   @NotNull(message = "Customer Classification Of Health is mandatory")
   private ClassificationOfHealth customerClsOfHealth;
   /*

@@ -22,7 +22,6 @@ public class PersonalAccidentProposalInsuredPersonDTO {
   @NotBlank(message = "InitialId is mandatory")
   private String initialId;
 
-
   @ApiModelProperty(position = 2, example = "AUNG ", required = true)
   @NotNull(message = "firstName is mandatory")
   private String firstName;
@@ -32,7 +31,6 @@ public class PersonalAccidentProposalInsuredPersonDTO {
 
   @ApiModelProperty(position = 4, example = "AUNG")
   private String lastName;
-
 
   @ApiModelProperty(position = 5, example = "U Maung Maung", required = true)
   @NotBlank(message = "fatherName is mandatory")
@@ -53,7 +51,6 @@ public class PersonalAccidentProposalInsuredPersonDTO {
   @ApiModelProperty(position = 9, example = "123123123")
   private String idNo;
 
-
   @ApiModelProperty(position = 10, example = "ISSYS0120001000000000129032013", required = true)
   @NotBlank(message = "relationshipId is mandatory")
   @NotEmpty
@@ -68,21 +65,27 @@ public class PersonalAccidentProposalInsuredPersonDTO {
   @NotEmpty
   private String townshipId;
 
-
-
   @ApiModelProperty(position = 13, example = "ISSYS011000009823001042019", required = true)
   private String occupationID;
 
+  @ApiModelProperty(position = 18, example = "ISSYSO52001000000000123052019", required = true)
+  private String riskoccupationID;
 
   @ApiModelProperty(position = 14, example = "MALE", required = true)
   @NotNull(message = "gender is mandatory")
   private String gender;
 
-
-
   @ApiModelProperty(position = 15, example = "100000", required = true)
   @NotNull(message = "proposedSumInsured is mandatory")
   private double proposedSumInsured;
+
+  @ApiModelProperty(position = 21, example = "true", required = true)
+  @NotNull(message = "approve is mandatory")
+  private boolean isRiskyOccupation;
+
+  @ApiModelProperty(position = 22, example = "true", required = true)
+  @NotNull(message = "approve is mandatory")
+  private boolean approve;
 
   @ApiModelProperty(position = 16, example = "100000", required = true)
   @NotNull(message = "proposedPremium is mandatory")
@@ -100,17 +103,16 @@ public class PersonalAccidentProposalInsuredPersonDTO {
   @NotNull(message = "basicTermPremium is mandatory")
   private double basicTermPremium;
 
-
-
   @Valid
   @ApiModelProperty(position = 20)
   @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
   private List<PersonalAccidentProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 
-  @Valid
-  @ApiModelProperty(position = 21)
-  @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-  private List<PersonalAccidentinsuredPersonPolicyHistoryRecordDTO> insuredPersonPolicyHistoryRecordList;
+  // @Valid
+  // @ApiModelProperty(position = 21)
+  // @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
+  // private List<PersonalAccidentinsuredPersonPolicyHistoryRecordDTO>
+  // insuredPersonPolicyHistoryRecordList;
 
 
 }
