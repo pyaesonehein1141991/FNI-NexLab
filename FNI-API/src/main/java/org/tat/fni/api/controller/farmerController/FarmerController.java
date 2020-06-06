@@ -35,12 +35,10 @@ public class FarmerController {
 	private ModelMapper mapper;
 
 	@PostMapping("/submitproposal")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
-	@ApiResponse(code = 403, message = "Access denied"),
-	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${FarmerController.submitproposal}")
-	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Farmer Proposal") 
-	@Valid @RequestBody FarmerProposalDTO farmerProposalDTO) {
+	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Farmer Proposal") @Valid @RequestBody FarmerProposalDTO farmerProposalDTO) {
 
 		List<LifeProposal> proposallist = new ArrayList<>();
 		FarmerProposalDTO dto = mapper.map(farmerProposalDTO, FarmerProposalDTO.class);
@@ -52,15 +50,12 @@ public class FarmerController {
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			ProposalResponseDTO farmerResponseDto = ProposalResponseDTO.builder()
-					.proposalID(proposal.getId())
-					.proposalNo(proposal.getProposalNo())
+			ProposalResponseDTO farmerResponseDto = ProposalResponseDTO.builder().proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
 					.proposedPremium(proposal.getProposedPremium()).build();
 			responseList.add(farmerResponseDto);
 		});
 
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
-				.responseBody(responseList).build();
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 		return responseDTO;
 	}
 

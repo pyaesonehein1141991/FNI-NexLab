@@ -27,20 +27,18 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping("/studentLife")
 @Api(tags = "studentLife")
 public class StudentLifeController {
-	
+
 	@Autowired
 	private StudentLifeProposalService studentLifeProposalService;
-	
+
 	@Autowired
 	private ModelMapper mapper;
-	
+
 	@PostMapping("/submitproposal")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
-	@ApiResponse(code = 403, message = "Access denied"),
-	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${StudentLifeController.submitproposal}")
-	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Student Life Proposal") 
-	@Valid @RequestBody StudentLifeDTO studentLifeDTO) {
+	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Student Life Proposal") @Valid @RequestBody StudentLifeDTO studentLifeDTO) {
 
 		List<LifeProposal> proposallist = new ArrayList<>();
 		StudentLifeDTO dto = mapper.map(studentLifeDTO, StudentLifeDTO.class);
@@ -52,15 +50,12 @@ public class StudentLifeController {
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			ProposalResponseDTO studentLifeResponseDto = ProposalResponseDTO.builder()
-					.proposalID(proposal.getId())
-					.proposalNo(proposal.getProposalNo())
+			ProposalResponseDTO studentLifeResponseDto = ProposalResponseDTO.builder().proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
 					.proposedPremium(proposal.getProposedPremium()).build();
 			responseList.add(studentLifeResponseDto);
 		});
 
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
-				.responseBody(responseList).build();
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 		return responseDTO;
 	}
 

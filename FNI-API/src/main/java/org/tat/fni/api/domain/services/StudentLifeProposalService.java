@@ -35,7 +35,7 @@ import org.tat.fni.api.exception.SystemException;
 
 @Service
 public class StudentLifeProposalService {
-	
+
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
@@ -61,32 +61,31 @@ public class StudentLifeProposalService {
 
 	@Autowired
 	private RelationshipService relationshipService;
-	
+
 	@Autowired
 	private GradeInfoService gradeInfoServie;
-	
+
 	@Autowired
 	private SchoolService schoolService;
 
 	@Autowired
 	private ICustomIdGenerator customId;
-	
+
 	public List<LifeProposal> createStudentLifeProposalDTOToProposal(StudentLifeDTO studentLifeProposalDTO) {
 		try {
 
 			List<LifeProposal> studentLifeProposalList = convertStudentLifeProposalDTOToProposal(studentLifeProposalDTO);
 			lifeProposalRepo.saveAll(studentLifeProposalList);
-			
-			String id = DateUtils.formattedSqlDate(new Date())
-			          .concat(studentLifeProposalList.get(0).getProposalNo());
+
+			String id = DateUtils.formattedSqlDate(new Date()).concat(studentLifeProposalList.get(0).getProposalNo());
 			String referenceNo = studentLifeProposalList.get(0).getId();
 			String referenceType = "FARMER";
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
 
 			lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
-			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,workflowDate);
-			
+			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate, workflowDate);
+
 			return studentLifeProposalList;
 
 		} catch (DAOException e) {
@@ -95,37 +94,31 @@ public class StudentLifeProposalService {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
 	}
-	
+
 	private List<LifeProposal> convertStudentLifeProposalDTOToProposal(StudentLifeDTO studentLifeProposalDTO) {
 
-		Optional<Branch> branchOptional = branchService
-				.findById(studentLifeProposalDTO.getBranchId());
-		Optional<Customer> customerOptional = customerService
-				.findById(studentLifeProposalDTO.getCustomerId());
-		Optional<PaymentType> paymentTypeOptional = paymentTypeService
-				.findById(studentLifeProposalDTO.getPaymentTypeId());
-		Optional<Agent> agentOptional = agentService
-				.findById(studentLifeProposalDTO.getAgentId());
-		Optional<SalesPoints> salePointOptional = salePointService
-				.findById(studentLifeProposalDTO.getSalesPointsId());
-		
+		Optional<Branch> branchOptional = branchService.findById(studentLifeProposalDTO.getBranchId());
+		Optional<Customer> customerOptional = customerService.findById(studentLifeProposalDTO.getCustomerId());
+		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(studentLifeProposalDTO.getPaymentTypeId());
+		Optional<Agent> agentOptional = agentService.findById(studentLifeProposalDTO.getAgentId());
+		Optional<SalesPoints> salePointOptional = salePointService.findById(studentLifeProposalDTO.getSalesPointsId());
+
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
-		
+
 		try {
 			studentLifeProposalDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
-				
+
 				LifeProposal lifeProposal = new LifeProposal();
 
-				lifeProposal.getProposalInsuredPersonList()
-				.add(createInsuredPersonForStudent(insuredPerson));
-				
+				lifeProposal.getProposalInsuredPersonList().add(createInsuredPersonForStudent(insuredPerson));
+
 				lifeProposal.setComplete(true);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(studentLifeProposalDTO.getSubmittedDate());
 				lifeProposal.setPeriodMonth(studentLifeProposalDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 
-				if(branchOptional.isPresent()) {
+				if (branchOptional.isPresent()) {
 					lifeProposal.setBranch(branchOptional.get());
 				}
 				if (paymentTypeOptional.isPresent()) {
@@ -156,7 +149,7 @@ public class StudentLifeProposalService {
 
 		return lifeProposalList;
 	}
-	
+
 	private ProposalInsuredPerson createInsuredPersonForStudent(StudentLifeProposalInsuredPersonDTO dto) {
 		try {
 
@@ -164,7 +157,7 @@ public class StudentLifeProposalService {
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			Optional<GradeInfo> gradeInfoOptional = gradeInfoServie.findById(dto.getGrateInfoId());
 			Optional<School> schoolOptional = schoolService.findById(dto.getSchoolId());
-			
+
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
 			residentAddress.setTownship(townshipOptional.get());

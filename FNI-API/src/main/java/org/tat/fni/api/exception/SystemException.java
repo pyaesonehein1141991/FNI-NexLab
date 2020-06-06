@@ -12,8 +12,8 @@ public class SystemException extends TransactionSystemException {
 		super(message);
 		this.errorCode = errorCode;
 	}
-	
-	public SystemException(int  errorCode, String message) {
+
+	public SystemException(int errorCode, String message) {
 		super(message);
 		this.statusCode = errorCode;
 	}
@@ -23,7 +23,7 @@ public class SystemException extends TransactionSystemException {
 		throwable.printStackTrace();
 		this.errorCode = errorCode;
 	}
-	
+
 	public SystemException(String errorCode, Object response, String message) {
 		super(message);
 		this.errorCode = errorCode;
@@ -33,7 +33,7 @@ public class SystemException extends TransactionSystemException {
 	public String getErrorCode() {
 		return errorCode;
 	}
-	
+
 	public Object getResponse() {
 		return response;
 	}
@@ -41,5 +41,5 @@ public class SystemException extends TransactionSystemException {
 	public int getStatusCode() {
 		return statusCode;
 	}
-	
+
 }

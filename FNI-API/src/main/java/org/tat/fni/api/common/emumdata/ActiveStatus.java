@@ -1,7 +1,7 @@
 package org.tat.fni.api.common.emumdata;
 
 public enum ActiveStatus {
-	ACTIVATE("activate"), DEACTIVATE("deactivate"),CONFIGURE("configure");
+	ACTIVATE("activate"), DEACTIVATE("deactivate"), CONFIGURE("configure");
 
 	private String label;
 

@@ -18,7 +18,6 @@ public interface IDGenDAOInf {
 	public IDGen getCustomNextNo(String generateItem, String productId) throws DAOException;
 
 	public IDGen getCustomNextNoByBranchId(String generateItem, String branchId);
-	
 
 	IDGen getNextId(String generateItem, boolean isIgnoreBranch) throws DAOException;
 

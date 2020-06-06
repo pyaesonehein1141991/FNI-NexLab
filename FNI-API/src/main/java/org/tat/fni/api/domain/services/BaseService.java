@@ -2,14 +2,10 @@ package org.tat.fni.api.domain.services;
 
 import java.util.Properties;
 
-import javax.annotation.Resource;
-
 import org.tat.fni.api.common.KeyFactor;
 import org.tat.fni.api.common.KeyFactorChecker;
 import org.tat.fni.api.common.emumdata.PeriodType;
-import org.tat.fni.api.common.interfaces.ICustomIDGenerators;
 import org.tat.fni.api.domain.Product;
-
 
 public class BaseService {
 	private final String SUM_INSURED = "SUM_INSURED";
@@ -25,18 +21,18 @@ public class BaseService {
 	protected final String PAYMENT = "PAYMENT";
 	protected final String FARMER = "FARMER";
 
-//	@Resource(name = "CustomIDGenerator")
-//	protected ICustomIDGenerators customIDGenerators;
+	// @Resource(name = "CustomIDGenerator")
+	// protected ICustomIDGenerators customIDGenerators;
 
-//	@Resource(name = "KEYFACTOR_ID_CONFIG")
+	// @Resource(name = "KEYFACTOR_ID_CONFIG")
 	private Properties keyFactorConfig;
 
-//	@Resource(name = "UserProcessService")
-//	protected IUserProcessService userProcessService;
-//
-//	public User getLoginUser() {
-//		return userProcessService.getLoginUser();
-//	}
+	// @Resource(name = "UserProcessService")
+	// protected IUserProcessService userProcessService;
+	//
+	// public User getLoginUser() {
+	// return userProcessService.getLoginUser();
+	// }
 
 	protected boolean isSumInsured(KeyFactor kf) {
 		if (kf.getId().trim().equals(keyFactorConfig.getProperty(SUM_INSURED))) {

@@ -27,21 +27,19 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping("/snakeBite")
 @Api(tags = "snakeBite")
 public class snakeBiteController {
-	
+
 	@Autowired
 	SnakeBiteProposalService snakeBiteProposalService;
-	
+
 	@Autowired
 	private ModelMapper mapper;
-	
+
 	@PostMapping("/submitproposal")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
-	@ApiResponse(code = 403, message = "Access denied"),
-	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${SnakeBiteController.submitproposal}")
-	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Snake Bite Life Proposal") 
-	@Valid @RequestBody SnakeBiteDTO snakeBiteDTO) {
-		
+	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Snake Bite Life Proposal") @Valid @RequestBody SnakeBiteDTO snakeBiteDTO) {
+
 		List<LifeProposal> proposallist = new ArrayList<>();
 		SnakeBiteDTO dto = mapper.map(snakeBiteDTO, SnakeBiteDTO.class);
 
@@ -52,17 +50,14 @@ public class snakeBiteController {
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			ProposalResponseDTO snakeBiteResponseDto = ProposalResponseDTO.builder()
-					.proposalID(proposal.getId())
-					.proposalNo(proposal.getProposalNo())
+			ProposalResponseDTO snakeBiteResponseDto = ProposalResponseDTO.builder().proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
 					.proposedPremium(proposal.getProposedPremium()).build();
 			responseList.add(snakeBiteResponseDto);
 		});
 
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
-				.responseBody(responseList).build();
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 		return responseDTO;
-		
+
 	}
 
 }

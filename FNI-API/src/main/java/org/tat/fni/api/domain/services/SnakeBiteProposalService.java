@@ -31,9 +31,6 @@ import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonBeneficiariesDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteProposalInsuredPersonDTO;
@@ -89,16 +86,15 @@ public class SnakeBiteProposalService {
 
 			List<LifeProposal> snakeBiteProposalList = convertSnakeBiteProposalDTOToProposal(snakeBiteDTO);
 			lifeProposalRepo.saveAll(snakeBiteProposalList);
-			
-			String id = DateUtils.formattedSqlDate(new Date())
-			          .concat(snakeBiteProposalList.get(0).getProposalNo());
+
+			String id = DateUtils.formattedSqlDate(new Date()).concat(snakeBiteProposalList.get(0).getProposalNo());
 			String referenceNo = snakeBiteProposalList.get(0).getId();
 			String referenceType = "SNAKE_BITE";
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
 
 			lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
-			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,workflowDate);
+			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate, workflowDate);
 
 			return snakeBiteProposalList;
 		} catch (DAOException e) {
@@ -107,42 +103,34 @@ public class SnakeBiteProposalService {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
 	}
-	
+
 	private List<LifeProposal> convertSnakeBiteProposalDTOToProposal(SnakeBiteDTO snakeBiteDTO) {
-		
-		Optional<Product> productOptional = productService
-				.findById(snakeBiteDTO.getProductId());
-		Optional<Branch> branchOptional = branchService
-				.findById(snakeBiteDTO.getBranchId());
-		Optional<Customer> customerOptional = customerService
-				.findById(snakeBiteDTO.getCustomerId());
-		Optional<Organization> organizationOptional = organizationService
-				.findById(snakeBiteDTO.getOrganizationId());
-		Optional<PaymentType> paymentTypeOptional = paymentTypeService
-				.findById(snakeBiteDTO.getPaymentTypeId());
-		Optional<Agent> agentOptional = agentService
-				.findById(snakeBiteDTO.getAgentId());
-		Optional<SalesPoints> salePointOptional = salePointService
-				.findById(snakeBiteDTO.getSalesPointsId());
-		
+
+		Optional<Product> productOptional = productService.findById(snakeBiteDTO.getProductId());
+		Optional<Branch> branchOptional = branchService.findById(snakeBiteDTO.getBranchId());
+		Optional<Customer> customerOptional = customerService.findById(snakeBiteDTO.getCustomerId());
+		Optional<Organization> organizationOptional = organizationService.findById(snakeBiteDTO.getOrganizationId());
+		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(snakeBiteDTO.getPaymentTypeId());
+		Optional<Agent> agentOptional = agentService.findById(snakeBiteDTO.getAgentId());
+		Optional<SalesPoints> salePointOptional = salePointService.findById(snakeBiteDTO.getSalesPointsId());
+
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
-		
+
 		try {
-			
+
 			snakeBiteDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
-				
+
 				LifeProposal lifeProposal = new LifeProposal();
-				
-				lifeProposal.getProposalInsuredPersonList()
-				.add(createInsuredPersonForSnakeBite(insuredPerson));
-				
+
+				lifeProposal.getProposalInsuredPersonList().add(createInsuredPersonForSnakeBite(insuredPerson));
+
 				lifeProposal.setComplete(true);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(snakeBiteDTO.getSubmittedDate());
 				lifeProposal.setPeriodMonth(snakeBiteDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
-				
-				if(branchOptional.isPresent()) {
+
+				if (branchOptional.isPresent()) {
 					lifeProposal.setBranch(branchOptional.get());
 				}
 				if (organizationOptional.isPresent()) {
@@ -160,33 +148,31 @@ public class SnakeBiteProposalService {
 				if (customerOptional.isPresent()) {
 					lifeProposal.setCustomer(customerOptional.get());
 				}
-				
+
 				String proposalNo = customId.getNextId("SNAKEBITE_PROPOSAL_NO", null);
 				lifeProposal.setStartDate(snakeBiteDTO.getStartDate());
 				lifeProposal.setEndDate(snakeBiteDTO.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
 
 				lifeProposalList.add(lifeProposal);
-				
+
 			});
-			
+
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
-		
+
 		return lifeProposalList;
 	}
-	
+
 	private ProposalInsuredPerson createInsuredPersonForSnakeBite(SnakeBiteProposalInsuredPersonDTO dto) {
-		
+
 		try {
 			Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
-			Optional<RelationShip> relationshipOptional = relationshipService
-					.findById(dto.getRelationshipId());
-			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
-					.findRiskyOccupationById(dto.getRiskyOccupationID());
+			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
+			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService.findRiskyOccupationById(dto.getRiskyOccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -240,9 +226,8 @@ public class SnakeBiteProposalService {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
 	}
-	
-	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
-			SnakeBiteProposalInsuredPersonBeneficiariesDTO dto) {
+
+	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(SnakeBiteProposalInsuredPersonBeneficiariesDTO dto) {
 		try {
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
@@ -280,7 +265,5 @@ public class SnakeBiteProposalService {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
 	}
-	
-	
 
 }

@@ -18,23 +18,23 @@ import org.tat.fni.api.exception.DAOException;
 //import org.tat.fni.api.common.interfaces.ICustomIDGenerator;
 
 @Service("CustomIDGenerator")
-@PropertySource(ignoreResourceNotFound=true,value="classpath:id-config.properties")
+@PropertySource(ignoreResourceNotFound = true, value = "classpath:id-config.properties")
 public class CustomIDGenerator implements ICustomIdGenerator {
 	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M-yyyy");
 
-//	@Resource(name = "ID_CONFIG")
+	// @Resource(name = "ID_CONFIG")
 	@Autowired
 	private PropertiesConfiguration properties;
 
 	@Resource(name = "IDGenDAO")
 	private IDGenDAOInf idGenDAO;
 
-//	@Resource(name = "IDConfigLoader")
-//	@Autowired
-//	private IDConfigLoader idConfigLoader;
+	// @Resource(name = "IDConfigLoader")
+	// @Autowired
+	// private IDConfigLoader idConfigLoader;
 
-//	@Resource(name = "UserProcessService")
-//	private IUserProcessService userProcessService;
+	// @Resource(name = "UserProcessService")
+	// private IUserProcessService userProcessService;
 
 	public String getNextId(String key, String productCode) throws CustomIDGeneratorException {
 		String id = null;
@@ -60,33 +60,36 @@ public class CustomIDGenerator implements ICustomIdGenerator {
 	}
 
 	/* This method is only for AutoRenewal Process */
-	//TODO FIXME PSH
-//	public String getNextIdForAutoRenewal(String key) throws CustomIDGeneratorException {
-//		String id = null;
-//		try {
-//			String genName = (String) properties.getProperty(key);
-//			id = formatIdForAutoRenewal(idGenDAO.getIDGenForAutoRenewal(genName), null);
-//		} catch (DAOException e) {
-//			throw new CustomIDGeneratorException(e.getErrorCode(), "Failed to generate a ID", e);
-//		}
-//		return id;
-//	}
+	// TODO FIXME PSH
+	// public String getNextIdForAutoRenewal(String key) throws
+	// CustomIDGeneratorException {
+	// String id = null;
+	// try {
+	// String genName = (String) properties.getProperty(key);
+	// id = formatIdForAutoRenewal(idGenDAO.getIDGenForAutoRenewal(genName),
+	// null);
+	// } catch (DAOException e) {
+	// throw new CustomIDGeneratorException(e.getErrorCode(), "Failed to
+	// generate a ID", e);
+	// }
+	// return id;
+	// }
 
 	/* This method is only for AutoRenewal Process */
-	
 
 	private String formatId(IDGen idGen, String productCode) {
 		String id = idGen.getMaxValue() + "";
 		String prefix = idGen.getPrefix();
 		String suffix = idGen.getSuffix();
 		int maxLength = idGen.getLength();
-		//TODO FIXME PSH Change Branch code
+		// TODO FIXME PSH Change Branch code
 		String branchCode = "001";
-//		if (idConfigLoader.isCentralizedSystem()) {
-//			branchCode = userProcessService.getLoginUser().getBranch().getPreFix();
-//		} else {
-//			branchCode = idConfigLoader.getBranchCode();
-//		}
+		// if (idConfigLoader.isCentralizedSystem()) {
+		// branchCode =
+		// userProcessService.getLoginUser().getBranch().getPreFix();
+		// } else {
+		// branchCode = idConfigLoader.getBranchCode();
+		// }
 		int idLength = id.length();
 		for (; (maxLength - idLength) > 0; idLength++) {
 			id = '0' + id;
@@ -110,11 +113,12 @@ public class CustomIDGenerator implements ICustomIdGenerator {
 		String suffix = idGen.getSuffix();
 		int maxLength = idGen.getLength();
 		String branchCode = null;
-//		if (idConfigLoader.isCentralizedSystem()) {
-//			branchCode = userProcessService.getLoginUser().getBranch().getPreFix();
-//		} else {
-//			branchCode = idConfigLoader.getBranchCode();
-//		}
+		// if (idConfigLoader.isCentralizedSystem()) {
+		// branchCode =
+		// userProcessService.getLoginUser().getBranch().getPreFix();
+		// } else {
+		// branchCode = idConfigLoader.getBranchCode();
+		// }
 		int idLength = id.length();
 		for (; (maxLength - idLength) > 0; idLength++) {
 			id = '0' + id;
@@ -162,10 +166,10 @@ public class CustomIDGenerator implements ICustomIdGenerator {
 	}
 
 	/* This method is only for AutoRenewal Process */
-//	public String getPrefixForAutoRenewal(Class cla) {
-//		String prefix = idConfigLoader.getFormat(cla.getName());
-//		return prefix;
-//	}
+	// public String getPrefixForAutoRenewal(Class cla) {
+	// String prefix = idConfigLoader.getFormat(cla.getName());
+	// return prefix;
+	// }
 
 	public String getPrefix(Class cla) {
 		return getPrefixStr(cla);
@@ -175,16 +179,18 @@ public class CustomIDGenerator implements ICustomIdGenerator {
 	// return getPrefixStr(cla, user);
 	// }
 
-	//TODO FIXME PSH
+	// TODO FIXME PSH
 	private String getPrefixStr(Class cla) {
-//		String branchCode = null;
-//		if (idConfigLoader.isCentralizedSystem()) {
-//			branchCode = user == null ? userProcessService.getLoginUser().getBranch().getBranchCode() : user.getBranch().getBranchCode();
-//		} else {
-//			branchCode = idConfigLoader.getBranchCode();
-//		}
-//		String prefix = idConfigLoader.getFormat(cla.getName());
-//		return prefix + branchCode;
+		// String branchCode = null;
+		// if (idConfigLoader.isCentralizedSystem()) {
+		// branchCode = user == null ?
+		// userProcessService.getLoginUser().getBranch().getBranchCode() :
+		// user.getBranch().getBranchCode();
+		// } else {
+		// branchCode = idConfigLoader.getBranchCode();
+		// }
+		// String prefix = idConfigLoader.getFormat(cla.getName());
+		// return prefix + branchCode;
 		return null;
 	}
 
@@ -192,10 +198,10 @@ public class CustomIDGenerator implements ICustomIdGenerator {
 		return simpleDateFormat.format(new Date());
 	}
 
-//	public static void main(String args[]) {
-//		CustomIDGenerator customIDGenerator = new CustomIDGenerator();
-//		customIDGenerator.getNextId("ss", "445");
-//	}
+	// public static void main(String args[]) {
+	// CustomIDGenerator customIDGenerator = new CustomIDGenerator();
+	// customIDGenerator.getNextId("ss", "445");
+	// }
 
 	public IDGen getIDGen(String key) throws CustomIDGeneratorException {
 		IDGen idGen = null;
@@ -257,8 +263,8 @@ public class CustomIDGenerator implements ICustomIdGenerator {
 		int maxLength = idGen.getLength();
 		String branchCode = null;
 
-		//TODO FIXME PSH
-//		branchCode = idConfigLoader.getBranchCode();
+		// TODO FIXME PSH
+		// branchCode = idConfigLoader.getBranchCode();
 
 		int idLength = id.length();
 		for (; (maxLength - idLength) > 0; idLength++) {
@@ -272,7 +278,5 @@ public class CustomIDGenerator implements ICustomIdGenerator {
 		id = prefix + "/" + getDateString() + "/" + id + "/" + branchCode;
 		return id;
 	}
-
-
 
 }

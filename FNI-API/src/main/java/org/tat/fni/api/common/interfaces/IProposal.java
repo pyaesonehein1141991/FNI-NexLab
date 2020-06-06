@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.tat.fni.api.domain.Currency;
 
-
 public interface IProposal {
 
 	public String getId();

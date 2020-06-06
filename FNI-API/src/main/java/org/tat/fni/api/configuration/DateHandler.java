@@ -9,8 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-public class DateHandler extends StdDeserializer<Date>{
- static final long serialVersionUID = 1L;
+public class DateHandler extends StdDeserializer<Date> {
+	static final long serialVersionUID = 1L;
 
 	public DateHandler() {
 		this(null);

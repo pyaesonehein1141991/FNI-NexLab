@@ -2,7 +2,9 @@ package org.tat.fni.api.controller.microHealthController;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,48 +23,41 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-
 @RestController
 @RequestMapping("/microHealth")
 @Api(tags = "microHealth")
 public class MicroHealthController {
 
-  @Autowired
-  private MicroHealthProposalService medicalProposalService;
+	@Autowired
+	private MicroHealthProposalService medicalProposalService;
 
-  @Autowired
-  private ModelMapper mapper;
+	@Autowired
+	private ModelMapper mapper;
 
-  @PostMapping("/submitproposal")
-  @ApiResponses(value = {@ApiResponse(code = 400, message = "Something went wrong"),
-  @ApiResponse(code = 403, message = "Access denied"),
-  @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
-  @ApiOperation(value = "${MicroHealthController.submitproposal}")
-  public ResponseDTO<Object> submitproposal(@ApiParam("Submit MicroHealth Proposal") 
-  @Valid @RequestBody MicroHealthDTO microHealthDTO) {
-	  
-    List<MedicalProposal> proposallist = new ArrayList<>();
-    MicroHealthDTO dto = mapper.map(microHealthDTO, MicroHealthDTO.class);
+	@PostMapping("/submitproposal")
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
+	@ApiOperation(value = "${MicroHealthController.submitproposal}")
+	public ResponseDTO<Object> submitproposal(@ApiParam("Submit MicroHealth Proposal") @Valid @RequestBody MicroHealthDTO microHealthDTO) {
 
-    // create micro health proposal
-    proposallist = medicalProposalService.createMicroHealthDtoToProposal(dto);
+		List<MedicalProposal> proposallist = new ArrayList<>();
+		MicroHealthDTO dto = mapper.map(microHealthDTO, MicroHealthDTO.class);
 
-    // create response object
-    List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
+		// create micro health proposal
+		proposallist = medicalProposalService.createMicroHealthDtoToProposal(dto);
 
-    proposallist.forEach(proposal -> {
-    	ProposalResponseDTO microHealthResponseDto = ProposalResponseDTO.builder()
-    			.proposalID(proposal.getId())
-    			.proposalNo(proposal.getProposalNo())
-    			.proposedPremium(proposal.getTotalPremium()).build();
-      responseList.add(microHealthResponseDto);
-    });
+		// create response object
+		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
-    ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
-    		.responseBody(responseList).build();
+		proposallist.forEach(proposal -> {
+			ProposalResponseDTO microHealthResponseDto = ProposalResponseDTO.builder().proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
+					.proposedPremium(proposal.getTotalPremium()).build();
+			responseList.add(microHealthResponseDto);
+		});
 
-    return responseDTO;
-  }
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 
+		return responseDTO;
+	}
 
 }

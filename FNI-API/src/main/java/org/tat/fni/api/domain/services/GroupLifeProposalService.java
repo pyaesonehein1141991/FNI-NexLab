@@ -40,7 +40,7 @@ import org.tat.fni.api.exception.SystemException;
 public class GroupLifeProposalService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
-	
+
 	@Autowired
 	private LifeProposalRepository lifeProposalRepo;
 
@@ -82,17 +82,15 @@ public class GroupLifeProposalService {
 
 			List<LifeProposal> groupLifeProposalList = convertGroupLifeProposalDTOToProposal(groupLifeDTO);
 			lifeProposalRepo.saveAll(groupLifeProposalList);
-			
-			String id = DateUtils.formattedSqlDate(new Date())
-			          .concat(groupLifeProposalList.get(0).getProposalNo());
+
+			String id = DateUtils.formattedSqlDate(new Date()).concat(groupLifeProposalList.get(0).getProposalNo());
 			String referenceNo = groupLifeProposalList.get(0).getId();
 			String referenceType = "GROUP_LIFE";
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
 
 			lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
-			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,
-			    workflowDate);
+			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate, workflowDate);
 
 			return groupLifeProposalList;
 
@@ -126,7 +124,7 @@ public class GroupLifeProposalService {
 				lifeProposal.setPeriodMonth(groupLifeDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 
-				if(branchOptional.isPresent()) {
+				if (branchOptional.isPresent()) {
 					lifeProposal.setBranch(branchOptional.get());
 				}
 				if (organizationOptional.isPresent()) {
@@ -244,8 +242,7 @@ public class GroupLifeProposalService {
 		return customer;
 	}
 
-	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
-			GroupLifeProposalInsuredPersonBeneficiariesDTO dto) {
+	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(GroupLifeProposalInsuredPersonBeneficiariesDTO dto) {
 		try {
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());

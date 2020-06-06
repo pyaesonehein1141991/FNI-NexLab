@@ -2,7 +2,9 @@ package org.tat.fni.api.controller.individualHealthController;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,49 +23,41 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-
 @RestController
 @RequestMapping("/individualHealth")
 @Api(tags = "individualHealth")
 public class IndividualHealthController {
 
-  @Autowired
-  private IndividualHealthProposalService medicalProposalService;
+	@Autowired
+	private IndividualHealthProposalService medicalProposalService;
 
-  @Autowired
-  private ModelMapper mapper;
+	@Autowired
+	private ModelMapper mapper;
 
-  @PostMapping("/submitproposal")
-  @ApiResponses(value = {@ApiResponse(code = 400, message = "Something went wrong"),
-  @ApiResponse(code = 403, message = "Access denied"),
-  @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
-  @ApiOperation(value = "${IndividualHealthController.submitproposal}")
-  public ResponseDTO<Object> submitproposal(@ApiParam("Submit IndividualHealth Proposal") 
-  @Valid @RequestBody IndividualHealthInsuranceDTO individualHealthInsuranceDTO) {
-	  
-    List<MedicalProposal> proposallist = new ArrayList<>();
-    IndividualHealthInsuranceDTO dto =
-        mapper.map(individualHealthInsuranceDTO, IndividualHealthInsuranceDTO.class);
+	@PostMapping("/submitproposal")
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
+	@ApiOperation(value = "${IndividualHealthController.submitproposal}")
+	public ResponseDTO<Object> submitproposal(@ApiParam("Submit IndividualHealth Proposal") @Valid @RequestBody IndividualHealthInsuranceDTO individualHealthInsuranceDTO) {
 
-    // create individual health proposal
-    proposallist = medicalProposalService.createIndividualHealthDtoToProposal(dto);
+		List<MedicalProposal> proposallist = new ArrayList<>();
+		IndividualHealthInsuranceDTO dto = mapper.map(individualHealthInsuranceDTO, IndividualHealthInsuranceDTO.class);
 
-    // create response object
-    List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
+		// create individual health proposal
+		proposallist = medicalProposalService.createIndividualHealthDtoToProposal(dto);
 
-    proposallist.forEach(proposal -> {
-    	ProposalResponseDTO individualHealthResponseDto = ProposalResponseDTO.builder()
-          .proposalID(proposal.getId())
-          .proposalNo(proposal.getProposalNo())
-          .proposedPremium(proposal.getTotalPremium()).build();
-      responseList.add(individualHealthResponseDto);
-    });
+		// create response object
+		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
-    ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
-    		.responseBody(responseList).build();
+		proposallist.forEach(proposal -> {
+			ProposalResponseDTO individualHealthResponseDto = ProposalResponseDTO.builder().proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
+					.proposedPremium(proposal.getTotalPremium()).build();
+			responseList.add(individualHealthResponseDto);
+		});
 
-    return responseDTO;
-  }
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 
+		return responseDTO;
+	}
 
 }

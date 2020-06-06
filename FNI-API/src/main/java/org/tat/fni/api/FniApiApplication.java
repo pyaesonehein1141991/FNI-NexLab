@@ -16,10 +16,11 @@ import org.tat.fni.api.common.emumdata.Role;
 
 @SpringBootApplication
 public class FniApiApplication implements CommandLineRunner {
-//	@Autowired
-//	private UserService userService;
+	// @Autowired
+	// private UserService userService;
 
-//	private static final Logger LOGGER = LogManager.getLogger(GginlApiApplication.class);
+	// private static final Logger LOGGER =
+	// LogManager.getLogger(GginlApiApplication.class);
 	private static final Logger LOGGER = LoggerFactory.getLogger(FniApiApplication.class);
 
 	public static void main(String[] args) {
@@ -50,7 +51,7 @@ public class FniApiApplication implements CommandLineRunner {
 		admin.setEmail("admin@email.com");
 		admin.setRoles(new ArrayList<Role>(Arrays.asList(Role.ROLE_ADMIN)));
 
-//	    userService.signup(admin);
+		// userService.signup(admin);
 
 		SecurityUser client = new SecurityUser();
 		client.setUsername("client");
@@ -58,6 +59,6 @@ public class FniApiApplication implements CommandLineRunner {
 		client.setEmail("client@email.com");
 		client.setRoles(new ArrayList<Role>(Arrays.asList(Role.ROLE_CLIENT)));
 
-//	    userService.signup(client);
+		// userService.signup(client);
 	}
 }

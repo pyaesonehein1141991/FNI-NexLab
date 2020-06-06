@@ -27,20 +27,18 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping("/groupLife")
 @Api(tags = "groupLife")
 public class GroupLifeController {
-	
+
 	@Autowired
 	private GroupLifeProposalService groupLifeProposalService;
 
 	@Autowired
 	private ModelMapper mapper;
-	
+
 	@PostMapping("/submitproposal")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
-	@ApiResponse(code = 403, message = "Access denied"),
-	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${GroupLifeController.submitproposal}")
-	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Group Life Proposal")
-	@Valid @RequestBody GroupLifeDTO groupLifeDTO) {
+	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Group Life Proposal") @Valid @RequestBody GroupLifeDTO groupLifeDTO) {
 
 		List<LifeProposal> proposallist = new ArrayList<>();
 		GroupLifeDTO dto = mapper.map(groupLifeDTO, GroupLifeDTO.class);
@@ -52,15 +50,12 @@ public class GroupLifeController {
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			ProposalResponseDTO groupLifeResponsedto = ProposalResponseDTO.builder()
-					.proposalID(proposal.getId())
-					.proposalNo(proposal.getProposalNo())
+			ProposalResponseDTO groupLifeResponsedto = ProposalResponseDTO.builder().proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
 					.proposedPremium(proposal.getProposedPremium()).build();
 			responseList.add(groupLifeResponsedto);
 		});
 
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
-				.responseBody(responseList).build();
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 		return responseDTO;
 	}
 

@@ -569,12 +569,12 @@ public class Utils {
 		return false;
 	}
 
-//	public static <T> boolean isLifePolicy(T lifePolicy) {
-//		if (lifePolicy instanceof LifePolicy) {
-//			return true;
-//		}
-//		return false;
-//	}
+	// public static <T> boolean isLifePolicy(T lifePolicy) {
+	// if (lifePolicy instanceof LifePolicy) {
+	// return true;
+	// }
+	// return false;
+	// }
 
 	public static boolean isNullOrEmpty(String value) {
 		if (value == null || value.isEmpty()) {
@@ -791,7 +791,7 @@ public class Utils {
 	public static String getResourceAsString(String filepath) throws IOException {
 		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(filepath);
 		StringWriter writer = new StringWriter();
-		IOUtils.copy(inputStream, writer,Charset.defaultCharset());
+		IOUtils.copy(inputStream, writer, Charset.defaultCharset());
 		return writer.toString();
 	}
 
@@ -915,11 +915,12 @@ public class Utils {
 		return false;
 	}
 
-//	public static String getSystemPath() {
-//		Object context = FacesContext.getCurrentInstance().getExternalContext().getContext();
-//		String systemPath = ((ServletContext) context).getRealPath("/");
-//		return systemPath;
-//	}
+	// public static String getSystemPath() {
+	// Object context =
+	// FacesContext.getCurrentInstance().getExternalContext().getContext();
+	// String systemPath = ((ServletContext) context).getRealPath("/");
+	// return systemPath;
+	// }
 
 	public static String getCompleteName(String initialId, Name name) {
 		String result = "";

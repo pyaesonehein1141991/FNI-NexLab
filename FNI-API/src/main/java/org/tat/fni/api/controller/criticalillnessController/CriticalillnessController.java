@@ -2,7 +2,9 @@ package org.tat.fni.api.controller.criticalillnessController;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,13 +35,11 @@ public class CriticalillnessController {
 	private ModelMapper mapper;
 
 	@PostMapping("/submitproposal")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
-	@ApiResponse(code = 403, message = "Access denied"),
-	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${CriticalillnessController.submitproposal}")
-	public ResponseDTO<Object> submitproposal(@ApiParam("Submit CriticalillnessController Proposal") 
-	@Valid @RequestBody IndividualCriticalIllnessDTO criticalillnessDTO) {
-		
+	public ResponseDTO<Object> submitproposal(@ApiParam("Submit CriticalillnessController Proposal") @Valid @RequestBody IndividualCriticalIllnessDTO criticalillnessDTO) {
+
 		List<MedicalProposal> proposallist = new ArrayList<>();
 		IndividualCriticalIllnessDTO dto = mapper.map(criticalillnessDTO, IndividualCriticalIllnessDTO.class);
 
@@ -50,15 +50,12 @@ public class CriticalillnessController {
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			ProposalResponseDTO individualCriticalIllnessResponseDto = ProposalResponseDTO.builder()
-					.proposalID(proposal.getId())
-					.proposalNo(proposal.getProposalNo())
+			ProposalResponseDTO individualCriticalIllnessResponseDto = ProposalResponseDTO.builder().proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
 					.proposedPremium(proposal.getTotalPremium()).build();
 			responseList.add(individualCriticalIllnessResponseDto);
 		});
 
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!")
-				.responseBody(responseList).build();
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 
 		return responseDTO;
 	}
