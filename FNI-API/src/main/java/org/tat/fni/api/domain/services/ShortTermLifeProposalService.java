@@ -155,7 +155,10 @@ public class ShortTermLifeProposalService {
           salePointService.findById(shortTermEndowmentLifeDto.getSalesPointsId());
 
       shortTermEndowmentLifeDto.getProposalInsuredPersonList().forEach(insuredPerson -> {
+
         LifeProposal lifeProposal = new LifeProposal();
+
+
 
         lifeProposal.getProposalInsuredPersonList()
             .add(createInsuredPersonForShortTerm(insuredPerson));
@@ -163,7 +166,6 @@ public class ShortTermLifeProposalService {
 
 
         lifeProposal.setComplete(true);
-        lifeProposal.setPeriodMonth(shortTermEndowmentLifeDto.getPeriodMonth());
         lifeProposal.setProposalType(ProposalType.UNDERWRITING);
         lifeProposal.setSubmittedDate(shortTermEndowmentLifeDto.getSubmittedDate());
 
@@ -262,6 +264,18 @@ public class ShortTermLifeProposalService {
       }
       if (relationshipOptional.isPresent()) {
         insuredPerson.setRelationship(relationshipOptional.get());
+      }
+
+
+      for (InsuredPersonKeyFactorValue vehKF : insuredPerson.getKeyFactorValueList()) {
+        KeyFactor kf = vehKF.getKeyFactor();
+        if (KeyFactorChecker.isSumInsured(kf)) {
+          vehKF.setValue(dto.getApprovedSumInsured() + "");
+        } else if (KeyFactorChecker.isAge(kf) || KeyFactorChecker.isMedicalAge(kf)) {
+          vehKF.setValue(dto.getAge() + "");
+        } else if (KeyFactorChecker.isTerm(kf)) {
+          vehKF.setValue(dto.getPeriodMonth() + "");
+        }
       }
 
       String insPersonCodeNo = customIdRepo.getNextId("LIFE_INSUREDPERSON_CODENO", null);
