@@ -35,6 +35,11 @@ public class SwaggerConfig {
 				.useDefaultResponseMessages(false)//
 				.securitySchemes(new ArrayList<>(Arrays.asList(new ApiKey("Bearer %token", "Authorization", "Header"))))//
 				.tags(new Tag("users", "Operations about users"))//
+				.tags(new Tag("criticalillness", "Operations about Criticalillness")).tags(new Tag("farmer", "Operations about Farmer"))
+				.tags(new Tag("groupLife", "Operations about Group Life")).tags(new Tag("individualHealth", "Operations about Individual Health"))
+				.tags(new Tag("microHealth", "Operations about Micro Health")).tags(new Tag("personalAccident", "Operations about Personal Accident"))
+				.tags(new Tag("shortTermEndowment", "Operations about Short Term Endowment")).tags(new Tag("snakeBite", "Operations about Snake Bite"))
+				.tags(new Tag("sportMan", "Operations about Sport Man")).tags(new Tag("studentLife", "Operations about Student Life"))
 				.tags(new Tag("Group-Farmer", "Operation about group farmer")).tags(new Tag("ping", "Just a ping"))//
 				.genericModelSubstitutes(Optional.class);
 

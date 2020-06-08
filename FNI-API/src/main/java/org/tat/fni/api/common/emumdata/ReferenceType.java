@@ -1,10 +1,5 @@
 package org.tat.fni.api.common.emumdata;
 
-/****
- * @purpose used in Workflow, AcceptedInfo
- * @author User
- *
- */
 public enum ReferenceType {
 
 	/* Health */

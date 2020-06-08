@@ -1,9 +1,7 @@
 package org.tat.fni.api.common.emumdata;
 
 public enum ProductGroupType {
-	LIFE("LIFE"), 
-	NONLIFE("NONLIFE"), 
-	COMPOSITE("COMPOSITE");
+	LIFE("LIFE"), NONLIFE("NONLIFE"), COMPOSITE("COMPOSITE");
 
 	private String label;
 

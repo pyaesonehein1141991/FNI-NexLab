@@ -15,23 +15,23 @@ import org.tat.fni.api.exception.SystemException;
 
 @Service(value = "RiskyOccupationService")
 public class RiskyOccupationService extends BaseService implements IRiskyOccupationService {
-	
+
 	@Resource(name = "RiskyOccupationDAO")
 	private IRiskyOccupationDAO riskyOccupationDAO;
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void addNewRiskyOccupation(RiskyOccupation riskyOccupation) {
 		try {
 			riskyOccupationDAO.insert(riskyOccupation);
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), "Faield to add a new RiskyOccupation", e);
 		}
-		
+
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void updateRiskyOccupation(RiskyOccupation riskyOccupation) {
 		try {
 			riskyOccupationDAO.update(riskyOccupation);
@@ -41,7 +41,7 @@ public class RiskyOccupationService extends BaseService implements IRiskyOccupat
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void deleteRiskyOccupation(RiskyOccupation riskyOccupation) {
 		try {
 			riskyOccupationDAO.delete(riskyOccupation);
@@ -51,11 +51,11 @@ public class RiskyOccupationService extends BaseService implements IRiskyOccupat
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public Optional<RiskyOccupation> findRiskyOccupationById(String id) {
-		Optional<RiskyOccupation> result=null;
+		Optional<RiskyOccupation> result = null;
 		try {
-			result=riskyOccupationDAO.findById(id);
+			result = riskyOccupationDAO.findById(id);
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), "Faield to find RiskyOccupation by Id", e);
 		}
@@ -63,11 +63,11 @@ public class RiskyOccupationService extends BaseService implements IRiskyOccupat
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public List<RiskyOccupation> findAllRiskyOccupation() {
-		List<RiskyOccupation> result=null;
+		List<RiskyOccupation> result = null;
 		try {
-			result=riskyOccupationDAO.findAll();
+			result = riskyOccupationDAO.findAll();
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), "Faield to find All RiskyOccupation", e);
 		}

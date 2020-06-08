@@ -8,7 +8,7 @@ import org.springframework.core.env.Environment;
 public class PropertiesConfiguration {
 	@Autowired
 	private Environment env;
-	
+
 	public String getProperty(String key) {
 		return env.getProperty(key);
 	}

@@ -59,5 +59,5 @@ public class GroupLifeProposalInsuredPersonBeneficiariesDTO {
 	@NotBlank(message = "residentTownshipId is mandatory")
 	@NotEmpty
 	private String residentTownshipId;
-	
+
 }

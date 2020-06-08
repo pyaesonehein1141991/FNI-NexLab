@@ -16,7 +16,6 @@ import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.common.emumdata.ProposalType;
 import org.tat.fni.api.common.emumdata.SaleChannelType;
-import org.tat.fni.api.common.interfaces.ICustomIDGenerators;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
@@ -37,10 +36,8 @@ import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonDTO;
-import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
-import org.tat.fni.api.common.interfaces.ICustomIDGenerators;
 
 @Service
 public class FarmerLifeProposalService {
@@ -94,17 +91,16 @@ public class FarmerLifeProposalService {
 
 			List<LifeProposal> farmerProposalList = convertFarmerProposalDTOToProposal(farmerProposalDTO);
 			lifeProposalRepo.saveAll(farmerProposalList);
-			
-			String id = DateUtils.formattedSqlDate(new Date())
-			          .concat(farmerProposalList.get(0).getProposalNo());
+
+			String id = DateUtils.formattedSqlDate(new Date()).concat(farmerProposalList.get(0).getProposalNo());
 			String referenceNo = farmerProposalList.get(0).getId();
 			String referenceType = "FARMER";
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
 
 			lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
-			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate,workflowDate);
-			
+			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate, workflowDate);
+
 			return farmerProposalList;
 
 		} catch (DAOException e) {
@@ -116,38 +112,30 @@ public class FarmerLifeProposalService {
 
 	private List<LifeProposal> convertFarmerProposalDTOToProposal(FarmerProposalDTO farmerProposalDTO) {
 
-		Optional<Product> productOptional = productService
-				.findById(farmerProposalDTO.getProductId());
-		Optional<Branch> branchOptional = branchService
-				.findById(farmerProposalDTO.getBranchId());
-		Optional<Customer> customerOptional = customerService
-				.findById(farmerProposalDTO.getCustomerId());
-		Optional<Organization> organizationOptional = organizationService
-				.findById(farmerProposalDTO.getOrganizationId());
-		Optional<PaymentType> paymentTypeOptional = paymentTypeService
-				.findById(farmerProposalDTO.getPaymentTypeId());
-		Optional<Agent> agentOptional = agentService
-				.findById(farmerProposalDTO.getAgentId());
-		Optional<SalesPoints> salePointOptional = salePointService
-				.findById(farmerProposalDTO.getSalesPointsId());
-		
+		Optional<Product> productOptional = productService.findById(farmerProposalDTO.getProductId());
+		Optional<Branch> branchOptional = branchService.findById(farmerProposalDTO.getBranchId());
+		Optional<Customer> customerOptional = customerService.findById(farmerProposalDTO.getCustomerId());
+		Optional<Organization> organizationOptional = organizationService.findById(farmerProposalDTO.getOrganizationId());
+		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(farmerProposalDTO.getPaymentTypeId());
+		Optional<Agent> agentOptional = agentService.findById(farmerProposalDTO.getAgentId());
+		Optional<SalesPoints> salePointOptional = salePointService.findById(farmerProposalDTO.getSalesPointsId());
+
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
-		
+
 		try {
 			farmerProposalDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
-				
+
 				LifeProposal lifeProposal = new LifeProposal();
 
-				lifeProposal.getProposalInsuredPersonList()
-				.add(createInsuredPersonForFarmer(insuredPerson));
-				
+				lifeProposal.getProposalInsuredPersonList().add(createInsuredPersonForFarmer(insuredPerson));
+
 				lifeProposal.setComplete(true);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(farmerProposalDTO.getSubmittedDate());
 				lifeProposal.setPeriodMonth(farmerProposalDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 
-				if(branchOptional.isPresent()) {
+				if (branchOptional.isPresent()) {
 					lifeProposal.setBranch(branchOptional.get());
 				}
 				if (organizationOptional.isPresent()) {
@@ -189,8 +177,7 @@ public class FarmerLifeProposalService {
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
-					.findRiskyOccupationById(dto.getRiskyOccupationID());
+			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService.findRiskyOccupationById(dto.getRiskyOccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -243,8 +230,7 @@ public class FarmerLifeProposalService {
 		}
 	}
 
-	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
-			FarmerProposalInsuredPersonBeneficiariesDTO dto) {
+	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(FarmerProposalInsuredPersonBeneficiariesDTO dto) {
 		try {
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());

@@ -1,8 +1,8 @@
-//package org.tat.fni.api.common.interfaces;
+// package org.tat.fni.api.common.interfaces;
 //
-//import org.tat.fni.api.domain.User;
+// import org.tat.fni.api.domain.User;
 //
-//public interface IUserProcessService {
-//	public void registerUser(User user);
-//	public User getLoginUser();
-//}
+// public interface IUserProcessService {
+// public void registerUser(User user);
+// public User getLoginUser();
+// }

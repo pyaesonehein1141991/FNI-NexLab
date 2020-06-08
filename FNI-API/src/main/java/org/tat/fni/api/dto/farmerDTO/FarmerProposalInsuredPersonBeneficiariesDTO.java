@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 public class FarmerProposalInsuredPersonBeneficiariesDTO {
-	
+
 	@ApiModelProperty(position = 0, example = "U", required = true)
 	@NotBlank(message = "InitialId is mandatory")
 	private String initialId;

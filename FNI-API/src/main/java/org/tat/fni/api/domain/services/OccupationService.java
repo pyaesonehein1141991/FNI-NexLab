@@ -2,6 +2,7 @@ package org.tat.fni.api.domain.services;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,34 +15,33 @@ import org.tat.fni.api.exception.ErrorCode;
 @Service
 public class OccupationService {
 
-  @Autowired
-  private OccupationRepository occupationRepository;
+	@Autowired
+	private OccupationRepository occupationRepository;
 
-  public List<Occupation> findAll() {
-    return occupationRepository.findAll();
-  }
+	public List<Occupation> findAll() {
+		return occupationRepository.findAll();
+	}
 
-  public List<Object[]> findAllNativeObject() {
-    return occupationRepository.findAllNativeObject();
-  }
+	public List<Object[]> findAllNativeObject() {
+		return occupationRepository.findAllNativeObject();
+	}
 
-  public List<Object> findAllColumnName() {
-    return occupationRepository.findAllColumnName();
-  }
+	public List<Object> findAllColumnName() {
+		return occupationRepository.findAllColumnName();
+	}
 
-  @Transactional
-  public Optional<Occupation> findById(String id) throws DAOException {
-    if (!StringUtils.isBlank(id)) {
-      if (occupationRepository.findById(id).isPresent()) {
-        return occupationRepository.findById(id);
-      } else {
-        throw new DAOException(ErrorCode.SYSTEM_ERROR_RESOURCE_NOT_FOUND,
-            id + " not found in Occupation");
-      }
-    } else {
-      return Optional.empty();
-    }
+	@Transactional
+	public Optional<Occupation> findById(String id) throws DAOException {
+		if (!StringUtils.isBlank(id)) {
+			if (occupationRepository.findById(id).isPresent()) {
+				return occupationRepository.findById(id);
+			} else {
+				throw new DAOException(ErrorCode.SYSTEM_ERROR_RESOURCE_NOT_FOUND, id + " not found in Occupation");
+			}
+		} else {
+			return Optional.empty();
+		}
 
-  }
+	}
 
 }
