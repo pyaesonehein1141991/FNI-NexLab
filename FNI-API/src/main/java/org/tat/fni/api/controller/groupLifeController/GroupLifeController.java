@@ -36,7 +36,7 @@ public class GroupLifeController {
 
 	@PostMapping("/submitproposal")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
-			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
+	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${GroupLifeController.submitproposal}")
 	public ResponseDTO<Object> submitproposal(@ApiParam("Submit Group Life Proposal") @Valid @RequestBody GroupLifeDTO groupLifeDTO) {
 
