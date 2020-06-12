@@ -26,8 +26,11 @@ import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.School;
 import org.tat.fni.api.domain.Township;
+import org.tat.fni.api.domain.lifepolicy.LifePolicy;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
+import org.tat.fni.api.domain.services.commonServices.LifeProposalService;
+import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.studentLifeDTO.StudentLifeDTO;
 import org.tat.fni.api.dto.studentLifeDTO.StudentLifeProposalInsuredPersonDTO;
 import org.tat.fni.api.exception.DAOException;
@@ -40,6 +43,9 @@ public class StudentLifeProposalService {
 
 	@Autowired
 	private LifeProposalRepository lifeProposalRepo;
+
+	@Autowired
+	private LifeProposalService commonLifeProposalService;
 
 	@Autowired
 	private PaymentTypeService paymentTypeService;
@@ -74,7 +80,8 @@ public class StudentLifeProposalService {
 	public List<LifeProposal> createStudentLifeProposalDTOToProposal(StudentLifeDTO studentLifeProposalDTO) {
 		try {
 
-			List<LifeProposal> studentLifeProposalList = convertStudentLifeProposalDTOToProposal(studentLifeProposalDTO);
+			List<LifeProposal> studentLifeProposalList = convertStudentLifeProposalDTOToProposal(
+					studentLifeProposalDTO);
 			lifeProposalRepo.saveAll(studentLifeProposalList);
 
 			String id = DateUtils.formattedSqlDate(new Date()).concat(studentLifeProposalList.get(0).getProposalNo());
@@ -99,7 +106,8 @@ public class StudentLifeProposalService {
 
 		Optional<Branch> branchOptional = branchService.findById(studentLifeProposalDTO.getBranchId());
 		Optional<Customer> customerOptional = customerService.findById(studentLifeProposalDTO.getCustomerId());
-		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(studentLifeProposalDTO.getPaymentTypeId());
+		Optional<PaymentType> paymentTypeOptional = paymentTypeService
+				.findById(studentLifeProposalDTO.getPaymentTypeId());
 		Optional<Agent> agentOptional = agentService.findById(studentLifeProposalDTO.getAgentId());
 		Optional<SalesPoints> salePointOptional = salePointService.findById(studentLifeProposalDTO.getSalesPointsId());
 
@@ -206,6 +214,12 @@ public class StudentLifeProposalService {
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
+	}
+
+	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
+
+		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
+
 	}
 
 }

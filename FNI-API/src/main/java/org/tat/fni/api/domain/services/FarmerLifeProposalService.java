@@ -1,6 +1,7 @@
 package org.tat.fni.api.domain.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.common.emumdata.IdType;
+import org.tat.fni.api.common.emumdata.ProposalStatus;
 import org.tat.fni.api.common.emumdata.ProposalType;
 import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
@@ -30,12 +32,16 @@ import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.RiskyOccupation;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
+import org.tat.fni.api.domain.lifepolicy.LifePolicy;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
+import org.tat.fni.api.domain.repository.LifePolicyRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
+import org.tat.fni.api.domain.services.commonServices.LifeProposalService;
 //import org.tat.fni.api.domain.repository.FarmerRepository;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -46,6 +52,9 @@ public class FarmerLifeProposalService {
 
 	@Autowired
 	private LifeProposalRepository lifeProposalRepo;
+	
+	@Autowired
+	private LifeProposalService commonLifeProposalService;
 
 	@Autowired
 	private PaymentTypeService paymentTypeService;
@@ -115,7 +124,8 @@ public class FarmerLifeProposalService {
 		Optional<Product> productOptional = productService.findById(farmerProposalDTO.getProductId());
 		Optional<Branch> branchOptional = branchService.findById(farmerProposalDTO.getBranchId());
 		Optional<Customer> customerOptional = customerService.findById(farmerProposalDTO.getCustomerId());
-		Optional<Organization> organizationOptional = organizationService.findById(farmerProposalDTO.getOrganizationId());
+		Optional<Organization> organizationOptional = organizationService
+				.findById(farmerProposalDTO.getOrganizationId());
 		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(farmerProposalDTO.getPaymentTypeId());
 		Optional<Agent> agentOptional = agentService.findById(farmerProposalDTO.getAgentId());
 		Optional<SalesPoints> salePointOptional = salePointService.findById(farmerProposalDTO.getSalesPointsId());
@@ -177,7 +187,8 @@ public class FarmerLifeProposalService {
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService.findRiskyOccupationById(dto.getRiskyOccupationID());
+			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
+					.findRiskyOccupationById(dto.getRiskyOccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -230,7 +241,8 @@ public class FarmerLifeProposalService {
 		}
 	}
 
-	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(FarmerProposalInsuredPersonBeneficiariesDTO dto) {
+	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
+			FarmerProposalInsuredPersonBeneficiariesDTO dto) {
 		try {
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
@@ -267,6 +279,12 @@ public class FarmerLifeProposalService {
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
+	}
+
+	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
+		
+		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
+		
 	}
 
 }

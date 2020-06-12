@@ -1,4 +1,4 @@
-package org.tat.fni.api.dto.proposalResponseDTO;
+package org.tat.fni.api.dto.responseDTO;
 
 import lombok.Builder;
 import lombok.Data;

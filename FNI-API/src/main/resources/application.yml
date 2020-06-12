@@ -19,6 +19,7 @@ spring:
   
 server:
    port: ${PORT:8082} # This is the default port anyway, but you can change it here
+
    
 farmerProductId: ISPRD003001000009376125072017
 studentLifeProductId: ISPRD003000009607306082019
@@ -50,23 +51,33 @@ UserController:
   submitProposal: Create proposal and return proposal number
 FarmerController:
   submitproposal: Create Farmer Life Proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 GroupLifeController:
   submitproposal: Create Group Life Proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 ShortTermEndowmentLifeController:
   submitproposal: Create Short Term Endowment Life proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 StudentLifeController:
   submitproposal: Create Student Life proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 BillCollectionController:
   payment: Create Subsequent Payment
 SnakeBiteController:
   submitproposal: Create Snake Bite Life proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 IndividualHealthController:
   submitproposal: Create Individual Health proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 CriticalillnessController:
   submitproposal: Create Critical Illness proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 MicroHealthController:
   submitproposal: Create Micro Health proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 PersonalAccidentController:
   submitproposal: Create Personal Accident proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 SportManController:
   submitproposal: Create Sportman proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved

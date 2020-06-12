@@ -21,6 +21,7 @@ import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.DateUtils;
+import org.tat.fni.api.domain.MedicalPolicy;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.MedicalProposalInsuredPerson;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonBeneficiaries;
@@ -34,9 +35,11 @@ import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
+import org.tat.fni.api.domain.services.commonServices.LifeProposalService;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.proposalDTO.ProposalMedicalDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -47,6 +50,9 @@ public class MicroHealthProposalService {
 
 	@Autowired
 	private MedicalProposalRepository medicalProposalRepo;
+	
+	@Autowired
+	private LifeProposalService commonLifeProposalService;
 
 	@Autowired
 	private BranchService branchService;
@@ -242,6 +248,12 @@ public class MicroHealthProposalService {
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
+	}
+	
+	public List<MedicalPolicy> retrievePolicyInfo(ProposalMedicalDTO proposalDto) {
+
+		return commonLifeProposalService.retrieveMedicalPolicyList(proposalDto);
+
 	}
 
 }
