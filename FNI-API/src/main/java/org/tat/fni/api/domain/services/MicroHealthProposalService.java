@@ -35,7 +35,6 @@ import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
-import org.tat.fni.api.domain.services.commonServices.LifeProposalService;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonDTO;
@@ -52,7 +51,7 @@ public class MicroHealthProposalService {
 	private MedicalProposalRepository medicalProposalRepo;
 	
 	@Autowired
-	private LifeProposalService commonLifeProposalService;
+	private LifePolicyService commonLifeProposalService;
 
 	@Autowired
 	private BranchService branchService;

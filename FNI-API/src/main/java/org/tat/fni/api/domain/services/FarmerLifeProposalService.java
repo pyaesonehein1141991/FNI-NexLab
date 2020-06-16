@@ -36,12 +36,12 @@ import org.tat.fni.api.domain.lifepolicy.LifePolicy;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifePolicyRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.domain.services.commonServices.LifeProposalService;
 //import org.tat.fni.api.domain.repository.FarmerRepository;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonDTO;
 import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
+import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -54,7 +54,7 @@ public class FarmerLifeProposalService {
 	private LifeProposalRepository lifeProposalRepo;
 	
 	@Autowired
-	private LifeProposalService commonLifeProposalService;
+	private LifePolicyService commonLifeProposalService;
 
 	@Autowired
 	private PaymentTypeService paymentTypeService;
@@ -279,12 +279,6 @@ public class FarmerLifeProposalService {
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
-	}
-
-	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
-		
-		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
-		
 	}
 
 }

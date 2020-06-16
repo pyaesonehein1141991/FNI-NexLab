@@ -253,6 +253,7 @@ public class KeyFactorChecker {
 	}
 
 	public static boolean isPersonalAccident(Product product) {
+		
 		if (product.getId().trim().equals(idConfig.getProperty(PERSONAL_ACCIDENT_KYT).trim())) {
 			return true;
 		} else if (product.getId().trim().equals(idConfig.getProperty(PERSONAL_ACCIDENT_USD).trim())) {

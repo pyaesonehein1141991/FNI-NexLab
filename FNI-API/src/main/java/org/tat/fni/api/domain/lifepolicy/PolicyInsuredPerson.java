@@ -174,8 +174,8 @@ public class PolicyInsuredPerson implements IInsuredItem, Serializable {
 //	@JoinColumn(name = "REFERENCEID", referencedColumnName = "ID")
 //	private List<PolicyInsuredPersonKeyFactorValue> policyInsuredPersonkeyFactorValueList;
 //
-//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "policyInsuredPerson", orphanRemoval = true)
-//	private List<PolicyInsuredPersonBeneficiaries> policyInsuredPersonBeneficiariesList;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "policyInsuredPerson", orphanRemoval = true)
+	private List<PolicyInsuredPersonBeneficiaries> policyInsuredPersonBeneficiariesList;
 	@Embedded
 	private UserRecorder recorder;
 	@Version
@@ -235,9 +235,9 @@ public class PolicyInsuredPerson implements IInsuredItem, Serializable {
 //		for (InsuredPersonKeyFactorValue keyFactorValue : insuredPerson.getKeyFactorValueList()) {
 //			addPolicyInsuredPersonKeyFactorValue(new PolicyInsuredPersonKeyFactorValue(keyFactorValue));
 //		}
-//		for (InsuredPersonBeneficiaries insuredPersonBeneficiaries : insuredPerson.getInsuredPersonBeneficiariesList()) {
-//			addInsuredPersonBeneficiaries(new PolicyInsuredPersonBeneficiaries(insuredPersonBeneficiaries));
-//		}
+		for (InsuredPersonBeneficiaries insuredPersonBeneficiaries : insuredPerson.getInsuredPersonBeneficiariesList()) {
+			addInsuredPersonBeneficiaries(new PolicyInsuredPersonBeneficiaries(insuredPersonBeneficiaries));
+		}
 	}
 
 //	public PolicyInsuredPerson(PolicyInsuredPersonHistory history) {
@@ -291,9 +291,9 @@ public class PolicyInsuredPerson implements IInsuredItem, Serializable {
 ////			addPolicyInsuredPersonKeyFactorValue(new PolicyInsuredPersonKeyFactorValue(keyFactorValue));
 ////		}
 ////
-////		for (PolicyInsuredPersonBeneficiariesHistory insuredPersonBeneficiaries : history.getPolicyInsuredPersonBeneficiariesList()) {
-////			addInsuredPersonBeneficiaries(new PolicyInsuredPersonBeneficiaries(insuredPersonBeneficiaries));
-////		}
+//		for (PolicyInsuredPersonBeneficiariesHistory insuredPersonBeneficiaries : history.getPolicyInsuredPersonBeneficiariesList()) {
+//			addInsuredPersonBeneficiaries(new PolicyInsuredPersonBeneficiaries(insuredPersonBeneficiaries));
+//		}
 ////
 ////		for (PolicyInsuredPersonAddonHistory addOn : history.getPolicyInsuredPersonAddOnList()) {
 ////			addInsuredPersonAddOn(new PolicyInsuredPersonAddon(addOn));
@@ -345,9 +345,9 @@ public class PolicyInsuredPerson implements IInsuredItem, Serializable {
 //		for (PolicyInsuredPersonKeyFactorValue kfv : dto.getPolicyKeyFactorValueList()) {
 //			addPolicyInsuredPersonKeyFactorValue(kfv);
 //		}
-//		for (BeneficiariesInfoDTO beneficiary : dto.getBeneficiariesInfoDTOList()) {
-//			addInsuredPersonBeneficiaries(new PolicyInsuredPersonBeneficiaries(beneficiary));
-//		}
+		for (BeneficiariesInfoDTO beneficiary : dto.getBeneficiariesInfoDTOList()) {
+			addInsuredPersonBeneficiaries(new PolicyInsuredPersonBeneficiaries(beneficiary));
+		}
 //		for (InsuredPersonAddOnDTO addOn : dto.getInsuredPersonAddOnDTOMap().values()) {
 //			addInsuredPersonAddOn(new PolicyInsuredPersonAddon(addOn));
 //		}
@@ -614,16 +614,16 @@ public class PolicyInsuredPerson implements IInsuredItem, Serializable {
 		return suminsuredPerUnit;
 	}
 
-//	public List<PolicyInsuredPersonBeneficiaries> getPolicyInsuredPersonBeneficiariesList() {
-//		if (this.policyInsuredPersonBeneficiariesList == null) {
-//			this.policyInsuredPersonBeneficiariesList = new ArrayList<PolicyInsuredPersonBeneficiaries>();
-//		}
-//		return this.policyInsuredPersonBeneficiariesList;
-//	}
-//
-//	public void setPolicyInsuredPersonBeneficiariesList(List<PolicyInsuredPersonBeneficiaries> policyInsuredPersonBeneficiariesList) {
-//		this.policyInsuredPersonBeneficiariesList = policyInsuredPersonBeneficiariesList;
-//	}
+	public List<PolicyInsuredPersonBeneficiaries> getPolicyInsuredPersonBeneficiariesList() {
+		if (this.policyInsuredPersonBeneficiariesList == null) {
+			this.policyInsuredPersonBeneficiariesList = new ArrayList<PolicyInsuredPersonBeneficiaries>();
+		}
+		return this.policyInsuredPersonBeneficiariesList;
+	}
+
+	public void setPolicyInsuredPersonBeneficiariesList(List<PolicyInsuredPersonBeneficiaries> policyInsuredPersonBeneficiariesList) {
+		this.policyInsuredPersonBeneficiariesList = policyInsuredPersonBeneficiariesList;
+	}
 
 	public void addAttachment(PolicyInsuredPersonAttachment attachment) {
 		attachment.setPolicyInsuredPerson(this);
@@ -643,11 +643,11 @@ public class PolicyInsuredPerson implements IInsuredItem, Serializable {
 //		// keyFactorValue.setPolicyInsuredPersonInfo(this);
 //		getPolicyInsuredPersonkeyFactorValueList().add(keyFactorValue);
 //	}
-//
-//	public void addInsuredPersonBeneficiaries(PolicyInsuredPersonBeneficiaries policyInsuredPersonBeneficiaries) {
-//		policyInsuredPersonBeneficiaries.setPolicyInsuredPerson(this);
-//		getPolicyInsuredPersonBeneficiariesList().add(policyInsuredPersonBeneficiaries);
-//	}
+
+	public void addInsuredPersonBeneficiaries(PolicyInsuredPersonBeneficiaries policyInsuredPersonBeneficiaries) {
+		policyInsuredPersonBeneficiaries.setPolicyInsuredPerson(this);
+		getPolicyInsuredPersonBeneficiariesList().add(policyInsuredPersonBeneficiaries);
+	}
 
 	public ClaimStatus getClaimStatus() {
 		return claimStatus;

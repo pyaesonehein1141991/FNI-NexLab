@@ -18,7 +18,6 @@ import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
 import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.proposalDTO.ProposalMedicalDTO;
-import org.tat.fni.api.dto.responseDTO.PolicyInformationResponseDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 
 import io.swagger.annotations.Api;
@@ -76,30 +75,31 @@ public class CriticalillnessController {
 		
 		ProposalMedicalDTO dto = mapper.map(proposalDto, ProposalMedicalDTO.class);
 		
-		policylist = medicalProposalService.retrievePolicyInfo(dto);
+//		policylist = medicalProposalService.retrievePolicyInfo(dto);
 		
 		// create response object
-		List<PolicyInformationResponseDTO> responseList = new ArrayList<PolicyInformationResponseDTO>();
+//		List<PolicyInformationResponseDTO> responseList = new ArrayList<PolicyInformationResponseDTO>();
 		
-		if(!policylist.isEmpty()) {
-			//Added temporary data
-			policylist.forEach(policy -> {
-				PolicyInformationResponseDTO policyInfoResponseDto = PolicyInformationResponseDTO.builder()
-						.policyStatus(policy.getPolicyStatus())
-						.premium(policy.getPremium())
-						.startDate(policy.getActivedPolicyStartDate())
-						.endDate(policy.getActivedPolicyEndDate())
-//						.paymentTimes(policy.get)
-//						.oneYearPremium(policy.getNetPremium())
-//						.termPremium(policy.getTotalBasicTermPremium())
-						.totalTerm(policy.getTotalTermPremium()).build();
-				responseList.add(policyInfoResponseDto);
-			});
-		}
-		
-		
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
-		return responseDTO;
+//		if(!policylist.isEmpty()) {
+//			//Added temporary data
+//			policylist.forEach(policy -> {
+//				PolicyInformationResponseDTO policyInfoResponseDto = PolicyInformationResponseDTO.builder()
+//						.policyStatus(policy.getPolicyStatus())
+//						.premium(policy.getPremium())
+//						.startDate(policy.getActivedPolicyStartDate())
+//						.endDate(policy.getActivedPolicyEndDate())
+////						.paymentTimes(policy.get)
+////						.oneYearPremium(policy.getNetPremium())
+////						.termPremium(policy.getTotalBasicTermPremium())
+//						.totalTerm(policy.getTotalTermPremium()).build();
+//				responseList.add(policyInfoResponseDto);
+//			});
+//		}
+//		
+//		
+//		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
+//		return responseDTO;
+		return null;
 	}
 
 }

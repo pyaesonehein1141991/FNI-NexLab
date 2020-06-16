@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifepolicy.LifePolicy;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
+import org.tat.fni.api.domain.services.LifePolicyService;
 import org.tat.fni.api.domain.services.PersonalaccidentProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.personalAccidentDTO.PersonalAccidentDTO;
 import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
-import org.tat.fni.api.dto.responseDTO.PolicyInformationResponseDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
+import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,15 +35,20 @@ public class PersonalAccidentController {
 
 	@Autowired
 	private PersonalaccidentProposalService lifeProposalService;
+	
+	@Autowired
+	private LifePolicyService lifePolicyService;
 
 	@Autowired
 	private ModelMapper mapper;
 
 	@PostMapping("/submitproposal")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
-	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
+			@ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${PersonalAccidentController.submitproposal}")
-	public ResponseDTO<Object> submitproposal(@ApiParam("Submit PersonalAccident Proposal") @Valid @RequestBody PersonalAccidentDTO personalAccidentDTO) {
+	public ResponseDTO<Object> submitproposal(
+			@ApiParam("Submit PersonalAccident Proposal") @Valid @RequestBody PersonalAccidentDTO personalAccidentDTO) {
 
 		List<LifeProposal> proposallist = new ArrayList<>();
 
@@ -54,8 +61,8 @@ public class PersonalAccidentController {
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			ProposalResponseDTO personalAccidentResponseDto = ProposalResponseDTO.builder().proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
-					.proposedPremium(proposal.getPremium()).build();
+			ProposalResponseDTO personalAccidentResponseDto = ProposalResponseDTO.builder().proposalID(proposal.getId())
+					.proposalNo(proposal.getProposalNo()).proposedPremium(proposal.getPremium()).build();
 			responseList.add(personalAccidentResponseDto);
 		});
 
@@ -63,41 +70,23 @@ public class PersonalAccidentController {
 
 		return responseDTO;
 	}
-	
+
 	@PostMapping("/policyinfo")
 	@ApiResponses(value = { //
-			@ApiResponse(code = 400, message = "Something went wrong"), 
+			@ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${PersonalAccidentController.getpolicyinfobyproposalno}")
-	public ResponseDTO<Object> retrievePolicyInfo(@ApiParam("Proposal Number") @Valid @RequestBody ProposalLifeDTO proposalDto) {
-		
-		List<LifePolicy> policylist = new ArrayList<>();
-		
-		ProposalLifeDTO dto = mapper.map(proposalDto, ProposalLifeDTO.class);
-		
-		policylist = lifeProposalService.retrievePolicyInfo(dto);
-		
-		// create response object
-		List<PolicyInformationResponseDTO> responseList = new ArrayList<PolicyInformationResponseDTO>();
-		
-		if(!policylist.isEmpty()) {
-			//Added temporary data
-			policylist.forEach(policy -> {
-				PolicyInformationResponseDTO policyInfoResponseDto = PolicyInformationResponseDTO.builder()
-						.policyStatus(policy.getPolicyStatus())
-						.premium(policy.getPremium())
-						.startDate(policy.getActivedPolicyStartDate())
-						.endDate(policy.getActivedPolicyEndDate())
-						.paymentTimes(policy.getPaymentTimes())
-						.oneYearPremium(policy.getNetPremium())
-						.termPremium(policy.getTotalBasicTermPremium())
-						.totalTerm(policy.getTotalTermPremium()).build();
-				responseList.add(policyInfoResponseDto);
-			});
-		}
-		
-		
+	public ResponseDTO<Object> retrievePolicyInfo(
+			@ApiParam("Proposal Number") @Valid @RequestBody PolicyDataCriteria policyDto) {
+
+		List<ResponseDataDTO> responseList = new ArrayList<ResponseDataDTO>();
+
+		PolicyDataCriteria dto = mapper.map(policyDto, PolicyDataCriteria.class);
+
+		// Get response data list of policy infomation
+		responseList = lifePolicyService.getResponseData(dto);
+
 		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 		return responseDTO;
 	}

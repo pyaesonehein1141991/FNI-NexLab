@@ -34,7 +34,6 @@ import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifePolicyRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.domain.services.commonServices.LifeProposalService;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonDTO;
@@ -51,7 +50,7 @@ public class GroupLifeProposalService {
 	private LifeProposalRepository lifeProposalRepo;
 	
 	@Autowired
-	private LifeProposalService commonLifeProposalService;
+	private LifePolicyService commonLifeProposalService;
 
 	@Autowired
 	private PaymentTypeService paymentTypeService;
@@ -290,9 +289,9 @@ public class GroupLifeProposalService {
 		}
 	}
 	
-	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
-
-		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
-	}
+//	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
+//
+//		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
+//	}
 
 }

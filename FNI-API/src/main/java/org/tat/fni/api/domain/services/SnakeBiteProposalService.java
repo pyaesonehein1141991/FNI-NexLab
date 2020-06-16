@@ -35,7 +35,6 @@ import org.tat.fni.api.domain.lifepolicy.LifePolicy;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifePolicyRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.domain.services.commonServices.LifeProposalService;
 import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteProposalInsuredPersonBeneficiariesDTO;
@@ -52,7 +51,7 @@ public class SnakeBiteProposalService {
 	private LifeProposalRepository lifeProposalRepo;
 	
 	@Autowired
-	private LifeProposalService commonLifeProposalService;
+	private LifePolicyService commonLifeProposalService;
 
 	@Autowired
 	private PaymentTypeService paymentTypeService;
@@ -275,9 +274,9 @@ public class SnakeBiteProposalService {
 		}
 	}
 	
-	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
-
-		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
-	}
+//	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
+//
+//		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
+//	}
 
 }

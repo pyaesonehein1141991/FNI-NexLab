@@ -77,6 +77,8 @@ public class Agent implements Serializable {
 	private String training;
 	private String outstandingEvent;
 	private String fullIdNo;
+	private String email;
+
 	@Embedded
 	private Name name;
 
@@ -250,6 +252,14 @@ public class Agent implements Serializable {
 
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getFullName() {
@@ -508,6 +518,7 @@ public class Agent implements Serializable {
 		result = prime * result + ((contentInfo == null) ? 0 : contentInfo.hashCode());
 		result = prime * result + ((country == null) ? 0 : country.hashCode());
 		result = prime * result + ((dateOfBirth == null) ? 0 : dateOfBirth.hashCode());
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((familyInfo == null) ? 0 : familyInfo.hashCode());
 		result = prime * result + ((fatherName == null) ? 0 : fatherName.hashCode());
 		result = prime * result + ((fullIdNo == null) ? 0 : fullIdNo.hashCode());
@@ -595,6 +606,11 @@ public class Agent implements Serializable {
 			if (other.dateOfBirth != null)
 				return false;
 		} else if (!dateOfBirth.equals(other.dateOfBirth))
+			return false;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
 			return false;
 		if (familyInfo == null) {
 			if (other.familyInfo != null)
