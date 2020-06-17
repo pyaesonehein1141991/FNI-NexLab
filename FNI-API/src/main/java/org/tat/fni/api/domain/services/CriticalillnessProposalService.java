@@ -38,7 +38,6 @@ import org.tat.fni.api.domain.repository.MedicalProposalRepository;
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
-import org.tat.fni.api.dto.proposalDTO.ProposalMedicalDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -49,9 +48,6 @@ public class CriticalillnessProposalService {
 
 	@Autowired
 	private MedicalProposalRepository medicalProposalRepo;
-
-	@Autowired
-	private LifePolicyService commonLifeProposalService;
 
 	@Autowired
 	private BranchService branchService;
@@ -255,12 +251,6 @@ public class CriticalillnessProposalService {
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
-	}
-
-	public List<MedicalPolicy> retrievePolicyInfo(ProposalMedicalDTO proposalDto) {
-
-		return commonLifeProposalService.retrieveMedicalPolicyList(proposalDto);
-
 	}
 
 }

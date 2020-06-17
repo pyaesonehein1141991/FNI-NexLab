@@ -2,7 +2,6 @@ package org.tat.fni.api.dto.retrieveDTO.policyData;
 
 import java.util.Date;
 
-import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.dto.retrieveDTO.NameDto;
 
 import lombok.Builder;
@@ -10,8 +9,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class InsuredPersonData {
-
+public class InsuredPersonMedicalData {
+	
 	private double proposedSumInsured;
 
 	private double proposedPremium;
@@ -22,11 +21,9 @@ public class InsuredPersonData {
 
 	private Date dateOfBirth;
 
-	private Gender gender;
-
 	private String address;
 
-	private NameDto name;
+	private String name;
 
 	private String schoolName;
 

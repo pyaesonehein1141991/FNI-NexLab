@@ -38,7 +38,6 @@ import org.tat.fni.api.domain.repository.MedicalProposalRepository;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonDTO;
-import org.tat.fni.api.dto.proposalDTO.ProposalMedicalDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -49,9 +48,6 @@ public class MicroHealthProposalService {
 
 	@Autowired
 	private MedicalProposalRepository medicalProposalRepo;
-	
-	@Autowired
-	private LifePolicyService commonLifeProposalService;
 
 	@Autowired
 	private BranchService branchService;
@@ -247,12 +243,6 @@ public class MicroHealthProposalService {
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
-	}
-	
-	public List<MedicalPolicy> retrievePolicyInfo(ProposalMedicalDTO proposalDto) {
-
-		return commonLifeProposalService.retrieveMedicalPolicyList(proposalDto);
-
 	}
 
 }

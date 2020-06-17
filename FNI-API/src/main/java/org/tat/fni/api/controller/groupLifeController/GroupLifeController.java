@@ -11,16 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.tat.fni.api.domain.lifepolicy.LifePolicy;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.GroupLifeProposalService;
 import org.tat.fni.api.domain.services.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifePolicyDataDTO;
-import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 
 import io.swagger.annotations.Api;
@@ -79,7 +77,7 @@ public class GroupLifeController {
 	public ResponseDTO<Object> retrievePolicyInfo(
 			@ApiParam("Proposal Number") @Valid @RequestBody GroupLifePolicyDataDTO policyDto) {
 
-		List<ResponseDataDTO> responseList = new ArrayList<ResponseDataDTO>();
+		List<ResponseDataLifeDTO> responseList = new ArrayList<ResponseDataLifeDTO>();
 
 		PolicyDataCriteria dto = mapper.map(policyDto, PolicyDataCriteria.class);
 

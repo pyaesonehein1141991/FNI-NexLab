@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class BeneficiaryData {
+public class BeneficiaryLifeData {
 	
 	private NameDto name;
 

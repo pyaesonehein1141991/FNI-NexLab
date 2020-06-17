@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.MedicalPolicy;
 import org.tat.fni.api.domain.MedicalProposal;
+import org.tat.fni.api.domain.services.MedicalPolicyService;
 import org.tat.fni.api.domain.services.MicroHealthProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
-import org.tat.fni.api.dto.proposalDTO.ProposalMedicalDTO;
+import org.tat.fni.api.dto.microHealthDTO.MicroHealthPolicyDataDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
+import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +35,9 @@ public class MicroHealthController {
 
 	@Autowired
 	private MicroHealthProposalService medicalProposalService;
+	
+	@Autowired
+	private MedicalPolicyService medicalPolicyService;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -68,37 +74,19 @@ public class MicroHealthController {
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${MicroHealthController.getpolicyinfobyproposalno}")
-	public ResponseDTO<Object> retrievePolicyInfo(@ApiParam("Proposal Number") @Valid @RequestBody ProposalMedicalDTO proposalDto) {
+	public ResponseDTO<Object> retrievePolicyInfo(
+			@ApiParam("Proposal Number") @Valid @RequestBody MicroHealthPolicyDataDTO policyDto) {
 		
-		List<MedicalPolicy> policylist = new ArrayList<>();
+		List<ResponseDataMedicalDTO> responseList = new ArrayList<ResponseDataMedicalDTO>();
+
+		PolicyDataCriteria dto = mapper.map(policyDto, PolicyDataCriteria.class);
+
+		// Get response data list of policy infomation
+		responseList = medicalPolicyService.getResponseData(dto);
+
+		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
+		return responseDTO;
 		
-		ProposalMedicalDTO dto = mapper.map(proposalDto, ProposalMedicalDTO.class);
-		
-//		policylist = medicalProposalService.retrievePolicyInfo(dto);
-		
-		// create response object
-//		List<PolicyInformationResponseDTO> responseList = new ArrayList<PolicyInformationResponseDTO>();
-//		
-//		if(!policylist.isEmpty()) {
-//			//Added temporary data
-//			policylist.forEach(policy -> {
-//				PolicyInformationResponseDTO policyInfoResponseDto = PolicyInformationResponseDTO.builder()
-//						.policyStatus(policy.getPolicyStatus())
-//						.premium(policy.getPremium())
-//						.startDate(policy.getActivedPolicyStartDate())
-//						.endDate(policy.getActivedPolicyEndDate())
-////						.paymentTimes(policy.get)
-////						.oneYearPremium(policy.getNetPremium())
-////						.termPremium(policy.getTotalBasicTermPremium())
-//						.totalTerm(policy.getTotalTermPremium()).build();
-//				responseList.add(policyInfoResponseDto);
-//			});
-//		}
-//		
-//		
-//		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
-//		return responseDTO;
-		return null;
 	}
 
 }

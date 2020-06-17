@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,8 @@ import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerPolicyDataDto;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 
 import io.swagger.annotations.Api;
@@ -24,7 +27,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
 
 @RestController
 @RequestMapping("/farmer")
@@ -76,7 +78,7 @@ public class FarmerController {
 	public ResponseDTO<Object> retrievePolicyInfo(
 			@ApiParam("Proposal Number") @Valid @RequestBody FarmerPolicyDataDto policyDto) {
 
-		List<ResponseDataDTO> responseList = new ArrayList<ResponseDataDTO>();
+		List<ResponseDataLifeDTO> responseList = new ArrayList<ResponseDataLifeDTO>();
 
 		PolicyDataCriteria dto = mapper.map(policyDto, PolicyDataCriteria.class);
 

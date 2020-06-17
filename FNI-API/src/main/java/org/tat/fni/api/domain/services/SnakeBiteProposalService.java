@@ -35,7 +35,6 @@ import org.tat.fni.api.domain.lifepolicy.LifePolicy;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifePolicyRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteProposalInsuredPersonDTO;

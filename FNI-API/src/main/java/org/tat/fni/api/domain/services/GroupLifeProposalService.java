@@ -37,7 +37,6 @@ import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonDTO;
-import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 

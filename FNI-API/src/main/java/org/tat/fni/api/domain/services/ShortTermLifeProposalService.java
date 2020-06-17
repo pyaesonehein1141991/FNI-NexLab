@@ -44,7 +44,6 @@ import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.dto.InsuredPersonInfoDTO;
-import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermEndowmentLifeDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonDTO;

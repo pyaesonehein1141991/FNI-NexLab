@@ -1,5 +1,7 @@
 package org.tat.fni.api.domain.repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +17,10 @@ public interface MedicalProposalRepository extends JpaRepository<MedicalProposal
 	@Transactional
 	@Query(nativeQuery = true, value = "SELECT ID FROM MEDICALPOLICY WHERE PROPOSALID=?1")
 	public String getPolicylId(String proposalId);
+	
+	@Transactional
+	  @Query(nativeQuery = true,
+	  	value = "SELECT APPROVED FROM MEDICALPROPOSAL_INSUREDPERSON_LINK WHERE MEDICALPROPOSALID=?1;")
+	  public List<Boolean> getApprovalStatus(String proposalId);
 
 }

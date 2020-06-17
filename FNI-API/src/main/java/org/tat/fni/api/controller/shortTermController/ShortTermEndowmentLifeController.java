@@ -11,14 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.tat.fni.api.domain.lifepolicy.LifePolicy;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.LifePolicyService;
 import org.tat.fni.api.domain.services.ShortTermLifeProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermEndowmentLifeDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermPolicyDataDTO;
@@ -83,7 +81,7 @@ public class ShortTermEndowmentLifeController {
 	public ResponseDTO<Object> retrievePolicyInfo(
 			@ApiParam("Proposal Number") @Valid @RequestBody ShortTermPolicyDataDTO policyDto) {
 
-		List<ResponseDataDTO> responseList = new ArrayList<ResponseDataDTO>();
+		List<ResponseDataLifeDTO> responseList = new ArrayList<ResponseDataLifeDTO>();
 
 		PolicyDataCriteria dto = mapper.map(policyDto, PolicyDataCriteria.class);
 

@@ -42,7 +42,6 @@ import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.dto.personalAccidentDTO.PersonalAccidentDTO;
 import org.tat.fni.api.dto.personalAccidentDTO.PersonalAccidentProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.personalAccidentDTO.PersonalAccidentProposalInsuredPersonDTO;
-import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 

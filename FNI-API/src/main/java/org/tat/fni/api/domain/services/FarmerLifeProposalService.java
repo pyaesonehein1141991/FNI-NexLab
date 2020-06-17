@@ -40,7 +40,6 @@ import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonDTO;
-import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;

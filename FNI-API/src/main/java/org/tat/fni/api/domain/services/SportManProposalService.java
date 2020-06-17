@@ -40,7 +40,6 @@ import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifePolicyRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.sportManDTO.SportManDTO;
 import org.tat.fni.api.dto.sportManDTO.SportManInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.sportManDTO.SportManProposalInsuredPersonDTO;

@@ -29,7 +29,6 @@ import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifepolicy.LifePolicy;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.studentLifeDTO.StudentLifeDTO;
 import org.tat.fni.api.dto.studentLifeDTO.StudentLifeProposalInsuredPersonDTO;
 import org.tat.fni.api.exception.DAOException;
