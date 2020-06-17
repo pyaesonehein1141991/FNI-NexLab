@@ -42,6 +42,6 @@ public interface LifeProposalRepository extends JpaRepository<LifeProposal, Stri
   @Transactional
   @Query(nativeQuery = true,
   	value = "SELECT APPROVED FROM LIFEPROPOSAL_INSUREDPERSON_LINK WHERE LIFEPROPOSALID=?1;")
-  public boolean getApprovalStatus(String proposalId);
+  public List<Boolean> getApprovalStatus(String proposalId);
   
 }

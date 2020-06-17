@@ -17,6 +17,7 @@ import org.tat.fni.api.domain.services.GroupLifeProposalService;
 import org.tat.fni.api.domain.services.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
+import org.tat.fni.api.dto.groupLifeDTO.GroupLifePolicyDataDTO;
 import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
@@ -76,7 +77,7 @@ public class GroupLifeController {
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${GroupLifeController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
-			@ApiParam("Proposal Number") @Valid @RequestBody PolicyDataCriteria policyDto) {
+			@ApiParam("Proposal Number") @Valid @RequestBody GroupLifePolicyDataDTO policyDto) {
 
 		List<ResponseDataDTO> responseList = new ArrayList<ResponseDataDTO>();
 

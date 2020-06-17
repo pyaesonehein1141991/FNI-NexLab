@@ -21,6 +21,7 @@ import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 import org.tat.fni.api.dto.sportManDTO.SportManDTO;
+import org.tat.fni.api.dto.sportManDTO.SportManPolicyDataDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -76,7 +77,7 @@ public class SportManController {
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${SportManController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
-			@ApiParam("Proposal Number") @Valid @RequestBody PolicyDataCriteria policyDto) {
+			@ApiParam("Proposal Number") @Valid @RequestBody SportManPolicyDataDTO policyDto) {
 		
 		List<ResponseDataDTO> responseList = new ArrayList<ResponseDataDTO>();
 

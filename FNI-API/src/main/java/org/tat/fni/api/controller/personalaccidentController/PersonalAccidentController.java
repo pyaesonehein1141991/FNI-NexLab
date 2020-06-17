@@ -17,6 +17,7 @@ import org.tat.fni.api.domain.services.LifePolicyService;
 import org.tat.fni.api.domain.services.PersonalaccidentProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.personalAccidentDTO.PersonalAccidentDTO;
+import org.tat.fni.api.dto.personalAccidentDTO.PersonalAccidentPolicyDataDTO;
 import org.tat.fni.api.dto.proposalDTO.ProposalLifeDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
@@ -78,7 +79,7 @@ public class PersonalAccidentController {
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${PersonalAccidentController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
-			@ApiParam("Proposal Number") @Valid @RequestBody PolicyDataCriteria policyDto) {
+			@ApiParam("Proposal Number") @Valid @RequestBody PersonalAccidentPolicyDataDTO policyDto) {
 
 		List<ResponseDataDTO> responseList = new ArrayList<ResponseDataDTO>();
 

@@ -14,6 +14,7 @@ import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.FarmerLifeProposalService;
 import org.tat.fni.api.domain.services.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
+import org.tat.fni.api.dto.farmerDTO.FarmerPolicyDataDto;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
@@ -73,7 +74,7 @@ public class FarmerController {
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${FarmerController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
-			@ApiParam("Proposal Number") @Valid @RequestBody PolicyDataCriteria policyDto) {
+			@ApiParam("Proposal Number") @Valid @RequestBody FarmerPolicyDataDto policyDto) {
 
 		List<ResponseDataDTO> responseList = new ArrayList<ResponseDataDTO>();
 

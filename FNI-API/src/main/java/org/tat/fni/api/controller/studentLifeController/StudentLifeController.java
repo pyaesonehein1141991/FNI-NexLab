@@ -21,6 +21,7 @@ import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 import org.tat.fni.api.dto.studentLifeDTO.StudentLifeDTO;
+import org.tat.fni.api.dto.studentLifeDTO.StudentLifePolicyDataDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -74,7 +75,7 @@ public class StudentLifeController {
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${StudentLifeController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
-			@ApiParam("Proposal Number") @Valid @RequestBody PolicyDataCriteria policyDto) {
+			@ApiParam("Proposal Number") @Valid @RequestBody StudentLifePolicyDataDTO policyDto) {
 		
 		List<ResponseDataDTO> responseList = new ArrayList<ResponseDataDTO>();
 
