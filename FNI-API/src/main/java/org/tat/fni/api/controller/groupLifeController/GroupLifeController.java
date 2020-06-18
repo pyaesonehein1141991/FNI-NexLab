@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.GroupLifeProposalService;
-import org.tat.fni.api.domain.services.LifePolicyService;
+import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifePolicyDataDTO;
