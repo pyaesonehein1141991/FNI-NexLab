@@ -26,25 +26,9 @@ public class GroupCriticalIllnessDTO {
 	@NotBlank(message = "SaleChannel Type is mandatory")
 	private String saleChannelType;
 
-	@ApiModelProperty(position = 2, example = "Critical illness", required = true)
-	@NotBlank(message = "Health Type is mandatory")
-	private String healthType;
-
-	@ApiModelProperty(position = 3, example = "Corporate", required = true)
-	@NotBlank(message = "Customer Type is mandatory")
-	private String customerType;
-
 	@ApiModelProperty(position = 4, example = "ISSYS002001000000000103062019", required = true)
 	@NotBlank(message = "Agent ID is mandatory")
 	private String agentId;
-
-	@ApiModelProperty(position = 5, example = "BANCH00000000000000129032013", required = true)
-	@NotBlank(message = "Branch ID is mandatory")
-	private String branchId;
-
-	@ApiModelProperty(position = 6, example = "ISSYS001001000000000103062019", required = true)
-	@NotBlank(message = "Customer ID is mandatory")
-	private String customerId;
 
 	@ApiModelProperty(position = 7, example = "ISSYS033001000000000104062019", required = true)
 	@NotBlank(message = "Organization ID is mandatory")
@@ -73,15 +57,8 @@ public class GroupCriticalIllnessDTO {
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
 
-	@ApiModelProperty(position = 13, required = true)
-	@NotNull(message = "Customer Classification Of Health is mandatory")
-	private ClassificationOfHealth customerClsOfHealth;
-
-	// @ApiModelProperty(position = 14, required = false)
-	// private List<InsuredPersonAttachment> attachmentList;
-
 	@ApiModelProperty(position = 15, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
-	private List<ProposalInsuredPerson> proposalInsuredPersonList;
+	private List<CriticalillnessProposalInsuredPersonDTO> proposalInsuredPersonList;
 
 }

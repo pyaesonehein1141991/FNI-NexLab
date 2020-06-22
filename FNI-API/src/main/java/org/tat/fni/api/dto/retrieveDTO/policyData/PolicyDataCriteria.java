@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import org.tat.fni.api.dto.farmerDTO.FarmerPolicyDataDto;
+import org.tat.fni.api.dto.farmerDTO.FarmerPolicyDataDTO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

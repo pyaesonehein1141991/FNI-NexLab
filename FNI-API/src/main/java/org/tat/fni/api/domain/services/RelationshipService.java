@@ -18,6 +18,10 @@ public class RelationshipService {
 	@Autowired
 	private RelationshipRepository relationshipRepository;
 
+	public List<RelationShip> findAll() {
+		return relationshipRepository.findAll();
+	}
+	
 	public List<Object[]> findAllNativeObject() {
 		return relationshipRepository.findAllNativeObject();
 	}

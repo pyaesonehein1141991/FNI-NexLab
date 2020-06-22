@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.tat.fni.api.common.Hospital;
+import org.tat.fni.api.domain.Hospital;
 import org.tat.fni.api.domain.repository.HospitalRepository;
 
 @Service

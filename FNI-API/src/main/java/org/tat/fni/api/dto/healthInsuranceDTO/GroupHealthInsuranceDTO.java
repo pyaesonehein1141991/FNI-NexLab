@@ -26,13 +26,13 @@ public class GroupHealthInsuranceDTO {
 	@NotBlank(message = "SaleChannel Type is mandatory")
 	private String saleChannelType;
 
-	@ApiModelProperty(position = 2, example = "Critical illness", required = true)
-	@NotBlank(message = "Health Type is mandatory")
-	private String healthType;
-
-	@ApiModelProperty(position = 3, example = "Corporate", required = true)
-	@NotBlank(message = "Customer Type is mandatory")
-	private String customerType;
+//	@ApiModelProperty(position = 2, example = "Individual Health", required = true)
+//	@NotBlank(message = "Health Type is mandatory")
+//	private String healthType;//
+//
+//	@ApiModelProperty(position = 3, example = "Corporate", required = true)
+//	@NotBlank(message = "Customer Type is mandatory")
+//	private String customerType;//
 
 	@ApiModelProperty(position = 4, example = "ISSYS002001000000000103062019", required = true)
 	@NotBlank(message = "Agent ID is mandatory")
@@ -42,9 +42,9 @@ public class GroupHealthInsuranceDTO {
 	@NotBlank(message = "Branch ID is mandatory")
 	private String branchId;
 
-	@ApiModelProperty(position = 6, example = "ISSYS001001000000000103062019", required = true)
-	@NotBlank(message = "Customer ID is mandatory")
-	private String customerId;
+//	@ApiModelProperty(position = 6, example = "ISSYS001001000000000103062019", required = true)
+//	@NotBlank(message = "Customer ID is mandatory")
+//	private String customerId;//
 
 	@ApiModelProperty(position = 7, example = "ISSYS033001000000000104062019", required = true)
 	@NotBlank(message = "Organization ID is mandatory")
@@ -73,15 +73,12 @@ public class GroupHealthInsuranceDTO {
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
 
-	@ApiModelProperty(position = 13, required = true)
-	@NotNull(message = "Customer Classification Of Health is mandatory")
-	private ClassificationOfHealth customerClsOfHealth;
+//	@ApiModelProperty(position = 13, required = true)
+//	@NotNull(message = "Customer Classification Of Health is mandatory")
+//	private ClassificationOfHealth customerClsOfHealth;//
 
-	// @ApiModelProperty(position = 14, required = false)
-	// private List<InsuredPersonAttachment> attachmentList;
-
-	@ApiModelProperty(position = 15, required = true)
-	@NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-	private List<InsuredPersonBeneficiaries> insuredPersonBeneficiariesList;
+	@ApiModelProperty(position = 14, required = true)
+	@NotNull(message = "proposalInsuredPersonList is mandatory")
+	private List<HealthProposalInsuredPersonDTO> proposalInsuredPersonList;
 
 }

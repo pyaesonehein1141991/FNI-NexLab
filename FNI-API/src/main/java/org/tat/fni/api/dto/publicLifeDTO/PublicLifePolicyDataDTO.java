@@ -1,4 +1,4 @@
-package org.tat.fni.api.dto.farmerDTO;
+package org.tat.fni.api.dto.publicLifeDTO;
 
 import javax.validation.constraints.NotBlank;
 
@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @ApiModel
-public class FarmerPolicyDataDto {
+public class PublicLifePolicyDataDTO {
 	
 	@ApiModelProperty(position = 0, example = "FNI-001/FA/PO/0000000010/6-2020", required = true)
 	@NotBlank(message = "ProposalNo is mandatory")

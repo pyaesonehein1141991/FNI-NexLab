@@ -46,7 +46,8 @@ public class MedicalProposalInsuredPersonBeneficiaries {
 	private String initialId;
 	private String fatherName;
 	private String fullIdNo;
-
+//	private String mobile;
+//	private String phone;
 	private float percentage;
 
 	@Temporal(TemporalType.DATE)
@@ -70,6 +71,10 @@ public class MedicalProposalInsuredPersonBeneficiaries {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "RELATIONSHIPID", referencedColumnName = "ID")
 	private RelationShip relationship;
+	
+//	@OneToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "RESIDENTTOWNSHIPID", referencedColumnName = "ID")
+//	private Township residentTownship;
 
 	@Transient
 	private String stateCode;
@@ -97,12 +102,15 @@ public class MedicalProposalInsuredPersonBeneficiaries {
 		this.initialId = beneficiary.getInitialId();
 		this.fatherName = beneficiary.getFatherName();
 		this.idNo = beneficiary.getIdNo();
+//		this.mobile = beneficiary.getMobile();
+//		this.phone = beneficiary.getPhone();
 		this.gender = beneficiary.getGender();
 		this.idType = beneficiary.getIdType();
 		this.residentAddress = beneficiary.getResidentAddress();
 		this.contentInfo = beneficiary.getContentInfo();
 		this.name = beneficiary.getName();
 		this.relationship = beneficiary.getRelationship();
+//		this.residentTownship = beneficiary.getResidentTownship();
 		this.version = beneficiary.getVersion();
 	}
 
@@ -194,6 +202,22 @@ public class MedicalProposalInsuredPersonBeneficiaries {
 	public void setInitialId(String initialId) {
 		this.initialId = initialId;
 	}
+	
+//	public String getMobile() {
+//		return mobile;
+//	}
+//
+//	public void setMobile(String mobile) {
+//		this.mobile = mobile;
+//	}
+	
+//	public String getPhone() {
+//		return phone;
+//	}
+//
+//	public void setPhone(String phone) {
+//		this.phone = phone;
+//	}
 
 	public String getIdNo() {
 		return idNo;
@@ -256,6 +280,14 @@ public class MedicalProposalInsuredPersonBeneficiaries {
 	public void setRelationship(RelationShip relationship) {
 		this.relationship = relationship;
 	}
+	
+//	public Township getResidentTownship() {
+//		return residentTownship;
+//	}
+//
+//	public void setResidentTownship(Township residentTownship) {
+//		this.residentTownship = residentTownship;
+//	}
 
 	public int getVersion() {
 		return version;
@@ -373,9 +405,12 @@ public class MedicalProposalInsuredPersonBeneficiaries {
 		result = prime * result + ((idNo == null) ? 0 : idNo.hashCode());
 		result = prime * result + ((idType == null) ? 0 : idType.hashCode());
 		result = prime * result + ((initialId == null) ? 0 : initialId.hashCode());
+//		result = prime * result + ((mobile == null) ? 0 : mobile.hashCode());
+//		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + Float.floatToIntBits(percentage);
 		result = prime * result + ((relationship == null) ? 0 : relationship.hashCode());
+//		result = prime * result + ((residentTownship == null) ? 0 : residentTownship.hashCode());
 		result = prime * result + ((residentAddress == null) ? 0 : residentAddress.hashCode());
 		result = prime * result + ((stateCode == null) ? 0 : stateCode.hashCode());
 		result = prime * result + ((townshipCode == null) ? 0 : townshipCode.hashCode());
@@ -439,6 +474,16 @@ public class MedicalProposalInsuredPersonBeneficiaries {
 				return false;
 		} else if (!initialId.equals(other.initialId))
 			return false;
+//		if (mobile == null) {
+//			if (other.mobile != null)
+//				return false;
+//		} else if (!mobile.equals(other.mobile))
+//			return false;
+//		if (phone == null) {
+//			if (other.phone != null)
+//				return false;
+//		} else if (!phone.equals(other.phone))
+//			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -451,6 +496,11 @@ public class MedicalProposalInsuredPersonBeneficiaries {
 				return false;
 		} else if (!relationship.equals(other.relationship))
 			return false;
+//		if (residentTownship == null) {
+//			if (other.residentTownship != null)
+//				return false;
+//		} else if (!residentTownship.equals(other.residentTownship))
+//			return false;
 		if (residentAddress == null) {
 			if (other.residentAddress != null)
 				return false;

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.tat.fni.api.domain.Country;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.exception.DAOException;
@@ -20,6 +21,10 @@ public class CustomerService {
 
 	public List<Object[]> findAllNativeObject(Date createdDate, Date updatedDate) {
 		return customerRepository.findAllNativeObject(createdDate, updatedDate, createdDate, updatedDate);
+	}
+	
+	public List<Customer> findAll() {
+		return customerRepository.findAll();
 	}
 
 	public List<Object> findAllColumnName() {

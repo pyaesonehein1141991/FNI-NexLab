@@ -31,17 +31,17 @@ public class PublicLifeDTO {
 	@NotBlank(message = "Agent ID is mandatory")
 	private String agentId;
 
-	@ApiModelProperty(position = 3, example = "BANCH00000000000000129032013", required = true)
-	@NotBlank(message = "Branch ID is mandatory")
-	private String branchId;
-
-	@ApiModelProperty(position = 4, example = "ISSYS001001000000000103062019", required = true)
-	@NotBlank(message = "Customer ID is mandatory")
-	private String customerId;
-
-	@ApiModelProperty(position = 5, example = "ISSYS033001000000000104062019", required = true)
-	@NotBlank(message = "Organization ID is mandatory")
-	private String organizationId;
+//	@ApiModelProperty(position = 3, example = "BANCH00000000000000129032013", required = true)
+//	@NotBlank(message = "Branch ID is mandatory")
+//	private String branchId;//
+//
+//	@ApiModelProperty(position = 4, example = "ISSYS001001000000000103062019", required = true)
+//	@NotBlank(message = "Customer ID is mandatory")
+//	private String customerId;//
+//
+//	@ApiModelProperty(position = 5, example = "ISSYS033001000000000104062019", required = true)
+//	@NotBlank(message = "Organization ID is mandatory")
+//	private String organizationId;//
 
 	@ApiModelProperty(position = 6, example = "ISSYS0090001000000000129032013", required = true)
 	@NotBlank(message = "Payment Type ID is mandatory")
@@ -70,11 +70,11 @@ public class PublicLifeDTO {
 	@NotNull(message = "Customer Classification Of Health is mandatory")
 	private ClassificationOfHealth customerClsOfHealth;
 
-	@ApiModelProperty(position = 12, required = false)
-	private List<InsuredPersonAttachment> attachmentList;
+//	@ApiModelProperty(position = 12, required = false)
+//	private List<InsuredPersonAttachment> attachmentList;
 
 	@ApiModelProperty(position = 13, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
-	private List<ProposalInsuredPerson> proposalInsuredPersonList;
+	private List<PublicLifeProposalInsuredPersonDTO> proposalInsuredPersonList;
 
 }

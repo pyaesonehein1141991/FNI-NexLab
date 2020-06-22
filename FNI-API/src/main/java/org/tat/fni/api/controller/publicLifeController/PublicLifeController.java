@@ -1,4 +1,4 @@
-package org.tat.fni.api.controller.farmerController;
+package org.tat.fni.api.controller.publicLifeController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.FarmerLifeProposalService;
+import org.tat.fni.api.domain.services.PublicLifeProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerPolicyDataDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
+import org.tat.fni.api.dto.publicLifeDTO.PublicLifeDTO;
+import org.tat.fni.api.dto.publicLifeDTO.PublicLifePolicyDataDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
@@ -28,12 +30,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/farmer")
-@Api(tags = "farmer")
-public class FarmerController {
-
+@RequestMapping("/publicLife")
+@Api(tags = "Public-Life")
+public class PublicLifeController {
+	
 	@Autowired
-	private FarmerLifeProposalService farmerLifeProposalService;
+	private PublicLifeProposalService publicLifeProposalService;
 
 	@Autowired
 	private LifePolicyService lifePolicyService;
@@ -45,15 +47,15 @@ public class FarmerController {
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${FarmerController.submitproposal}")
+	@ApiOperation(value = "${PublicLifeController.submitproposal}")
 	public ResponseDTO<Object> submitproposal(
-			@ApiParam("Submit Farmer Proposal") @Valid @RequestBody FarmerProposalDTO farmerProposalDTO) {
+			@ApiParam("Submit Public Life Proposal") @Valid @RequestBody PublicLifeDTO publicLifeDTO) {
 
 		List<LifeProposal> proposallist = new ArrayList<>();
-		FarmerProposalDTO dto = mapper.map(farmerProposalDTO, FarmerProposalDTO.class);
+		PublicLifeDTO dto = mapper.map(publicLifeDTO, PublicLifeDTO.class);
 
 		// create Farmer proposal
-		proposallist = farmerLifeProposalService.createFarmerProposalDTOToProposal(dto);
+		proposallist = publicLifeProposalService.createPublicLifeProposalDTOToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
@@ -75,7 +77,7 @@ public class FarmerController {
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${FarmerController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
-			@ApiParam("Proposal Number") @Valid @RequestBody FarmerPolicyDataDTO policyDto) {
+			@ApiParam("Proposal Number") @Valid @RequestBody PublicLifePolicyDataDTO policyDto) {
 
 		List<ResponseDataLifeDTO> responseList = new ArrayList<ResponseDataLifeDTO>();
 

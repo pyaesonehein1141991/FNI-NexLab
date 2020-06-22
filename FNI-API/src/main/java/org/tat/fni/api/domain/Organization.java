@@ -59,6 +59,8 @@ public class Organization implements Serializable {
 	@Column(name = "OWNER_NAME")
 	private String OwnerName;
 	private int activePolicy;
+	@Column(name = "PHONE")
+	private String phone;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date activedDate;
 
@@ -103,6 +105,14 @@ public class Organization implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getPhone() {
+		return this.phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public PermanentAddress getAddress() {
@@ -200,6 +210,7 @@ public class Organization implements Serializable {
 		result = prime * result + ((contentInfo == null) ? 0 : contentInfo.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
 		result = prime * result + ((recorder == null) ? 0 : recorder.hashCode());
 		result = prime * result + ((regNo == null) ? 0 : regNo.hashCode());
 		result = prime * result + version;
@@ -244,6 +255,11 @@ public class Organization implements Serializable {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (phone == null) {
+			if (other.phone != null)
+				return false;
+		} else if (!phone.equals(other.phone))
 			return false;
 		if (recorder == null) {
 			if (other.recorder != null)

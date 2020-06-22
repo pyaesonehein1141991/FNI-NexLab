@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.tat.fni.api.domain.Province;
 
-public interface ProvienceRepository extends JpaRepository<Province, String> {
+public interface ProvinceRepository extends JpaRepository<Province, String> {
 
   @Query(value = "SELECT * FROM Province", nativeQuery = true)
   List<Object[]> findAllNativeObject();

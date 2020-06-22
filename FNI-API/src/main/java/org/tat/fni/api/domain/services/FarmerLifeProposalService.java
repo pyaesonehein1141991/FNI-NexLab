@@ -47,9 +47,6 @@ public class FarmerLifeProposalService {
 
 	@Autowired
 	private LifeProposalRepository lifeProposalRepo;
-	
-	@Autowired
-	private LifePolicyService commonLifeProposalService;
 
 	@Autowired
 	private PaymentTypeService paymentTypeService;

@@ -1,4 +1,4 @@
-package org.tat.fni.api.controller.farmerController;
+package org.tat.fni.api.controller.criticalillnessController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.services.FarmerLifeProposalService;
-import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
+import org.tat.fni.api.domain.MedicalProposal;
+import org.tat.fni.api.domain.services.CriticalillnessProposalService;
+import org.tat.fni.api.domain.services.PolicyDataService.MedicalPolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerPolicyDataDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
+import org.tat.fni.api.dto.criticalIllnessDTO.CriticalIllnessPolicyDataDTO;
+import org.tat.fni.api.dto.criticalIllnessDTO.GroupCriticalIllnessDTO;
+import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 
 import io.swagger.annotations.Api;
@@ -28,15 +29,15 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/farmer")
-@Api(tags = "farmer")
-public class FarmerController {
+@RequestMapping("/groupCriticalillness")
+@Api(tags = "Group Criticalillness")
+public class GroupCriticalIllnessController {
 
 	@Autowired
-	private FarmerLifeProposalService farmerLifeProposalService;
+	private CriticalillnessProposalService medicalProposalService;
 
 	@Autowired
-	private LifePolicyService lifePolicyService;
+	private MedicalPolicyService medicalPolicyService;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -45,26 +46,28 @@ public class FarmerController {
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${FarmerController.submitproposal}")
+	@ApiOperation(value = "${GroupCriticalIllnessController.submitproposal}")
 	public ResponseDTO<Object> submitproposal(
-			@ApiParam("Submit Farmer Proposal") @Valid @RequestBody FarmerProposalDTO farmerProposalDTO) {
+			@ApiParam("Submit CriticalillnessController Proposal") @Valid @RequestBody GroupCriticalIllnessDTO criticalillnessDTO) {
 
-		List<LifeProposal> proposallist = new ArrayList<>();
-		FarmerProposalDTO dto = mapper.map(farmerProposalDTO, FarmerProposalDTO.class);
+		List<MedicalProposal> proposallist = new ArrayList<>();
+		GroupCriticalIllnessDTO dto = mapper.map(criticalillnessDTO, GroupCriticalIllnessDTO.class);
 
-		// create Farmer proposal
-		proposallist = farmerLifeProposalService.createFarmerProposalDTOToProposal(dto);
+		// create Individual Critical illness proposal
+		proposallist = medicalProposalService.criticalillnessDTOToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();
 
 		proposallist.forEach(proposal -> {
-			ProposalResponseDTO farmerResponseDto = ProposalResponseDTO.builder().proposalID(proposal.getId())
-					.proposalNo(proposal.getProposalNo()).proposedPremium(proposal.getProposedPremium()).build();
-			responseList.add(farmerResponseDto);
+			ProposalResponseDTO individualCriticalIllnessResponseDto = ProposalResponseDTO.builder()
+					.proposalID(proposal.getId()).proposalNo(proposal.getProposalNo())
+					.proposedPremium(proposal.getTotalPremium()).build();
+			responseList.add(individualCriticalIllnessResponseDto);
 		});
 
 		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
+
 		return responseDTO;
 	}
 
@@ -73,19 +76,20 @@ public class FarmerController {
 			@ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${FarmerController.getpolicyinfobyproposalno}")
+	@ApiOperation(value = "${CriticalillnessController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
-			@ApiParam("Proposal Number") @Valid @RequestBody FarmerPolicyDataDTO policyDto) {
+			@ApiParam("Proposal Number") @Valid @RequestBody CriticalIllnessPolicyDataDTO policyDto) {
 
-		List<ResponseDataLifeDTO> responseList = new ArrayList<ResponseDataLifeDTO>();
+		List<ResponseDataMedicalDTO> responseList = new ArrayList<ResponseDataMedicalDTO>();
 
 		PolicyDataCriteria dto = mapper.map(policyDto, PolicyDataCriteria.class);
 
 		// Get response data list of policy infomation
-		responseList = lifePolicyService.getResponseData(dto);
+		responseList = medicalPolicyService.getResponseData(dto);
 
 		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 		return responseDTO;
+
 	}
 
 }

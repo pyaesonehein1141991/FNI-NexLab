@@ -69,7 +69,7 @@ SnakeBiteController:
 IndividualHealthController:
   submitproposal: Create Individual Health proposal and return proposal number
   getpolicyinfobyproposalno: Returns policy information if proposal status is approved
-CriticalillnessController:
+IndividualCriticalillnessController:
   submitproposal: Create Critical Illness proposal and return proposal number
   getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 MicroHealthController:
