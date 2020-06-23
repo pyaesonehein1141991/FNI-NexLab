@@ -35,13 +35,33 @@ public class SwaggerConfig {
 				.useDefaultResponseMessages(false)//
 				.securitySchemes(new ArrayList<>(Arrays.asList(new ApiKey("Bearer %token", "Authorization", "Header"))))//
 				.tags(new Tag("users", "Operations about users"))//
-				.tags(new Tag("criticalillness", "Operations about Criticalillness")).tags(new Tag("farmer", "Operations about Farmer"))
-				.tags(new Tag("groupLife", "Operations about Group Life")).tags(new Tag("individualHealth", "Operations about Individual Health"))
-				.tags(new Tag("microHealth", "Operations about Micro Health")).tags(new Tag("personalAccident", "Operations about Personal Accident"))
-				.tags(new Tag("shortTermEndowment", "Operations about Short Term Endowment")).tags(new Tag("snakeBite", "Operations about Snake Bite"))
-				.tags(new Tag("sportMan", "Operations about Sport Man")).tags(new Tag("studentLife", "Operations about Student Life"))
-				.tags(new Tag("Group-Farmer", "Operation about group farmer")).tags(new Tag("ping", "Just a ping"))//
-				.genericModelSubstitutes(Optional.class);
+				.tags(new Tag("Agents", "Operations about Agent")).tags(new Tag("Banks", "Operations about Bank"))
+				.tags(new Tag("Branches", "Operations about Branch"))
+				.tags(new Tag("Countrys", "Operations about Country"))
+				.tags(new Tag("Customers", "Operations about Customer"))
+				.tags(new Tag("Farmer", "Operation about Farmer")).tags(new Tag("Grades", "Operations about Grade"))
+				.tags(new Tag("Group Criticalillness", "Operations about Group Criticalillness"))
+				.tags(new Tag("Group Health", "Operations about Group Health"))
+				.tags(new Tag("groupLife", "Operations about Group Life"))
+				.tags(new Tag("Hospitals", "Operations about Hospital"))
+				.tags(new Tag("Individual Criticalillness", "Operations about Individual criticalillness"))
+				.tags(new Tag("Individual Health", "Operations about Individual Health"))
+				.tags(new Tag("Micro Health", "Operations about Micro Health"))
+				.tags(new Tag("Occupations", "Operations about Occupation"))
+				.tags(new Tag("Organizations", "Operations about Organization"))
+				.tags(new Tag("Payment Types", "Operations about Payment Type"))
+				.tags(new Tag("Personal Accident", "Operations about Personal Accident"))
+				.tags(new Tag("Provinces", "Operations about Province"))
+				.tags(new Tag("Public-Life", "Operations about Public-Life"))
+				.tags(new Tag("Relationships", "Operations about Relationship"))
+				.tags(new Tag("SaleMan", "Operations about SaleMan"))
+				.tags(new Tag("Salepoints", "Operations about Salepoint"))
+				.tags(new Tag("Schools", "Operations about School"))
+				.tags(new Tag("Short-Term Life Insurance", "Operations about Short-Term Life Insurance"))
+				.tags(new Tag("Snake Bite", "Operations about Snake Bite"))
+				.tags(new Tag("Sport Man", "Operations about Sport Man"))
+				.tags(new Tag("Student-Life", "Operations about Student-Life"))
+				.tags(new Tag("Townships", "Operations about Township")).genericModelSubstitutes(Optional.class);
 
 	}
 

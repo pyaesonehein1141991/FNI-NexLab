@@ -29,8 +29,8 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/snakeBite")
-@Api(tags = "snakeBite")
-public class snakeBiteController {
+@Api(tags = "Snake Bite")
+public class SnakeBiteController {
 
 	@Autowired
 	SnakeBiteProposalService snakeBiteProposalService;

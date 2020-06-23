@@ -26,7 +26,7 @@ public class SalePointController {
 	private SalePointService salepointService;
 
 	@GetMapping("/salepoints")
-	@ApiOperation(value = "${SalePointController.banks}")
+	@ApiOperation(value = "${SalePointController.salepoints}")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired for invalid JWT token") })

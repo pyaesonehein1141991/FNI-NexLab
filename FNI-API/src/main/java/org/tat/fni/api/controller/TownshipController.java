@@ -26,7 +26,7 @@ public class TownshipController {
 	private TownShipService townshipService;
 
 	@GetMapping("/townships")
-	@ApiOperation(value = "${TownshipController.banks}")
+	@ApiOperation(value = "${TownshipController.townships}")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired for invalid JWT token") })

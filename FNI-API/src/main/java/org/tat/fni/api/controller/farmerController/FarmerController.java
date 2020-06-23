@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/farmer")
-@Api(tags = "farmer")
+@Api(tags = "Farmers")
 public class FarmerController {
 
 	@Autowired

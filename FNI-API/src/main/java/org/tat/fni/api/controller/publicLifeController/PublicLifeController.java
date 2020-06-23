@@ -75,7 +75,7 @@ public class PublicLifeController {
 			@ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${FarmerController.getpolicyinfobyproposalno}")
+	@ApiOperation(value = "${PublicLifeController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
 			@ApiParam("Proposal Number") @Valid @RequestBody PublicLifePolicyDataDTO policyDto) {
 

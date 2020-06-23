@@ -19,14 +19,14 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/paymentType")
-@Api(tags = "PaymentTypes")
+@Api(tags = "Payment Types")
 public class PaymentTypeController {
 	
 	@Autowired
 	private PaymentTypeService paymentTypeService;
 
 	@GetMapping("/paymentTypes")
-	@ApiOperation(value = "${PaymentTypeController.banks}")
+	@ApiOperation(value = "${PaymentTypeController.paymentTypes}")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired for invalid JWT token") })

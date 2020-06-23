@@ -49,6 +49,48 @@ UserController:
   search: Returns specific user by username
   me: Returns current user's data
   submitProposal: Create proposal and return proposal number
+AgentController:
+  agents: Get All Agents
+BankController:
+  banks: Get All Banks
+BranchController:
+  branches: Get All Branches
+GradeController:
+  grades: Get All Grades
+CountryController:
+  countrys: Get All Countries
+CustomerController:
+  customers: Get All Customers
+HospitalController:
+  hospitals: Get All Hospitals
+OccupationController:
+  occupations: Get All Occupations
+OrganizationController:
+  organizations: Get All Organizations
+PaymentTypeController:
+  paymentTypes: Get All Payment Types
+ProvinceController:
+  provinces: Get All Provinces
+RelationshipController:
+  relationships: Get All Relationships
+SalemanController:
+  salemans: Get All Sale Men
+SalePointController:
+  salepoints: Get All Sale points
+SchoolController:
+  schools: Get All Schools
+TownshipController:
+  townships: Get All Townships
+
+PublicLifeController:
+  submitproposal: Create Public Life Proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
+GroupHealthController:
+  submitproposal: Create Group Health Proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
+GroupCriticalIllnessController:
+  submitproposal: Create Group Critical Illness Proposal and return proposal number
+  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 FarmerController:
   submitproposal: Create Farmer Life Proposal and return proposal number
   getpolicyinfobyproposalno: Returns policy information if proposal status is approved

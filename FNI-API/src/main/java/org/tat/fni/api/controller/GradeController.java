@@ -26,7 +26,7 @@ public class GradeController {
 	private GradeInfoService gradeInfoService;
 
 	@GetMapping("/grades")
-	@ApiOperation(value = "${GradeController.banks}")
+	@ApiOperation(value = "${GradeController.grades}")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired for invalid JWT token") })

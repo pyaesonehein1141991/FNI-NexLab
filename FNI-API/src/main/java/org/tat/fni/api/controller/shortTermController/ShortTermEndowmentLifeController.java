@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/shortterm")
-@Api(tags = "shortTermEndowment")
+@Api(tags = "Short-Term Life Insurance")
 public class ShortTermEndowmentLifeController {
 
 	@Autowired

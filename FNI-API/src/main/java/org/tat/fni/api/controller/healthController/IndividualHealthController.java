@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/individualHealth")
-@Api(tags = "individualHealth")
+@Api(tags = "Individual Health")
 public class IndividualHealthController {
 
 	@Autowired

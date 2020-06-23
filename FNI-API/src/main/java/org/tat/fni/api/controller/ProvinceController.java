@@ -26,7 +26,7 @@ public class ProvinceController {
 	private ProvinceService provinceService;
 
 	@GetMapping("/provinces")
-	@ApiOperation(value = "${ProvinceController.banks}")
+	@ApiOperation(value = "${ProvinceController.provinces}")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired for invalid JWT token") })

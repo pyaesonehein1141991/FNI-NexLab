@@ -45,7 +45,7 @@ public class GroupHealthController {
 	@PostMapping("/submitproposal")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
 	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${IndividualHealthController.submitproposal}")
+	@ApiOperation(value = "${GroupHealthController.submitproposal}")
 	public ResponseDTO<Object> submitproposal(@ApiParam("Submit IndividualHealth Proposal") @Valid @RequestBody GroupHealthInsuranceDTO groupHealthInsuranceDTO) {
 
 		List<MedicalProposal> proposallist = new ArrayList<>();
@@ -73,7 +73,7 @@ public class GroupHealthController {
 			@ApiResponse(code = 400, message = "Something went wrong"), 
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${IndividualHealthController.getpolicyinfobyproposalno}")
+	@ApiOperation(value = "${GroupHealthController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
 			@ApiParam("Proposal Number") @Valid @RequestBody IndividualHealthPolicyDataDTO policyDto) {
 		

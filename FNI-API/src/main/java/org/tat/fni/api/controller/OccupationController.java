@@ -26,7 +26,7 @@ public class OccupationController {
 	private OccupationService occupationService;
 
 	@GetMapping("/occupations")
-	@ApiOperation(value = "${OccupationController.banks}")
+	@ApiOperation(value = "${OccupationController.occupations}")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired for invalid JWT token") })

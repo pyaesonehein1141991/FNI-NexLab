@@ -84,7 +84,7 @@ public class StudentLifeProposalService {
 
 			String id = DateUtils.formattedSqlDate(new Date()).concat(studentLifeProposalList.get(0).getProposalNo());
 			String referenceNo = studentLifeProposalList.get(0).getId();
-			String referenceType = "FARMER";
+			String referenceType = "STUDENT_LIFE";
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
 

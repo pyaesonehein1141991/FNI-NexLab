@@ -76,7 +76,7 @@ public class GroupCriticalIllnessController {
 			@ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${CriticalillnessController.getpolicyinfobyproposalno}")
+	@ApiOperation(value = "${GroupCriticalIllnessController.getpolicyinfobyproposalno}")
 	public ResponseDTO<Object> retrievePolicyInfo(
 			@ApiParam("Proposal Number") @Valid @RequestBody CriticalIllnessPolicyDataDTO policyDto) {
 
