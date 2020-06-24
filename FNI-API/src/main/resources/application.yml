@@ -81,6 +81,8 @@ SchoolController:
   schools: Get All Schools
 TownshipController:
   townships: Get All Townships
+ReligionController:
+  religions: Get All Religions
 
 PublicLifeController:
   submitproposal: Create Public Life Proposal and return proposal number

@@ -54,6 +54,7 @@ public class SwaggerConfig {
 				.tags(new Tag("Provinces", "Operations about Province"))
 				.tags(new Tag("Public-Life", "Operations about Public-Life"))
 				.tags(new Tag("Relationships", "Operations about Relationship"))
+				.tags(new Tag("Religions", "Operations about Religion"))
 				.tags(new Tag("SaleMan", "Operations about SaleMan"))
 				.tags(new Tag("Salepoints", "Operations about Salepoint"))
 				.tags(new Tag("Schools", "Operations about School"))
