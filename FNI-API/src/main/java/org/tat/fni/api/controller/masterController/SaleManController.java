@@ -39,7 +39,10 @@ public class SaleManController {
 		List<SaleManDTO> salemanList = new ArrayList<SaleManDTO>();
 
 		resultList.forEach(result -> {
-			SaleManDTO salemanDTO = SaleManDTO.builder().build();
+			SaleManDTO salemanDTO = SaleManDTO.builder().id(result.getId()).dateOfBirth(result.getDateOfBirth())
+					.CodeNo(result.getCodeNo()).idNo(result.getIdNo()).idType(result.getIdType())
+					.initialId(result.getInitialId()).fullName(result.getFullName())
+					.address(result.getAddress().getFullAddress()).build();
 			salemanList.add(salemanDTO);
 		});
 

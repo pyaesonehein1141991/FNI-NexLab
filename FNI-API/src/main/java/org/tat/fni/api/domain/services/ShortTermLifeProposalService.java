@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +46,6 @@ import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
-import org.tat.fni.api.dto.InsuredPersonInfoDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermEndowmentLifeDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonDTO;
@@ -53,7 +54,7 @@ import org.tat.fni.api.exception.ErrorCode;
 import org.tat.fni.api.exception.SystemException;
 
 @Service
-public class ShortTermLifeProposalService {
+public class ShortTermLifeProposalService extends BaseService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -61,13 +62,7 @@ public class ShortTermLifeProposalService {
 	private LifeProposalRepository lifeProposalRepo;
 
 	@Autowired
-	private LifePolicyService commonLifeProposalService;
-
-	@Autowired
 	private BranchService branchService;
-
-	@Autowired
-	private IPremiumCalculatorService premiumCalculatorService;
 
 	@Autowired
 	private CustomerRepository customerRepo;
@@ -104,8 +99,9 @@ public class ShortTermLifeProposalService {
 
 	@Autowired
 	private RiskyOccupationService riskyOccupationService;
-
-	private InsuredPersonInfoDTO insuredPersonInfoDTO;
+	
+	@Resource(name = "PremiumCalculatorService")
+	private IPremiumCalculatorService premiumCalculatorService;
 
 	@Value("${shorttermLifeProductId}")
 	private String shorttermLifeProductId;
@@ -117,9 +113,7 @@ public class ShortTermLifeProposalService {
 			// convert shortTermEndowmentlifeProposalDTO to lifeproposal
 			List<LifeProposal> shortTermEndowmentLifeProposalList = convertShortTermEndowmentLifeProposalDTOToProposal(
 					shortTermEndowmentLifeDto);
-
-			;
-
+			
 			shortTermEndowmentLifeProposalList = lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
 
 			String id = DateUtils.formattedSqlDate(new Date())
@@ -194,11 +188,11 @@ public class ShortTermLifeProposalService {
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 				lifeProposal.setEndDate(shortTermEndowmentLifeDto.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
+
+//				LifeProposal lifeProposalPremiumAdded = calculatePremium(lifeProposal);
+//				calculateTermPremium(lifeProposalPremiumAdded);
+
 				lifeProposalList.add(lifeProposal);
-
-				// calculateTermPremium(lifeProposal);
-
-				// calculatePremium(lifeProposal);
 
 			});
 		} catch (DAOException e) {
@@ -209,6 +203,7 @@ public class ShortTermLifeProposalService {
 
 	private ProposalInsuredPerson createInsuredPersonForShortTerm(ShortTermProposalInsuredPersonDTO dto) {
 		try {
+
 			Optional<Product> productOptional = productService.findById(shorttermLifeProductId);
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
@@ -227,7 +222,6 @@ public class ShortTermLifeProposalService {
 
 			ProposalInsuredPerson insuredPerson = new ProposalInsuredPerson();
 
-			insuredPerson.setProduct(productOptional.get());
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
@@ -244,6 +238,7 @@ public class ShortTermLifeProposalService {
 			insuredPerson.setResidentAddress(residentAddress);
 			insuredPerson.setPhone(dto.getPhone());
 			insuredPerson.setName(name);
+			
 			if (occupationOptional.isPresent()) {
 				insuredPerson.setOccupation(occupationOptional.get());
 			}
@@ -259,28 +254,50 @@ public class ShortTermLifeProposalService {
 			if (relationshipOptional.isPresent()) {
 				insuredPerson.setRelationship(relationshipOptional.get());
 			}
-
-			for (InsuredPersonKeyFactorValue vehKF : insuredPerson.getKeyFactorValueList()) {
-				KeyFactor kf = vehKF.getKeyFactor();
-				if (KeyFactorChecker.isSumInsured(kf)) {
-					vehKF.setValue(dto.getApprovedSumInsured() + "");
-				} else if (KeyFactorChecker.isAge(kf) || KeyFactorChecker.isMedicalAge(kf)) {
-					vehKF.setValue(dto.getAge() + "");
-				} else if (KeyFactorChecker.isTerm(kf)) {
-					vehKF.setValue(dto.getPeriodMonth() + "");
-				}
+			if(productOptional.isPresent()) {
+				insuredPerson.setProduct(productOptional.get());
 			}
 
 			String insPersonCodeNo = customIdRepo.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
-
 			});
+			
+			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
+				insuredPerson.getKeyFactorValueList().add(createKeyFactorValue(keyfactor, insuredPerson));
+			});
+			
+			
+			for (InsuredPersonKeyFactorValue vehKF2 : insuredPerson.getKeyFactorValueList()) {
+				KeyFactor kf = vehKF2.getKeyFactor();
+				
+				if(kf.getValue().equals("Age")) {
+					vehKF2.setValue(dto.getAge() + "");
+				}else if(kf.getValue().equals("Term")) {
+					vehKF2.setValue(dto.getPeriodMonth() + "");
+				}
+//				if (KeyFactorChecker.isSumInsured(kf)) {
+//					vehKF2.setValue(dto.getApprovedSumInsured() + "");
+//				} else if (KeyFactorChecker.isAge(kf) || KeyFactorChecker.isMedicalAge(kf)) {
+//					vehKF2.setValue(dto.getAge() + "");
+//				} else if (KeyFactorChecker.isTerm(kf)) {
+//					vehKF2.setValue(dto.getPeriodMonth() + "");
+//				}
+			}
+			
 			return insuredPerson;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
+	}
+	
+	private InsuredPersonKeyFactorValue createKeyFactorValue(KeyFactor keyfactor, ProposalInsuredPerson insuredPerson) {
+		
+		InsuredPersonKeyFactorValue insuredPersonKeyFactorValue = new InsuredPersonKeyFactorValue();
+		insuredPersonKeyFactorValue.setKeyFactor(keyfactor);
+		insuredPersonKeyFactorValue.setProposalInsuredPerson(insuredPerson);
+		return insuredPersonKeyFactorValue;
 	}
 
 	private Customer createNewCustomer(ProposalInsuredPerson dto) {
@@ -334,48 +351,8 @@ public class ShortTermLifeProposalService {
 		}
 	}
 
-	public void calculateTermPremium(LifeProposal lifeProposal) {
-		int paymentType = lifeProposal.getPaymentType().getMonth();
-		// boolean isStudentLife = KeyFactorChecker
-		// .isStudentLife(lifeProposal.getProposalInsuredPersonList().get(0).getProduct().getId());
-		int paymentTerm = 0;
-		double premium = 0, termPremium = 0, addOnPremium = 0;
-		for (ProposalInsuredPerson pv : lifeProposal.getProposalInsuredPersonList()) {
-			premium = pv.getProposedPremium();
-			if (paymentType > 0) {
-				// if (isStudentLife) {
-				// paymentTerm = (lifeProposal.getPeriodOfYears() - 3) * 12 /
-				// paymentType;
-				// } else
-				paymentTerm = lifeProposal.getPeriodMonth() / paymentType;// lifeProposal.getPeriodOfYear()*12
-
-				termPremium = (paymentType * premium) / 12;
-				pv.setBasicTermPremium(termPremium);
-			} else {
-				// *** Calculation for Lump Sum ***
-				if (KeyFactorChecker
-						.isPersonalAccident(lifeProposal.getProposalInsuredPersonList().get(0).getProduct()))
-					termPremium = (premium / 12) * lifeProposal.getPeriodMonth();
-				else
-					termPremium = (lifeProposal.getPeriodOfYears() * premium);
-				pv.setBasicTermPremium(termPremium);
-			}
-			lifeProposal.setPaymentTerm(paymentTerm);
-
-			addOnPremium = pv.getAddOnPremium();
-			if (paymentType > 0) {
-				termPremium = (paymentType * addOnPremium) / 12;
-				pv.setAddOnTermPremium(termPremium);
-			} else {
-				// *** Calculation for Lump Sum AddOn Premium***
-				termPremium = (lifeProposal.getPeriodMonth() * addOnPremium);
-				pv.setAddOnTermPremium(termPremium);
-			}
-		}
-	}
-
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void calculatePremium(LifeProposal lifeProposal) {
+	public LifeProposal calculatePremium(LifeProposal lifeProposal) {
 		Double premium;
 		Double premiumRate;
 		double proposedSI;
@@ -391,13 +368,39 @@ public class ShortTermLifeProposalService {
 			for (InsuredPersonKeyFactorValue insukf : pv.getKeyFactorValueList()) {
 				keyfatorValueMap.put(insukf.getKeyFactor(), insukf.getValue());
 			}
-			premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
-			pv.setPremiumRate(premiumRate);
-			premium = premiumCalculatorService.calulatePremium(premiumRate, product,
-					new PremiumCalData(null, proposedSI, null, null));
-
-			pv.setProposedPremium(premium);
-
+			if (isSportMan(product) || isSnakeBite(product)) {
+				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
+				pv.setPremiumRate(premiumRate);
+				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
+						new PremiumCalData(null, null, null, (double) pv.getUnit()));
+				pv.setProposedSumInsured(pv.getUnit() * product.getSumInsuredPerUnit());
+			} else {
+				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
+				pv.setPremiumRate(premiumRate);
+				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
+						new PremiumCalData(null, proposedSI, null, null));
+			}
+			if (KeyFactorChecker.isStudentLife(product.getId())) {
+				// ratePremium = premium;
+				// premium = (ratePremium *
+				// lifeProposal.getPaymentType().getMonth());
+				switch (lifeProposal.getPaymentType().getMonth()) {
+				case 1:
+					pv.setProposedPremium(premium * 12);
+					break;
+				case 6:
+					pv.setProposedPremium(premium * 2);
+					break;
+				case 3:
+					pv.setProposedPremium(premium * 4);
+					break;
+				default:
+					pv.setProposedPremium(premium);
+				}
+				// pv.setProposedPremium(premium);
+			} else {
+				pv.setProposedPremium(premium);
+			}
 			if (premium == null || premium < 0) {
 				throw new SystemException(ErrorCode.NO_PREMIUM_RATE, keyfatorValueMap, "There is no premiumn.");
 			}
@@ -431,14 +434,47 @@ public class ShortTermLifeProposalService {
 					insuredPersonAddOn.setProposedPremium(addOnPremium);
 				}
 			}
-
 		}
+		return lifeProposal;
 	}
 
-//	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
-//
-//		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
-//
-//	}
+	public void calculateTermPremium(LifeProposal lifeProposal) {
+		int paymentType = lifeProposal.getPaymentType().getMonth();
+		boolean isStudentLife = KeyFactorChecker
+				.isStudentLife(lifeProposal.getProposalInsuredPersonList().get(0).getProduct().getId());
+		int paymentTerm = 0;
+		double premium = 0, termPremium = 0, addOnPremium = 0;
+		for (ProposalInsuredPerson pv : lifeProposal.getProposalInsuredPersonList()) {
+			premium = pv.getProposedPremium();
+			if (paymentType > 0) {
+				if (isStudentLife) {
+					paymentTerm = (lifeProposal.getPeriodOfYears() - 3) * 12 / paymentType;
+				} else
+					paymentTerm = lifeProposal.getPeriodMonth() / paymentType;// lifeProposal.getPeriodOfYear()*12
+
+				termPremium = (paymentType * premium) / 12;
+				pv.setBasicTermPremium(termPremium);
+			} else {
+				// *** Calculation for Lump Sum ***
+				if (KeyFactorChecker
+						.isPersonalAccident(lifeProposal.getProposalInsuredPersonList().get(0).getProduct()))
+					termPremium = (premium / 12) * lifeProposal.getPeriodMonth();
+				else
+					termPremium = (lifeProposal.getPeriodOfYears() * premium);
+				pv.setBasicTermPremium(termPremium);
+			}
+			lifeProposal.setPaymentTerm(paymentTerm);
+
+			addOnPremium = pv.getAddOnPremium();
+			if (paymentType > 0) {
+				termPremium = (paymentType * addOnPremium) / 12;
+				pv.setAddOnTermPremium(termPremium);
+			} else {
+				// *** Calculation for Lump Sum AddOn Premium***
+				termPremium = (lifeProposal.getPeriodMonth() * addOnPremium);
+				pv.setAddOnTermPremium(termPremium);
+			}
+		}
+	}
 
 }

@@ -12,5 +12,21 @@ import lombok.Data;
 @Data
 @Builder
 public class SaleManDTO {
+	
+	private String id;
+
+	private Date dateOfBirth;
+
+	private String CodeNo;
+
+	private String idNo;
+
+	private IdType idType;
+
+	private String initialId;
+
+	private String fullName;
+
+	private String address;
 
 }
