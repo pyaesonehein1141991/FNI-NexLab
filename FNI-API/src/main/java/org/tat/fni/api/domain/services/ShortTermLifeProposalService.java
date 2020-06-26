@@ -189,8 +189,8 @@ public class ShortTermLifeProposalService extends BaseService {
 				lifeProposal.setEndDate(shortTermEndowmentLifeDto.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
 
-//				LifeProposal lifeProposalPremiumAdded = calculatePremium(lifeProposal);
-//				calculateTermPremium(lifeProposalPremiumAdded);
+				LifeProposal lifeProposalPremiumAdded = calculatePremium(lifeProposal);
+				calculateTermPremium(lifeProposalPremiumAdded);
 
 				lifeProposalList.add(lifeProposal);
 
@@ -272,7 +272,9 @@ public class ShortTermLifeProposalService extends BaseService {
 			for (InsuredPersonKeyFactorValue vehKF2 : insuredPerson.getKeyFactorValueList()) {
 				KeyFactor kf = vehKF2.getKeyFactor();
 				
-				if(kf.getValue().equals("Age")) {
+				if(kf.getValue().equals("Sum Insured")) {
+					vehKF2.setValue(dto.getApprovedSumInsured() + "");
+				}else if(kf.getValue().equals("Age")) {
 					vehKF2.setValue(dto.getAge() + "");
 				}else if(kf.getValue().equals("Term")) {
 					vehKF2.setValue(dto.getPeriodMonth() + "");
@@ -368,22 +370,39 @@ public class ShortTermLifeProposalService extends BaseService {
 			for (InsuredPersonKeyFactorValue insukf : pv.getKeyFactorValueList()) {
 				keyfatorValueMap.put(insukf.getKeyFactor(), insukf.getValue());
 			}
-			if (isSportMan(product) || isSnakeBite(product)) {
+			
+			boolean isSportMan = product.getProductContent().getName().equals("SPORTMAN");
+			boolean isSnakeBite = product.getProductContent().getName().equals("SNAKE BITE");
+			boolean isStudentLife = product.getProductContent().getName().equals("STUDENT LIFE");
+			
+			if(isSportMan || isSnakeBite) {
 				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
 				pv.setPremiumRate(premiumRate);
 				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
 						new PremiumCalData(null, null, null, (double) pv.getUnit()));
 				pv.setProposedSumInsured(pv.getUnit() * product.getSumInsuredPerUnit());
-			} else {
+			}else {
 				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
 				pv.setPremiumRate(premiumRate);
 				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
 						new PremiumCalData(null, proposedSI, null, null));
 			}
-			if (KeyFactorChecker.isStudentLife(product.getId())) {
-				// ratePremium = premium;
-				// premium = (ratePremium *
-				// lifeProposal.getPaymentType().getMonth());
+			
+			
+//			if (isSportMan(product) || isSnakeBite(product)) {
+//				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
+//				pv.setPremiumRate(premiumRate);
+//				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
+//						new PremiumCalData(null, null, null, (double) pv.getUnit()));
+//				pv.setProposedSumInsured(pv.getUnit() * product.getSumInsuredPerUnit());
+//			} else {
+//				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
+//				pv.setPremiumRate(premiumRate);
+//				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
+//						new PremiumCalData(null, proposedSI, null, null));
+//			}
+			
+			if(isStudentLife) {
 				switch (lifeProposal.getPaymentType().getMonth()) {
 				case 1:
 					pv.setProposedPremium(premium * 12);
@@ -397,51 +416,78 @@ public class ShortTermLifeProposalService extends BaseService {
 				default:
 					pv.setProposedPremium(premium);
 				}
-				// pv.setProposedPremium(premium);
-			} else {
+			}else {
 				pv.setProposedPremium(premium);
 			}
+			
+//			if (KeyFactorChecker.isStudentLife(product.getId())) {
+//				// ratePremium = premium;
+//				// premium = (ratePremium *
+//				// lifeProposal.getPaymentType().getMonth());
+//				switch (lifeProposal.getPaymentType().getMonth()) {
+//				case 1:
+//					pv.setProposedPremium(premium * 12);
+//					break;
+//				case 6:
+//					pv.setProposedPremium(premium * 2);
+//					break;
+//				case 3:
+//					pv.setProposedPremium(premium * 4);
+//					break;
+//				default:
+//					pv.setProposedPremium(premium);
+//				}
+//				// pv.setProposedPremium(premium);
+//			} else {
+//				pv.setProposedPremium(premium);
+//			}
+			
 			if (premium == null || premium < 0) {
 				throw new SystemException(ErrorCode.NO_PREMIUM_RATE, keyfatorValueMap, "There is no premiumn.");
 			}
 
-			List<InsuredPersonAddon> insuredPersonAddOnList = pv.getInsuredPersonAddOnList();
-			if (insuredPersonAddOnList != null && !insuredPersonAddOnList.isEmpty()) {
-				for (InsuredPersonAddon insuredPersonAddOn : insuredPersonAddOnList) {
-					double addOnPremium = 0.0;
-					double addOnPremiumRate = 0.0;
-					Map<KeyFactor, String> addOnKeyfatorValueMap = new HashMap<KeyFactor, String>();
-					if (insuredPersonAddOn.getAddOn().isBaseOnKeyFactor()) {
-						for (KeyFactor kf : insuredPersonAddOn.getAddOn().getKeyFactorList()) {
-							innerLoop: for (InsuredPersonKeyFactorValue ipKf : pv.getKeyFactorValueList()) {
-								if (kf.equals(ipKf.getKeyFactor())) {
-									addOnKeyfatorValueMap.put(kf, ipKf.getValue());
-									break innerLoop;
-								}
-							}
-							if (KeyFactorChecker.isGender(kf)) {
-								addOnKeyfatorValueMap.put(kf, pv.getGender().getLabel());
-							}
-						}
-					}
-					addOnPremium = premiumCalculatorService.calculatePremium(addOnKeyfatorValueMap,
-							insuredPersonAddOn.getAddOn(),
-							new PremiumCalData(insuredPersonAddOn.getProposedSumInsured(), proposedSI,
-									pv.getProposedPremium(), null));
-					addOnPremiumRate = premiumCalculatorService.findPremiumRate(addOnKeyfatorValueMap,
-							insuredPersonAddOn.getAddOn());
-					insuredPersonAddOn.setPremiumRate(addOnPremiumRate);
-					insuredPersonAddOn.setProposedPremium(addOnPremium);
-				}
-			}
+//			List<InsuredPersonAddon> insuredPersonAddOnList = pv.getInsuredPersonAddOnList();
+//			if (insuredPersonAddOnList != null && !insuredPersonAddOnList.isEmpty()) {
+//				for (InsuredPersonAddon insuredPersonAddOn : insuredPersonAddOnList) {
+//					double addOnPremium = 0.0;
+//					double addOnPremiumRate = 0.0;
+//					Map<KeyFactor, String> addOnKeyfatorValueMap = new HashMap<KeyFactor, String>();
+//					if (insuredPersonAddOn.getAddOn().isBaseOnKeyFactor()) {
+//						for (KeyFactor kf : insuredPersonAddOn.getAddOn().getKeyFactorList()) {
+//							innerLoop: for (InsuredPersonKeyFactorValue ipKf : pv.getKeyFactorValueList()) {
+//								if (kf.equals(ipKf.getKeyFactor())) {
+//									addOnKeyfatorValueMap.put(kf, ipKf.getValue());
+//									break innerLoop;
+//								}
+//							}
+//							if (KeyFactorChecker.isGender(kf)) {
+//								addOnKeyfatorValueMap.put(kf, pv.getGender().getLabel());
+//							}
+//						}
+//					}
+//					addOnPremium = premiumCalculatorService.calculatePremium(addOnKeyfatorValueMap,
+//							insuredPersonAddOn.getAddOn(),
+//							new PremiumCalData(insuredPersonAddOn.getProposedSumInsured(), proposedSI,
+//									pv.getProposedPremium(), null));
+//					addOnPremiumRate = premiumCalculatorService.findPremiumRate(addOnKeyfatorValueMap,
+//							insuredPersonAddOn.getAddOn());
+//					insuredPersonAddOn.setPremiumRate(addOnPremiumRate);
+//					insuredPersonAddOn.setProposedPremium(addOnPremium);
+//				}
+//			}
 		}
 		return lifeProposal;
 	}
 
 	public void calculateTermPremium(LifeProposal lifeProposal) {
 		int paymentType = lifeProposal.getPaymentType().getMonth();
-		boolean isStudentLife = KeyFactorChecker
-				.isStudentLife(lifeProposal.getProposalInsuredPersonList().get(0).getProduct().getId());
+		
+		boolean isStudentLife = lifeProposal.getProposalInsuredPersonList().get(0).getProduct()
+				.getProductContent().getName().equals("STUDENT LIFE");
+		
+//		boolean isStudentLife = KeyFactorChecker
+//				.isStudentLife(lifeProposal.getProposalInsuredPersonList().get(0).getProduct().getId());
+		
 		int paymentTerm = 0;
 		double premium = 0, termPremium = 0, addOnPremium = 0;
 		for (ProposalInsuredPerson pv : lifeProposal.getProposalInsuredPersonList()) {
@@ -465,15 +511,15 @@ public class ShortTermLifeProposalService extends BaseService {
 			}
 			lifeProposal.setPaymentTerm(paymentTerm);
 
-			addOnPremium = pv.getAddOnPremium();
-			if (paymentType > 0) {
-				termPremium = (paymentType * addOnPremium) / 12;
-				pv.setAddOnTermPremium(termPremium);
-			} else {
-				// *** Calculation for Lump Sum AddOn Premium***
-				termPremium = (lifeProposal.getPeriodMonth() * addOnPremium);
-				pv.setAddOnTermPremium(termPremium);
-			}
+//			addOnPremium = pv.getAddOnPremium();
+//			if (paymentType > 0) {
+//				termPremium = (paymentType * addOnPremium) / 12;
+//				pv.setAddOnTermPremium(termPremium);
+//			} else {
+//				// *** Calculation for Lump Sum AddOn Premium***
+//				termPremium = (lifeProposal.getPeriodMonth() * addOnPremium);
+//				pv.setAddOnTermPremium(termPremium);
+//			}
 		}
 	}
 
