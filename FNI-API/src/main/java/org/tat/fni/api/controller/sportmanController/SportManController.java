@@ -3,6 +3,7 @@ package org.tat.fni.api.controller.sportmanController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.services.SportManProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
@@ -32,8 +33,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "Sport Man")
 public class SportManController {
 
-	@Autowired
-	private SportManProposalService lifeProposalService;
+	@Resource(name = "sportManProposalService")
+	private ILifeProductsProposalService lifeProposalService;
 
 	@Autowired
 	private LifePolicyService lifePolicyService;
@@ -52,7 +53,7 @@ public class SportManController {
 		SportManDTO sportmandto = mapper.map(sportManDTO, SportManDTO.class);
 
 		// create sport man proposal
-		proposallist = lifeProposalService.createSportManDTOToProposal(sportmandto);
+		proposallist = lifeProposalService.createDtoToProposal(sportmandto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();

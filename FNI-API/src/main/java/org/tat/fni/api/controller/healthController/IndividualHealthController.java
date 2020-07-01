@@ -3,6 +3,7 @@ package org.tat.fni.api.controller.healthController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.MedicalProposal;
-import org.tat.fni.api.domain.services.HealthProposalService;
+import org.tat.fni.api.domain.services.Interfaces.IMedicalProductsProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.MedicalPolicyService;
+import org.tat.fni.api.domain.services.ProposalServices.HealthProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthInsuranceDTO;
 import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthPolicyDataDTO;
@@ -32,8 +34,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "Individual Health")
 public class IndividualHealthController {
 
-	@Autowired
-	private HealthProposalService medicalProposalService;
+	@Resource(name = "healthProposalService")
+	private IMedicalProductsProposalService medicalProposalService;
 	
 	@Autowired
 	private MedicalPolicyService medicalPolicyService;
@@ -51,7 +53,7 @@ public class IndividualHealthController {
 		IndividualHealthInsuranceDTO dto = mapper.map(individualHealthInsuranceDTO, IndividualHealthInsuranceDTO.class);
 
 		// create individual health proposal
-		proposallist = medicalProposalService.createIndividualHealthDtoToProposal(dto);
+		proposallist = medicalProposalService.createDtoToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();

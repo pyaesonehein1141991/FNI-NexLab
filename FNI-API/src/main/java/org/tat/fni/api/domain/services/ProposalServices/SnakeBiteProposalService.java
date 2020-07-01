@@ -1,4 +1,4 @@
-package org.tat.fni.api.domain.services;
+package org.tat.fni.api.domain.services.ProposalServices;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.tat.fni.api.common.KeyFactor;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
@@ -21,6 +24,7 @@ import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
+import org.tat.fni.api.domain.InsuredPersonKeyFactorValue;
 import org.tat.fni.api.domain.Occupation;
 import org.tat.fni.api.domain.Organization;
 import org.tat.fni.api.domain.PaymentType;
@@ -32,16 +36,30 @@ import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
-//import org.tat.fni.api.domain.repository.FarmerRepository;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonBeneficiariesDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalInsuredPersonDTO;
+import org.tat.fni.api.domain.services.AgentService;
+import org.tat.fni.api.domain.services.BaseService;
+import org.tat.fni.api.domain.services.BranchService;
+import org.tat.fni.api.domain.services.CustomerService;
+import org.tat.fni.api.domain.services.OccupationService;
+import org.tat.fni.api.domain.services.OrganizationService;
+import org.tat.fni.api.domain.services.PaymentTypeService;
+import org.tat.fni.api.domain.services.ProductService;
+import org.tat.fni.api.domain.services.RelationshipService;
+import org.tat.fni.api.domain.services.RiskyOccupationService;
+import org.tat.fni.api.domain.services.SalePointService;
+import org.tat.fni.api.domain.services.TownShipService;
+import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProposalService;
+import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteDTO;
+import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteProposalInsuredPersonBeneficiariesDTO;
+import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteProposalInsuredPersonDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
 @Service
-public class FarmerLifeProposalService {
+public class SnakeBiteProposalService extends BaseService implements ILifeProductsProposalService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -80,30 +98,36 @@ public class FarmerLifeProposalService {
 
 	@Autowired
 	private RiskyOccupationService riskyOccupationService;
+	
+	@Autowired
+	private ILifeProposalService lifeProposalService;
+	
+	@Value("${snakeBiteProductId}")
+	private String snakeBiteProductId;
 
 	@Autowired
 	private ICustomIdGenerator customId;
 
-	@Value("${farmerProductId}")
-	private String farmerpProductId;
-
-	public List<LifeProposal> createFarmerProposalDTOToProposal(FarmerProposalDTO farmerProposalDTO) {
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public <T> List<LifeProposal> createDtoToProposal(T proposalDto) {
 		try {
+			
+			SnakeBiteDTO snakeBiteDTO = (SnakeBiteDTO) proposalDto;
 
-			List<LifeProposal> farmerProposalList = convertFarmerProposalDTOToProposal(farmerProposalDTO);
-			lifeProposalRepo.saveAll(farmerProposalList);
+			List<LifeProposal> snakeBiteProposalList = convertProposalDTOToProposal(snakeBiteDTO);
+			lifeProposalRepo.saveAll(snakeBiteProposalList);
 
-			String id = DateUtils.formattedSqlDate(new Date()).concat(farmerProposalList.get(0).getProposalNo());
-			String referenceNo = farmerProposalList.get(0).getId();
-			String referenceType = "FARMER";
+			String id = DateUtils.formattedSqlDate(new Date()).concat(snakeBiteProposalList.get(0).getProposalNo());
+			String referenceNo = snakeBiteProposalList.get(0).getId();
+			String referenceType = "SNAKE_BITE";
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
 
 			lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
 			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate, workflowDate);
 
-			return farmerProposalList;
-
+			return snakeBiteProposalList;
 		} catch (DAOException e) {
 
 			logger.error("JOEERROR:" + e.getMessage(), e);
@@ -111,30 +135,36 @@ public class FarmerLifeProposalService {
 		}
 	}
 
-	private List<LifeProposal> convertFarmerProposalDTOToProposal(FarmerProposalDTO farmerProposalDTO) {
-
-		Optional<Product> productOptional = productService.findById(farmerProposalDTO.getProductId());
-		Optional<Branch> branchOptional = branchService.findById(farmerProposalDTO.getBranchId());
-		Optional<Customer> customerOptional = customerService.findById(farmerProposalDTO.getCustomerId());
-		Optional<Organization> organizationOptional = organizationService
-				.findById(farmerProposalDTO.getOrganizationId());
-		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(farmerProposalDTO.getPaymentTypeId());
-		Optional<Agent> agentOptional = agentService.findById(farmerProposalDTO.getAgentId());
-		Optional<SalesPoints> salePointOptional = salePointService.findById(farmerProposalDTO.getSalesPointsId());
+	@Override
+	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto) {
+		
+		SnakeBiteDTO snakeBiteDTO = (SnakeBiteDTO) proposalDto;
+		
+		Optional<Product> productOptional = productService.findById(snakeBiteDTO.getProductId());
+		Optional<Branch> branchOptional = branchService.findById(snakeBiteDTO.getBranchId());
+		Optional<Customer> customerOptional = customerService.findById(snakeBiteDTO.getCustomerId());
+		Optional<Organization> organizationOptional = organizationService.findById(snakeBiteDTO.getOrganizationId());
+		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(snakeBiteDTO.getPaymentTypeId());
+		Optional<Agent> agentOptional = agentService.findById(snakeBiteDTO.getAgentId());
+		Optional<SalesPoints> salePointOptional = salePointService.findById(snakeBiteDTO.getSalesPointsId());
 
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
 
 		try {
-			farmerProposalDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
+
+			snakeBiteDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
 				LifeProposal lifeProposal = new LifeProposal();
+				
+				lifeProposalService.setPeriodMonthForKeyFacterValue(
+						snakeBiteDTO.getPeriodMonth(), snakeBiteDTO.getPaymentTypeId());
 
-				lifeProposal.getProposalInsuredPersonList().add(createInsuredPersonForFarmer(insuredPerson));
+				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
 				lifeProposal.setComplete(true);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
-				lifeProposal.setSubmittedDate(farmerProposalDTO.getSubmittedDate());
-				lifeProposal.setPeriodMonth(farmerProposalDTO.getPeriodMonth());
+				lifeProposal.setSubmittedDate(snakeBiteDTO.getSubmittedDate());
+				lifeProposal.setPeriodMonth(snakeBiteDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 
 				if (branchOptional.isPresent()) {
@@ -156,10 +186,13 @@ public class FarmerLifeProposalService {
 					lifeProposal.setCustomer(customerOptional.get());
 				}
 
-				String proposalNo = customId.getNextId("FARMER_PROPOSAL_NO", null);
-				lifeProposal.setStartDate(farmerProposalDTO.getStartDate());
-				lifeProposal.setEndDate(farmerProposalDTO.getEndDate());
+				String proposalNo = customId.getNextId("SNAKEBITE_PROPOSAL_NO", null);
+				lifeProposal.setStartDate(snakeBiteDTO.getStartDate());
+				lifeProposal.setEndDate(snakeBiteDTO.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
+				
+				lifeProposal = lifeProposalService.calculatePremium(lifeProposal);
+				lifeProposalService.calculateTermPremium(lifeProposal);
 
 				lifeProposalList.add(lifeProposal);
 
@@ -172,15 +205,18 @@ public class FarmerLifeProposalService {
 		return lifeProposalList;
 	}
 
-	private ProposalInsuredPerson createInsuredPersonForFarmer(FarmerProposalInsuredPersonDTO dto) {
+	@Override
+	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
 		try {
-
-			Optional<Product> productOptional = productService.findById(farmerpProductId);
+			
+			SnakeBiteProposalInsuredPersonDTO dto = (SnakeBiteProposalInsuredPersonDTO) proposalInsuredPersonDTO;
+			
+			Optional<Product> productOptional = productService.findById(snakeBiteProductId);
+			Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
-					.findRiskyOccupationById(dto.getRiskyOccupationID());
+			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService.findRiskyOccupationById(dto.getRiskyOccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -194,9 +230,7 @@ public class FarmerLifeProposalService {
 			ProposalInsuredPerson insuredPerson = new ProposalInsuredPerson();
 			insuredPerson.setProduct(productOptional.get());
 			insuredPerson.setInitialId(dto.getInitialId());
-			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
-			insuredPerson.setApprovedSumInsured(dto.getApprovedSumInsured());
 			insuredPerson.setApproved(dto.isApprove());
 			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
 			insuredPerson.setRejectReason(dto.getRejectReason());
@@ -207,6 +241,8 @@ public class FarmerLifeProposalService {
 			insuredPerson.setPhone(dto.getPhone());
 			insuredPerson.setAge(DateUtils.getAgeForNextYear(dto.getDateOfBirth()));
 			insuredPerson.setGender(Gender.valueOf(dto.getGender()));
+			insuredPerson.setUnit(dto.getUnit());
+			insuredPerson.setApprovedUnit(dto.getApprovedUnit());
 			insuredPerson.setResidentAddress(residentAddress);
 			insuredPerson.setName(name);
 
@@ -215,6 +251,9 @@ public class FarmerLifeProposalService {
 			}
 			if (relationshipOptional.isPresent()) {
 				insuredPerson.setRelationship(relationshipOptional.get());
+			}
+			if (customerOptional.isPresent()) {
+				insuredPerson.setCustomer(customerOptional.get());
 			}
 			if (riskyOccupationOptional.isPresent()) {
 				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
@@ -226,6 +265,10 @@ public class FarmerLifeProposalService {
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
+			
+			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
+				insuredPerson.getKeyFactorValueList().add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
 
 			return insuredPerson;
 		} catch (DAOException e) {
@@ -233,9 +276,19 @@ public class FarmerLifeProposalService {
 		}
 	}
 
-	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
-			FarmerProposalInsuredPersonBeneficiariesDTO dto) {
+	@Override
+	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
 		try {
+			
+			SnakeBiteProposalInsuredPersonBeneficiariesDTO dto = 
+					(SnakeBiteProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+			
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 

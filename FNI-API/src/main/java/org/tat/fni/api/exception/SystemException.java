@@ -7,6 +7,7 @@ public class SystemException extends TransactionSystemException {
 	private String errorCode;
 	private Object response;
 	private int statusCode;
+	private Object source;
 
 	public SystemException(String errorCode, String message) {
 		super(message);
@@ -36,6 +37,14 @@ public class SystemException extends TransactionSystemException {
 
 	public Object getResponse() {
 		return response;
+	}
+	
+	public Object getSource() {
+		return source;
+	}
+	
+	public void setSource(Object source) {
+		this.source = source;
 	}
 
 	public int getStatusCode() {

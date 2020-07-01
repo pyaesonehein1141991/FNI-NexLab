@@ -3,6 +3,7 @@ package org.tat.fni.api.controller.shortTermController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.services.ShortTermLifeProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
@@ -32,9 +33,9 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "Short-Term Life Insurance")
 public class ShortTermEndowmentLifeController {
 
-	@Autowired
-	private ShortTermLifeProposalService lifeProposalService;
-
+	@Resource(name = "shortTermLifeProposalService")
+	private ILifeProductsProposalService lifeProposalService;
+	
 	@Autowired
 	private LifePolicyService lifePolicyService;
 
@@ -54,7 +55,7 @@ public class ShortTermEndowmentLifeController {
 		ShortTermEndowmentLifeDTO dto = mapper.map(shortTermEndowmentLifeDto, ShortTermEndowmentLifeDTO.class);
 
 		// create shortTermEndowmentlife proposal
-		proposallist = lifeProposalService.createShortTermEndowmentLifeDtoToProposal(dto);
+		proposallist = lifeProposalService.createDtoToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<>();

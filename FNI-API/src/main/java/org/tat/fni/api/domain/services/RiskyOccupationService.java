@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.tat.fni.api.domain.RiskyOccupation;
 import org.tat.fni.api.domain.repository.IRiskyOccupationDAO;
+import org.tat.fni.api.domain.services.Interfaces.IRiskyOccupationService;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 

@@ -1,4 +1,4 @@
-package org.tat.fni.api.domain.services;
+package org.tat.fni.api.domain.services.ProposalServices;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,7 +8,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.tat.fni.api.common.KeyFactor;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
@@ -20,9 +24,11 @@ import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
+import org.tat.fni.api.domain.InsuredPersonKeyFactorValue;
 import org.tat.fni.api.domain.Occupation;
 import org.tat.fni.api.domain.Organization;
 import org.tat.fni.api.domain.PaymentType;
+import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
@@ -30,23 +36,34 @@ import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
+import org.tat.fni.api.domain.services.AgentService;
+import org.tat.fni.api.domain.services.BaseService;
+import org.tat.fni.api.domain.services.BranchService;
+import org.tat.fni.api.domain.services.CustomerService;
+import org.tat.fni.api.domain.services.OccupationService;
+import org.tat.fni.api.domain.services.OrganizationService;
+import org.tat.fni.api.domain.services.PaymentTypeService;
+import org.tat.fni.api.domain.services.ProductService;
+import org.tat.fni.api.domain.services.RelationshipService;
+import org.tat.fni.api.domain.services.SalePointService;
+import org.tat.fni.api.domain.services.TownShipService;
+import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProposalService;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
 @Service
-public class GroupLifeProposalService {
+public class GroupLifeProposalService extends BaseService implements ILifeProductsProposalService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private LifeProposalRepository lifeProposalRepo;
-	
-	@Autowired
-	private LifePolicyService commonLifeProposalService;
 
 	@Autowired
 	private PaymentTypeService paymentTypeService;
@@ -74,17 +91,29 @@ public class GroupLifeProposalService {
 
 	@Autowired
 	private RelationshipService relationshipService;
+	
+	@Autowired
+	private ProductService productService;
 
 	@Autowired
 	private CustomerRepository customerRepo;
+	
+	@Autowired
+	private ILifeProposalService lifeProposalService;
+	
+	@Value("${groupLifeProductId}")
+	private String groupLifeProductId;
 
 	@Autowired
 	private ICustomIdGenerator customId;
 
-	public List<LifeProposal> createGroupLifeProposalDTOToProposal(GroupLifeDTO groupLifeDTO) {
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public <T> List<LifeProposal> createDtoToProposal(T proposalDto) {
 		try {
+			GroupLifeDTO groupLifeDTO = (GroupLifeDTO) proposalDto;
 
-			List<LifeProposal> groupLifeProposalList = convertGroupLifeProposalDTOToProposal(groupLifeDTO);
+			List<LifeProposal> groupLifeProposalList = convertProposalDTOToProposal(groupLifeDTO);
 			lifeProposalRepo.saveAll(groupLifeProposalList);
 
 			String id = DateUtils.formattedSqlDate(new Date()).concat(groupLifeProposalList.get(0).getProposalNo());
@@ -105,8 +134,11 @@ public class GroupLifeProposalService {
 		}
 	}
 
-	private List<LifeProposal> convertGroupLifeProposalDTOToProposal(GroupLifeDTO groupLifeDTO) {
-
+	@Override
+	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto) {
+		
+		GroupLifeDTO groupLifeDTO = (GroupLifeDTO) proposalDto;
+		
 		Optional<Branch> branchOptional = branchService.findById(groupLifeDTO.getBranchId());
 		Optional<Customer> customerOptional = customerService.findById(groupLifeDTO.getCustomerId());
 		Optional<Organization> organizationOptional = organizationService.findById(groupLifeDTO.getOrganizationId());
@@ -120,8 +152,11 @@ public class GroupLifeProposalService {
 			groupLifeDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
 				LifeProposal lifeProposal = new LifeProposal();
+				
+				lifeProposalService.setPeriodMonthForKeyFacterValue(
+						groupLifeDTO.getPeriodMonth(), groupLifeDTO.getPaymentTypeId());
 
-				lifeProposal.getProposalInsuredPersonList().add(createInsuredPersonForGroupLife(insuredPerson));
+				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 				lifeProposal.setComplete(true);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(groupLifeDTO.getSubmittedDate());
@@ -151,6 +186,9 @@ public class GroupLifeProposalService {
 				lifeProposal.setStartDate(groupLifeDTO.getStartDate());
 				lifeProposal.setEndDate(groupLifeDTO.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
+				
+				lifeProposal = lifeProposalService.calculatePremium(lifeProposal);
+				lifeProposalService.calculateTermPremium(lifeProposal);
 
 				lifeProposalList.add(lifeProposal);
 
@@ -161,12 +199,15 @@ public class GroupLifeProposalService {
 		}
 
 		return lifeProposalList;
-
 	}
 
-	private ProposalInsuredPerson createInsuredPersonForGroupLife(GroupLifeProposalInsuredPersonDTO dto) {
+	@Override
+	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
+		
 		try {
+			GroupLifeProposalInsuredPersonDTO dto = (GroupLifeProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 
+			Optional<Product> productOptional = productService.findById(groupLifeProductId);
 			Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
@@ -182,6 +223,7 @@ public class GroupLifeProposalService {
 			name.setLastName(dto.getLastName());
 
 			ProposalInsuredPerson insuredPerson = new ProposalInsuredPerson();
+			insuredPerson.setProduct(productOptional.get());
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
@@ -219,6 +261,10 @@ public class GroupLifeProposalService {
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
+			
+			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
+				insuredPerson.getKeyFactorValueList().add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
 
 			return insuredPerson;
 		} catch (DAOException e) {
@@ -226,19 +272,20 @@ public class GroupLifeProposalService {
 		}
 	}
 
-	private Customer createNewCustomer(ProposalInsuredPerson dto) {
+	@Override
+	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
 		Customer customer = new Customer();
 		try {
-			customer.setInitialId(dto.getInitialId());
-			customer.setFatherName(dto.getFatherName());
-			customer.setIdNo(dto.getIdNo());
-			customer.setDateOfBirth(dto.getDateOfBirth());
-			customer.setGender(dto.getGender());
-			customer.setIdType(dto.getIdType());
-			customer.setResidentAddress(dto.getResidentAddress());
-			customer.setName(dto.getName());
-			customer.setOccupation(dto.getOccupation());
-			customer.setRecorder(dto.getRecorder());
+			customer.setInitialId(insuredPersonDto.getInitialId());
+			customer.setFatherName(insuredPersonDto.getFatherName());
+			customer.setIdNo(insuredPersonDto.getIdNo());
+			customer.setDateOfBirth(insuredPersonDto.getDateOfBirth());
+			customer.setGender(insuredPersonDto.getGender());
+			customer.setIdType(insuredPersonDto.getIdType());
+			customer.setResidentAddress(insuredPersonDto.getResidentAddress());
+			customer.setName(insuredPersonDto.getName());
+			customer.setOccupation(insuredPersonDto.getOccupation());
+			customer.setRecorder(insuredPersonDto.getRecorder());
 			customer = customerRepo.save(customer);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -246,8 +293,13 @@ public class GroupLifeProposalService {
 		return customer;
 	}
 
-	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(GroupLifeProposalInsuredPersonBeneficiariesDTO dto) {
+	@Override
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
+		
 		try {
+			GroupLifeProposalInsuredPersonBeneficiariesDTO dto = 
+					(GroupLifeProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+			
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 
@@ -284,10 +336,5 @@ public class GroupLifeProposalService {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
 	}
-	
-//	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
-//
-//		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
-//	}
 
 }

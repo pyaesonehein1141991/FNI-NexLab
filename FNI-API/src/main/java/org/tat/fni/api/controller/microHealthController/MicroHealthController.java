@@ -3,6 +3,7 @@ package org.tat.fni.api.controller.microHealthController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.MedicalProposal;
-import org.tat.fni.api.domain.services.MicroHealthProposalService;
+import org.tat.fni.api.domain.services.Interfaces.IMedicalProductsProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.MedicalPolicyService;
+import org.tat.fni.api.domain.services.ProposalServices.MicroHealthProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthPolicyDataDTO;
@@ -32,8 +34,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "Micro Health")
 public class MicroHealthController {
 
-	@Autowired
-	private MicroHealthProposalService medicalProposalService;
+	@Resource(name = "microHealthProposalService")
+	private IMedicalProductsProposalService medicalProposalService;
 	
 	@Autowired
 	private MedicalPolicyService medicalPolicyService;
@@ -51,7 +53,7 @@ public class MicroHealthController {
 		MicroHealthDTO dto = mapper.map(microHealthDTO, MicroHealthDTO.class);
 
 		// create micro health proposal
-		proposallist = medicalProposalService.createMicroHealthDtoToProposal(dto);
+		proposallist = medicalProposalService.createDtoToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();

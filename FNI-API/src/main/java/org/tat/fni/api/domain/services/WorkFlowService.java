@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.tat.fni.api.domain.WorkFlow;
 import org.tat.fni.api.domain.WorkFlowDTO;
 import org.tat.fni.api.domain.repository.IWorkFlowDAO;
+import org.tat.fni.api.domain.services.Interfaces.IWorkFlowService;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 

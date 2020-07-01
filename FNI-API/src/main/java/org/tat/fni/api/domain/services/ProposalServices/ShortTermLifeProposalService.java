@@ -1,14 +1,9 @@
-package org.tat.fni.api.domain.services;
+package org.tat.fni.api.domain.services.ProposalServices;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
-
-import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.tat.fni.api.common.KeyFactor;
-import org.tat.fni.api.common.KeyFactorChecker;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
@@ -29,14 +22,10 @@ import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.DateUtils;
-import org.tat.fni.api.domain.IPremiumCalculatorService;
-import org.tat.fni.api.domain.InsuredPersonAddon;
 import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
-import org.tat.fni.api.domain.InsuredPersonKeyFactorValue;
 import org.tat.fni.api.domain.Occupation;
 import org.tat.fni.api.domain.Organization;
 import org.tat.fni.api.domain.PaymentType;
-import org.tat.fni.api.domain.PremiumCalData;
 import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
@@ -46,15 +35,29 @@ import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
+import org.tat.fni.api.domain.services.AgentService;
+import org.tat.fni.api.domain.services.BaseService;
+import org.tat.fni.api.domain.services.BranchService;
+import org.tat.fni.api.domain.services.CustomerService;
+import org.tat.fni.api.domain.services.OccupationService;
+import org.tat.fni.api.domain.services.OrganizationService;
+import org.tat.fni.api.domain.services.PaymentTypeService;
+import org.tat.fni.api.domain.services.ProductService;
+import org.tat.fni.api.domain.services.RelationshipService;
+import org.tat.fni.api.domain.services.RiskyOccupationService;
+import org.tat.fni.api.domain.services.SalePointService;
+import org.tat.fni.api.domain.services.TownShipService;
+import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProposalService;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermEndowmentLifeDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonDTO;
 import org.tat.fni.api.exception.DAOException;
-import org.tat.fni.api.exception.ErrorCode;
 import org.tat.fni.api.exception.SystemException;
 
 @Service
-public class ShortTermLifeProposalService extends BaseService {
+public class ShortTermLifeProposalService extends BaseService implements ILifeProductsProposalService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -99,27 +102,29 @@ public class ShortTermLifeProposalService extends BaseService {
 
 	@Autowired
 	private RiskyOccupationService riskyOccupationService;
-	
-	@Resource(name = "PremiumCalculatorService")
-	private IPremiumCalculatorService premiumCalculatorService;
+
+	@Autowired
+	private ILifeProposalService lifeProposalService;
 
 	@Value("${shorttermLifeProductId}")
 	private String shorttermLifeProductId;
 
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<LifeProposal> createShortTermEndowmentLifeDtoToProposal(
-			ShortTermEndowmentLifeDTO shortTermEndowmentLifeDto) {
+	public <T> List<LifeProposal> createDtoToProposal(T proposalDto) {
 		try {
+
+			ShortTermEndowmentLifeDTO shortTermEndowmentLifeDto = (ShortTermEndowmentLifeDTO) proposalDto;
+
 			// convert shortTermEndowmentlifeProposalDTO to lifeproposal
-			List<LifeProposal> shortTermEndowmentLifeProposalList = convertShortTermEndowmentLifeProposalDTOToProposal(
+			List<LifeProposal> shortTermEndowmentLifeProposalList = convertProposalDTOToProposal(
 					shortTermEndowmentLifeDto);
-			
+
 			shortTermEndowmentLifeProposalList = lifeProposalRepo.saveAll(shortTermEndowmentLifeProposalList);
 
 			String id = DateUtils.formattedSqlDate(new Date())
 					.concat(shortTermEndowmentLifeProposalList.get(0).getProposalNo());
 			String referenceNo = shortTermEndowmentLifeProposalList.get(0).getId();
-			// TODO FIXME PSH Modify for All product
 			String referenceType = "SHORT_ENDOWMENT_LIFE";
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
@@ -135,9 +140,10 @@ public class ShortTermLifeProposalService extends BaseService {
 	}
 
 	// ForshortTermEndowmentlifeDto to proposal
-	public List<LifeProposal> convertShortTermEndowmentLifeProposalDTOToProposal(
-			ShortTermEndowmentLifeDTO shortTermEndowmentLifeDto) {
+	@Override
+	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto) {
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
+		ShortTermEndowmentLifeDTO shortTermEndowmentLifeDto = (ShortTermEndowmentLifeDTO) proposalDto;
 		try {
 			Optional<Organization> organizationOptional = organizationService
 					.findById(shortTermEndowmentLifeDto.getOrganizationId());
@@ -152,8 +158,11 @@ public class ShortTermLifeProposalService extends BaseService {
 			shortTermEndowmentLifeDto.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
 				LifeProposal lifeProposal = new LifeProposal();
+				
+				lifeProposalService.setPeriodMonthForKeyFacterValue(
+						shortTermEndowmentLifeDto.getPeriodMonth(), shortTermEndowmentLifeDto.getPaymentTypeId());
 
-				lifeProposal.getProposalInsuredPersonList().add(createInsuredPersonForShortTerm(insuredPerson));
+				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
 				lifeProposal.setComplete(true);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
@@ -185,12 +194,13 @@ public class ShortTermLifeProposalService extends BaseService {
 
 				String proposalNo = customIdRepo.getNextId("SHORT_ENDOWMENT_PROPOSAL_NO", null);
 				lifeProposal.setStartDate(shortTermEndowmentLifeDto.getStartDate());
+				lifeProposal.setPeriodMonth(shortTermEndowmentLifeDto.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
 				lifeProposal.setEndDate(shortTermEndowmentLifeDto.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
 
-				LifeProposal lifeProposalPremiumAdded = calculatePremium(lifeProposal);
-				calculateTermPremium(lifeProposalPremiumAdded);
+				lifeProposal = lifeProposalService.calculatePremium(lifeProposal);
+				lifeProposalService.calculateTermPremium(lifeProposal);
 
 				lifeProposalList.add(lifeProposal);
 
@@ -201,8 +211,11 @@ public class ShortTermLifeProposalService extends BaseService {
 		return lifeProposalList;
 	}
 
-	private ProposalInsuredPerson createInsuredPersonForShortTerm(ShortTermProposalInsuredPersonDTO dto) {
+	@Override
+	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
 		try {
+
+			ShortTermProposalInsuredPersonDTO dto = (ShortTermProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 
 			Optional<Product> productOptional = productService.findById(shorttermLifeProductId);
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
@@ -238,7 +251,7 @@ public class ShortTermLifeProposalService extends BaseService {
 			insuredPerson.setResidentAddress(residentAddress);
 			insuredPerson.setPhone(dto.getPhone());
 			insuredPerson.setName(name);
-			
+
 			if (occupationOptional.isPresent()) {
 				insuredPerson.setOccupation(occupationOptional.get());
 			}
@@ -254,7 +267,7 @@ public class ShortTermLifeProposalService extends BaseService {
 			if (relationshipOptional.isPresent()) {
 				insuredPerson.setRelationship(relationshipOptional.get());
 			}
-			if(productOptional.isPresent()) {
+			if (productOptional.isPresent()) {
 				insuredPerson.setProduct(productOptional.get());
 			}
 
@@ -263,58 +276,32 @@ public class ShortTermLifeProposalService extends BaseService {
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
-			
+
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
-				insuredPerson.getKeyFactorValueList().add(createKeyFactorValue(keyfactor, insuredPerson));
+				insuredPerson.getKeyFactorValueList()
+						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
 			});
-			
-			
-			for (InsuredPersonKeyFactorValue vehKF2 : insuredPerson.getKeyFactorValueList()) {
-				KeyFactor kf = vehKF2.getKeyFactor();
-				
-				if(kf.getValue().equals("Sum Insured")) {
-					vehKF2.setValue(dto.getApprovedSumInsured() + "");
-				}else if(kf.getValue().equals("Age")) {
-					vehKF2.setValue(dto.getAge() + "");
-				}else if(kf.getValue().equals("Term")) {
-					vehKF2.setValue(dto.getPeriodMonth() + "");
-				}
-//				if (KeyFactorChecker.isSumInsured(kf)) {
-//					vehKF2.setValue(dto.getApprovedSumInsured() + "");
-//				} else if (KeyFactorChecker.isAge(kf) || KeyFactorChecker.isMedicalAge(kf)) {
-//					vehKF2.setValue(dto.getAge() + "");
-//				} else if (KeyFactorChecker.isTerm(kf)) {
-//					vehKF2.setValue(dto.getPeriodMonth() + "");
-//				}
-			}
-			
+
 			return insuredPerson;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
 	}
-	
-	private InsuredPersonKeyFactorValue createKeyFactorValue(KeyFactor keyfactor, ProposalInsuredPerson insuredPerson) {
-		
-		InsuredPersonKeyFactorValue insuredPersonKeyFactorValue = new InsuredPersonKeyFactorValue();
-		insuredPersonKeyFactorValue.setKeyFactor(keyfactor);
-		insuredPersonKeyFactorValue.setProposalInsuredPerson(insuredPerson);
-		return insuredPersonKeyFactorValue;
-	}
 
-	private Customer createNewCustomer(ProposalInsuredPerson dto) {
+	@Override
+	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
 		Customer customer = new Customer();
 		try {
-			customer.setInitialId(dto.getInitialId());
-			customer.setFatherName(dto.getFatherName());
-			customer.setIdNo(dto.getIdNo());
-			customer.setDateOfBirth(dto.getDateOfBirth());
-			customer.setGender(dto.getGender());
-			customer.setIdType(dto.getIdType());
-			customer.setResidentAddress(dto.getResidentAddress());
-			customer.setName(dto.getName());
-			customer.setOccupation(dto.getOccupation());
-			customer.setRecorder(dto.getRecorder());
+			customer.setInitialId(insuredPersonDto.getInitialId());
+			customer.setFatherName(insuredPersonDto.getFatherName());
+			customer.setIdNo(insuredPersonDto.getIdNo());
+			customer.setDateOfBirth(insuredPersonDto.getDateOfBirth());
+			customer.setGender(insuredPersonDto.getGender());
+			customer.setIdType(insuredPersonDto.getIdType());
+			customer.setResidentAddress(insuredPersonDto.getResidentAddress());
+			customer.setName(insuredPersonDto.getName());
+			customer.setOccupation(insuredPersonDto.getOccupation());
+			customer.setRecorder(insuredPersonDto.getRecorder());
 			customer = customerRepo.save(customer);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -322,9 +309,12 @@ public class ShortTermLifeProposalService extends BaseService {
 		return customer;
 	}
 
-	private InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
-			ShortTermProposalInsuredPersonBeneficiariesDTO dto) {
+	@Override
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
 		try {
+
+			ShortTermProposalInsuredPersonBeneficiariesDTO dto = (ShortTermProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			ResidentAddress residentAddress = new ResidentAddress();
@@ -350,176 +340,6 @@ public class ShortTermLifeProposalService extends BaseService {
 			return beneficiary;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
-		}
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED)
-	public LifeProposal calculatePremium(LifeProposal lifeProposal) {
-		Double premium;
-		Double premiumRate;
-		double proposedSI;
-		Product product = lifeProposal.getProposalInsuredPersonList().get(0).getProduct();
-
-		for (ProposalInsuredPerson pv : lifeProposal.getProposalInsuredPersonList()) {
-			proposedSI = pv.getProposedSumInsured();
-			/* set approved SI (after approved, edit SI from enquire) */
-			if (pv.isApproved()) {
-				pv.setApprovedSumInsured(proposedSI);
-			}
-			Map<KeyFactor, String> keyfatorValueMap = new HashMap<KeyFactor, String>();
-			for (InsuredPersonKeyFactorValue insukf : pv.getKeyFactorValueList()) {
-				keyfatorValueMap.put(insukf.getKeyFactor(), insukf.getValue());
-			}
-			
-			boolean isSportMan = product.getProductContent().getName().equals("SPORTMAN");
-			boolean isSnakeBite = product.getProductContent().getName().equals("SNAKE BITE");
-			boolean isStudentLife = product.getProductContent().getName().equals("STUDENT LIFE");
-			
-			if(isSportMan || isSnakeBite) {
-				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
-				pv.setPremiumRate(premiumRate);
-				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
-						new PremiumCalData(null, null, null, (double) pv.getUnit()));
-				pv.setProposedSumInsured(pv.getUnit() * product.getSumInsuredPerUnit());
-			}else {
-				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
-				pv.setPremiumRate(premiumRate);
-				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
-						new PremiumCalData(null, proposedSI, null, null));
-			}
-			
-			
-//			if (isSportMan(product) || isSnakeBite(product)) {
-//				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
-//				pv.setPremiumRate(premiumRate);
-//				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
-//						new PremiumCalData(null, null, null, (double) pv.getUnit()));
-//				pv.setProposedSumInsured(pv.getUnit() * product.getSumInsuredPerUnit());
-//			} else {
-//				premiumRate = premiumCalculatorService.findPremiumRate(keyfatorValueMap, product);
-//				pv.setPremiumRate(premiumRate);
-//				premium = premiumCalculatorService.calulatePremium(premiumRate, product,
-//						new PremiumCalData(null, proposedSI, null, null));
-//			}
-			
-			if(isStudentLife) {
-				switch (lifeProposal.getPaymentType().getMonth()) {
-				case 1:
-					pv.setProposedPremium(premium * 12);
-					break;
-				case 6:
-					pv.setProposedPremium(premium * 2);
-					break;
-				case 3:
-					pv.setProposedPremium(premium * 4);
-					break;
-				default:
-					pv.setProposedPremium(premium);
-				}
-			}else {
-				pv.setProposedPremium(premium);
-			}
-			
-//			if (KeyFactorChecker.isStudentLife(product.getId())) {
-//				// ratePremium = premium;
-//				// premium = (ratePremium *
-//				// lifeProposal.getPaymentType().getMonth());
-//				switch (lifeProposal.getPaymentType().getMonth()) {
-//				case 1:
-//					pv.setProposedPremium(premium * 12);
-//					break;
-//				case 6:
-//					pv.setProposedPremium(premium * 2);
-//					break;
-//				case 3:
-//					pv.setProposedPremium(premium * 4);
-//					break;
-//				default:
-//					pv.setProposedPremium(premium);
-//				}
-//				// pv.setProposedPremium(premium);
-//			} else {
-//				pv.setProposedPremium(premium);
-//			}
-			
-			if (premium == null || premium < 0) {
-				throw new SystemException(ErrorCode.NO_PREMIUM_RATE, keyfatorValueMap, "There is no premiumn.");
-			}
-
-//			List<InsuredPersonAddon> insuredPersonAddOnList = pv.getInsuredPersonAddOnList();
-//			if (insuredPersonAddOnList != null && !insuredPersonAddOnList.isEmpty()) {
-//				for (InsuredPersonAddon insuredPersonAddOn : insuredPersonAddOnList) {
-//					double addOnPremium = 0.0;
-//					double addOnPremiumRate = 0.0;
-//					Map<KeyFactor, String> addOnKeyfatorValueMap = new HashMap<KeyFactor, String>();
-//					if (insuredPersonAddOn.getAddOn().isBaseOnKeyFactor()) {
-//						for (KeyFactor kf : insuredPersonAddOn.getAddOn().getKeyFactorList()) {
-//							innerLoop: for (InsuredPersonKeyFactorValue ipKf : pv.getKeyFactorValueList()) {
-//								if (kf.equals(ipKf.getKeyFactor())) {
-//									addOnKeyfatorValueMap.put(kf, ipKf.getValue());
-//									break innerLoop;
-//								}
-//							}
-//							if (KeyFactorChecker.isGender(kf)) {
-//								addOnKeyfatorValueMap.put(kf, pv.getGender().getLabel());
-//							}
-//						}
-//					}
-//					addOnPremium = premiumCalculatorService.calculatePremium(addOnKeyfatorValueMap,
-//							insuredPersonAddOn.getAddOn(),
-//							new PremiumCalData(insuredPersonAddOn.getProposedSumInsured(), proposedSI,
-//									pv.getProposedPremium(), null));
-//					addOnPremiumRate = premiumCalculatorService.findPremiumRate(addOnKeyfatorValueMap,
-//							insuredPersonAddOn.getAddOn());
-//					insuredPersonAddOn.setPremiumRate(addOnPremiumRate);
-//					insuredPersonAddOn.setProposedPremium(addOnPremium);
-//				}
-//			}
-		}
-		return lifeProposal;
-	}
-
-	public void calculateTermPremium(LifeProposal lifeProposal) {
-		int paymentType = lifeProposal.getPaymentType().getMonth();
-		
-		boolean isStudentLife = lifeProposal.getProposalInsuredPersonList().get(0).getProduct()
-				.getProductContent().getName().equals("STUDENT LIFE");
-		
-//		boolean isStudentLife = KeyFactorChecker
-//				.isStudentLife(lifeProposal.getProposalInsuredPersonList().get(0).getProduct().getId());
-		
-		int paymentTerm = 0;
-		double premium = 0, termPremium = 0, addOnPremium = 0;
-		for (ProposalInsuredPerson pv : lifeProposal.getProposalInsuredPersonList()) {
-			premium = pv.getProposedPremium();
-			if (paymentType > 0) {
-				if (isStudentLife) {
-					paymentTerm = (lifeProposal.getPeriodOfYears() - 3) * 12 / paymentType;
-				} else
-					paymentTerm = lifeProposal.getPeriodMonth() / paymentType;// lifeProposal.getPeriodOfYear()*12
-
-				termPremium = (paymentType * premium) / 12;
-				pv.setBasicTermPremium(termPremium);
-			} else {
-				// *** Calculation for Lump Sum ***
-				if (KeyFactorChecker
-						.isPersonalAccident(lifeProposal.getProposalInsuredPersonList().get(0).getProduct()))
-					termPremium = (premium / 12) * lifeProposal.getPeriodMonth();
-				else
-					termPremium = (lifeProposal.getPeriodOfYears() * premium);
-				pv.setBasicTermPremium(termPremium);
-			}
-			lifeProposal.setPaymentTerm(paymentTerm);
-
-//			addOnPremium = pv.getAddOnPremium();
-//			if (paymentType > 0) {
-//				termPremium = (paymentType * addOnPremium) / 12;
-//				pv.setAddOnTermPremium(termPremium);
-//			} else {
-//				// *** Calculation for Lump Sum AddOn Premium***
-//				termPremium = (lifeProposal.getPeriodMonth() * addOnPremium);
-//				pv.setAddOnTermPremium(termPremium);
-//			}
 		}
 	}
 

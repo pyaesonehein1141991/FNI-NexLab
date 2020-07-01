@@ -3,6 +3,7 @@ package org.tat.fni.api.controller.farmerController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.services.FarmerLifeProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
+import org.tat.fni.api.domain.services.ProposalServices.FarmerLifeProposalService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerPolicyDataDTO;
 import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
@@ -32,8 +34,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "Farmers")
 public class FarmerController {
 
-	@Autowired
-	private FarmerLifeProposalService farmerLifeProposalService;
+	@Resource(name = "farmerLifeProposalService")
+	private ILifeProductsProposalService farmerLifeProposalService;
 
 	@Autowired
 	private LifePolicyService lifePolicyService;
@@ -53,7 +55,7 @@ public class FarmerController {
 		FarmerProposalDTO dto = mapper.map(farmerProposalDTO, FarmerProposalDTO.class);
 
 		// create Farmer proposal
-		proposallist = farmerLifeProposalService.createFarmerProposalDTOToProposal(dto);
+		proposallist = farmerLifeProposalService.createDtoToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();

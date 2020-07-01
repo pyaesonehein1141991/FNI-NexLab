@@ -3,6 +3,7 @@ package org.tat.fni.api.controller.studentLifeController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.services.StudentLifeProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
@@ -32,8 +33,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "Student-Life")
 public class StudentLifeController {
 
-	@Autowired
-	private StudentLifeProposalService studentLifeProposalService;
+	@Resource(name = "studentLifeProposalService")
+	private ILifeProductsProposalService studentLifeProposalService;
 	
 	@Autowired
 	private LifePolicyService lifePolicyService;
@@ -51,7 +52,7 @@ public class StudentLifeController {
 		StudentLifeDTO dto = mapper.map(studentLifeDTO, StudentLifeDTO.class);
 
 		// create student life proposal
-		proposallist = studentLifeProposalService.createStudentLifeProposalDTOToProposal(dto);
+		proposallist = studentLifeProposalService.createDtoToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();

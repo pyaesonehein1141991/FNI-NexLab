@@ -1,4 +1,4 @@
-package org.tat.fni.api.domain.services;
+package org.tat.fni.api.domain.repository;
 
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.tat.fni.api.common.IDGen;
 import org.tat.fni.api.common.interfaces.IDGenDAOInf;
 import org.tat.fni.api.domain.Branch;
-import org.tat.fni.api.domain.repository.BasicDAO;
 import org.tat.fni.api.exception.DAOException;
 
 @Repository("IDGenDAO")

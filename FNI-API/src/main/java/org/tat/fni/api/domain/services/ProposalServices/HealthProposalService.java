@@ -1,4 +1,4 @@
-package org.tat.fni.api.domain.services;
+package org.tat.fni.api.domain.services.ProposalServices;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.tat.fni.api.common.KeyFactor;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.IdType;
@@ -19,7 +20,9 @@ import org.tat.fni.api.common.emumdata.ProposalType;
 import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Branch;
+import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.DateUtils;
+import org.tat.fni.api.domain.InsuredPersonKeyFactorValue;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.MedicalProposalInsuredPerson;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonBeneficiaries;
@@ -27,13 +30,25 @@ import org.tat.fni.api.domain.Occupation;
 import org.tat.fni.api.domain.Organization;
 import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
+import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
-import org.tat.fni.api.domain.repository.CustomerRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
-import org.tat.fni.api.dto.criticalIllnessDTO.GroupCriticalIllnessDTO;
+import org.tat.fni.api.domain.services.AgentService;
+import org.tat.fni.api.domain.services.BranchService;
+import org.tat.fni.api.domain.services.GuardainService;
+import org.tat.fni.api.domain.services.OccupationService;
+import org.tat.fni.api.domain.services.OrganizationService;
+import org.tat.fni.api.domain.services.PaymentTypeService;
+import org.tat.fni.api.domain.services.ProductService;
+import org.tat.fni.api.domain.services.RelationshipService;
+import org.tat.fni.api.domain.services.SalePointService;
+import org.tat.fni.api.domain.services.TownShipService;
+import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
+import org.tat.fni.api.domain.services.Interfaces.IMedicalProductsProposalService;
+import org.tat.fni.api.domain.services.Interfaces.IMedicalProposalService;
 import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
 import org.tat.fni.api.dto.healthInsuranceDTO.GroupHealthInsuranceDTO;
 import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthInsuranceDTO;
@@ -43,7 +58,7 @@ import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
 @Service
-public class HealthProposalService {
+public class HealthProposalService implements IMedicalProductsProposalService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -52,12 +67,6 @@ public class HealthProposalService {
 
 	@Autowired
 	private BranchService branchService;
-
-	@Autowired
-	private CustomerRepository customerRepo;
-
-	@Autowired
-	private CustomerService customerService;
 
 	@Autowired
 	private OrganizationService organizationService;
@@ -87,6 +96,9 @@ public class HealthProposalService {
 	private GuardainService guardainService;
 
 	@Autowired
+	private IMedicalProposalService medicalProposalService;
+
+	@Autowired
 	private ICustomIdGenerator customIdRepo;
 
 	@Autowired
@@ -94,17 +106,19 @@ public class HealthProposalService {
 
 	@Value("${individualHealthProductId}")
 	private String individualHealthProductId;
+	
+	@Value("${groupHealthProductId}")
+	private String groupHealthProductId;
 
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public List<MedicalProposal> createIndividualHealthDtoToProposal(Object dtoObj) {
+	public <T> List<MedicalProposal> createDtoToProposal(T proposalDto) {
 		try {
 			// convert IndividualHealthProposalDTO to lifeproposal
-			List<MedicalProposal> healthProposalList = dtoObj instanceof IndividualCriticalIllnessDTO
-					? convertIndividualHealthProposalDTOToProposal(
-							(IndividualHealthInsuranceDTO) dtoObj)
-					: convertGroupHealthProposalDTOToProposal(
-							(GroupHealthInsuranceDTO) dtoObj);
-							
+			List<MedicalProposal> healthProposalList = proposalDto instanceof IndividualHealthInsuranceDTO
+					? convertIndividualProposalDTOToProposal((IndividualHealthInsuranceDTO) proposalDto)
+					: convertGroupProposalDTOToProposal((GroupHealthInsuranceDTO) proposalDto);
+
 			medicalProposalRepo.saveAll(healthProposalList);
 
 			String id = DateUtils.formattedSqlDate(new Date()).concat(healthProposalList.get(0).getProposalNo());
@@ -123,20 +137,30 @@ public class HealthProposalService {
 		}
 	}
 
-	// For individual health proposal Dto to proposal
-	public List<MedicalProposal> convertIndividualHealthProposalDTOToProposal(IndividualHealthInsuranceDTO individualHealthInsuranceDTO) {
+	@Override
+	public <T> List<MedicalProposal> convertIndividualProposalDTOToProposal(T proposalDto) {
+
 		List<MedicalProposal> medicalProposalList = new ArrayList<>();
+		IndividualHealthInsuranceDTO individualHealthInsuranceDTO = (IndividualHealthInsuranceDTO) proposalDto;
+
 		try {
 			Optional<Branch> branchOptional = branchService.findById(individualHealthInsuranceDTO.getBranchId());
-			Optional<Organization> organizationOptional = organizationService.findById(individualHealthInsuranceDTO.getOrganizationId());
-			Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(individualHealthInsuranceDTO.getPaymentTypeId());
+			Optional<Organization> organizationOptional = organizationService
+					.findById(individualHealthInsuranceDTO.getOrganizationId());
+			Optional<PaymentType> paymentTypeOptional = paymentTypeService
+					.findById(individualHealthInsuranceDTO.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(individualHealthInsuranceDTO.getAgentId());
-			Optional<SalesPoints> salesPointsOptional = salePointService.findById(individualHealthInsuranceDTO.getSalesPointsId());
+			Optional<SalesPoints> salesPointsOptional = salePointService
+					.findById(individualHealthInsuranceDTO.getSalesPointsId());
 
 			individualHealthInsuranceDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				MedicalProposal medicalProposal = new MedicalProposal();
 
-				medicalProposal.getMedicalProposalInsuredPersonList().add(createInsuredPersonForIndividualHealth(insuredPerson));
+				medicalProposalService.setPeriodMonthForKeyFacterValue(individualHealthInsuranceDTO.getPeriodMonth(),
+						individualHealthInsuranceDTO.getPaymentTypeId());
+
+				medicalProposal.getMedicalProposalInsuredPersonList()
+						.add(createInsuredPerson(insuredPerson, individualHealthInsuranceDTO));
 				medicalProposal.setComplete(true);
 				medicalProposal.setProposalType(ProposalType.UNDERWRITING);
 				medicalProposal.setSubmittedDate(individualHealthInsuranceDTO.getSubmittedDate());
@@ -166,6 +190,10 @@ public class HealthProposalService {
 				medicalProposal.setSaleChannelType(SaleChannelType.AGENT);
 				medicalProposal.setPeriodMonth(individualHealthInsuranceDTO.getPeriodMonth());
 				medicalProposal.setProposalNo(proposalNo);
+
+				medicalProposal = medicalProposalService.calculatePremium(medicalProposal);
+				medicalProposalService.calculateTermPremium(medicalProposal);
+
 				medicalProposalList.add(medicalProposal);
 			});
 		} catch (DAOException e) {
@@ -173,21 +201,28 @@ public class HealthProposalService {
 		}
 		return medicalProposalList;
 	}
-	
-	// For group health proposal Dto to proposal
-	public List<MedicalProposal> convertGroupHealthProposalDTOToProposal(GroupHealthInsuranceDTO groupHealthInsuranceDTO) {
+
+	@Override
+	public <T> List<MedicalProposal> convertGroupProposalDTOToProposal(T proposalDto) {
+
 		List<MedicalProposal> medicalProposalList = new ArrayList<>();
+		GroupHealthInsuranceDTO groupHealthInsuranceDTO = (GroupHealthInsuranceDTO) proposalDto;
+
 		try {
 			Optional<Branch> branchOptional = branchService.findById(groupHealthInsuranceDTO.getBranchId());
-			Optional<Organization> organizationOptional = organizationService.findById(groupHealthInsuranceDTO.getOrganizationId());
-			Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(groupHealthInsuranceDTO.getPaymentTypeId());
+			Optional<Organization> organizationOptional = organizationService
+					.findById(groupHealthInsuranceDTO.getOrganizationId());
+			Optional<PaymentType> paymentTypeOptional = paymentTypeService
+					.findById(groupHealthInsuranceDTO.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(groupHealthInsuranceDTO.getAgentId());
-			Optional<SalesPoints> salesPointsOptional = salePointService.findById(groupHealthInsuranceDTO.getSalesPointsId());
+			Optional<SalesPoints> salesPointsOptional = salePointService
+					.findById(groupHealthInsuranceDTO.getSalesPointsId());
 
 			groupHealthInsuranceDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				MedicalProposal medicalProposal = new MedicalProposal();
 
-				medicalProposal.getMedicalProposalInsuredPersonList().add(createInsuredPersonForIndividualHealth(insuredPerson));
+				medicalProposal.getMedicalProposalInsuredPersonList()
+						.add(createInsuredPerson(insuredPerson, groupHealthInsuranceDTO));
 				medicalProposal.setComplete(true);
 				medicalProposal.setProposalType(ProposalType.UNDERWRITING);
 				medicalProposal.setSubmittedDate(groupHealthInsuranceDTO.getSubmittedDate());
@@ -217,6 +252,10 @@ public class HealthProposalService {
 				medicalProposal.setSaleChannelType(SaleChannelType.AGENT);
 				medicalProposal.setPeriodMonth(groupHealthInsuranceDTO.getPeriodMonth());
 				medicalProposal.setProposalNo(proposalNo);
+
+				medicalProposal = medicalProposalService.calculatePremium(medicalProposal);
+				medicalProposalService.calculateTermPremium(medicalProposal);
+
 				medicalProposalList.add(medicalProposal);
 			});
 		} catch (DAOException e) {
@@ -225,16 +264,21 @@ public class HealthProposalService {
 		return medicalProposalList;
 	}
 
-	private MedicalProposalInsuredPerson createInsuredPersonForIndividualHealth(HealthProposalInsuredPersonDTO dto) {
+	@Override
+	public <T> MedicalProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO, T proposalDto) {
+
+		HealthProposalInsuredPersonDTO dto = (HealthProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 		try {
-			Optional<Product> productOptional = productService.findById(individualHealthProductId);
+			Optional<Product> productOptional = proposalDto instanceof IndividualHealthInsuranceDTO
+					? productService.findById(individualHealthProductId)
+					: productService.findById(groupHealthProductId);
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
-			
+
 			MedicalProposalInsuredPerson insuredPerson = new MedicalProposalInsuredPerson();
 
-//			insuredPerson
+			insuredPerson.setAge(dto.getAge());
 			insuredPerson.setProduct(productOptional.get());
 			insuredPerson.setPremium(dto.getPremium());
 			insuredPerson.setUnit(dto.getUnit());
@@ -245,33 +289,38 @@ public class HealthProposalService {
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
+			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
+				insuredPerson.getKeyFactorValueList()
+						.add(medicalProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
+
 			return insuredPerson;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
 	}
 
-	/*
-	 * private Customer createNewCustomer(MedicalProposalInsuredPerson dto) {
-	 * Customer customer = new Customer(); try {
-	 * customer.setInitialId(dto.getInitialId());
-	 * customer.setFatherName(dto.getFatherName());
-	 * customer.setIdNo(dto.getIdNo());
-	 * customer.setDateOfBirth(dto.getDateOfBirth());
-	 * customer.setGender(dto.getGender()); customer.setIdType(dto.getIdType());
-	 * customer.setResidentAddress(dto.getResidentAddress());
-	 * customer.setName(dto.getName());
-	 * customer.setOccupation(dto.getOccupation());
-	 * customer.setRecorder(dto.getRecorder()); customer =
-	 * customerRepo.save(customer); } catch (Exception e) { e.printStackTrace();
-	 * } return customer; }
-	 */
+	@Override
+	public InsuredPersonKeyFactorValue createKeyFactorValue(KeyFactor keyfactor, ProposalInsuredPerson insuredPerson) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	private MedicalProposalInsuredPersonBeneficiaries createInsuredPersonBeneficiareis(HealthProposalInsuredPersonBeneficiariesDTO dto) {
+	@Override
+	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> MedicalProposalInsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
+			T insuredPersonBeneficiariesDto) {
 		try {
+			HealthProposalInsuredPersonBeneficiariesDTO dto = (HealthProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-			
+
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
 			Name name = new Name();
@@ -289,14 +338,14 @@ public class HealthProposalService {
 //			beneficiary.setPhone(dto.getPhone());
 			beneficiary.setResidentAddress(residentAddress);
 			beneficiary.setName(name);
-			
-			if(townshipOptional.isPresent()) {
+
+			if (townshipOptional.isPresent()) {
 //				beneficiary.setResidentTownship(townshipOptional.get());
 			}
 			if (relationshipOptional.isPresent()) {
 				beneficiary.setRelationship(relationshipOptional.get());
 			}
-			
+
 			String beneficiaryNo = customIdRepo.getNextId("HEALTH_BENEFICIARY_NO", null);
 			beneficiary.setBeneficiaryNo(beneficiaryNo);
 			return beneficiary;

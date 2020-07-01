@@ -3,6 +3,7 @@ package org.tat.fni.api.controller.groupLifeController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.services.GroupLifeProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
@@ -32,8 +33,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "groupLife")
 public class GroupLifeController {
 
-	@Autowired
-	private GroupLifeProposalService groupLifeProposalService;
+	@Resource(name = "groupLifeProposalService")
+	private ILifeProductsProposalService groupLifeProposalService;
 
 	@Autowired
 	private LifePolicyService lifePolicyService;
@@ -53,7 +54,7 @@ public class GroupLifeController {
 		GroupLifeDTO dto = mapper.map(groupLifeDTO, GroupLifeDTO.class);
 
 		// create group life proposal
-		proposallist = groupLifeProposalService.createGroupLifeProposalDTOToProposal(dto);
+		proposallist = groupLifeProposalService.createDtoToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();

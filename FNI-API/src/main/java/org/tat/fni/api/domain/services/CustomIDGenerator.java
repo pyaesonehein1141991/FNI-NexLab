@@ -14,6 +14,7 @@ import org.tat.fni.api.common.SystemConstants;
 import org.tat.fni.api.common.interfaces.IDGenDAOInf;
 import org.tat.fni.api.configuration.PropertiesConfiguration;
 import org.tat.fni.api.domain.Branch;
+import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
 import org.tat.fni.api.exception.DAOException;
 //import org.tat.fni.api.common.interfaces.ICustomIDGenerator;
 

@@ -3,6 +3,7 @@ package org.tat.fni.api.controller.publicLifeController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,11 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
-import org.tat.fni.api.domain.services.FarmerLifeProposalService;
-import org.tat.fni.api.domain.services.PublicLifeProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.farmerDTO.FarmerProposalDTO;
 import org.tat.fni.api.dto.publicLifeDTO.PublicLifeDTO;
 import org.tat.fni.api.dto.publicLifeDTO.PublicLifePolicyDataDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
@@ -34,9 +33,9 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "Public-Life")
 public class PublicLifeController {
 	
-	@Autowired
-	private PublicLifeProposalService publicLifeProposalService;
-
+	@Resource(name = "publicLifeProposalService")
+	private ILifeProductsProposalService publicLifeProposalService;
+	
 	@Autowired
 	private LifePolicyService lifePolicyService;
 
@@ -55,7 +54,7 @@ public class PublicLifeController {
 		PublicLifeDTO dto = mapper.map(publicLifeDTO, PublicLifeDTO.class);
 
 		// create Farmer proposal
-		proposallist = publicLifeProposalService.createPublicLifeProposalDTOToProposal(dto);
+		proposallist = publicLifeProposalService.createDtoToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();

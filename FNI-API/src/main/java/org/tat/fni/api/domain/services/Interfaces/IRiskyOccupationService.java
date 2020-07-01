@@ -1,4 +1,4 @@
-package org.tat.fni.api.domain.services;
+package org.tat.fni.api.domain.services.Interfaces;
 
 import java.util.List;
 import java.util.Optional;

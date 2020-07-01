@@ -1,14 +1,17 @@
-package org.tat.fni.api.domain.services;
+package org.tat.fni.api.domain.services.ProposalServices;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.tat.fni.api.common.KeyFactor;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
@@ -20,7 +23,10 @@ import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.GradeInfo;
+import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
+import org.tat.fni.api.domain.InsuredPersonKeyFactorValue;
 import org.tat.fni.api.domain.PaymentType;
+import org.tat.fni.api.domain.Product;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
@@ -28,14 +34,29 @@ import org.tat.fni.api.domain.School;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
-import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
+import org.tat.fni.api.domain.services.AgentService;
+import org.tat.fni.api.domain.services.BaseService;
+import org.tat.fni.api.domain.services.BranchService;
+import org.tat.fni.api.domain.services.CustomerService;
+import org.tat.fni.api.domain.services.GradeInfoService;
+import org.tat.fni.api.domain.services.PaymentTypeService;
+import org.tat.fni.api.domain.services.ProductService;
+import org.tat.fni.api.domain.services.RelationshipService;
+import org.tat.fni.api.domain.services.SalePointService;
+import org.tat.fni.api.domain.services.SchoolService;
+import org.tat.fni.api.domain.services.TownShipService;
+import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
+import org.tat.fni.api.domain.services.Interfaces.ILifeProposalService;
+import org.tat.fni.api.dto.shortTermEndowmentLifeDTO.ShortTermProposalInsuredPersonDTO;
 import org.tat.fni.api.dto.studentLifeDTO.StudentLifeDTO;
 import org.tat.fni.api.dto.studentLifeDTO.StudentLifeProposalInsuredPersonDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
+import org.tat.fni.api.common.RiskyOccupation;
 
 @Service
-public class StudentLifeProposalService {
+public class StudentLifeProposalService extends BaseService implements ILifeProductsProposalService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -43,13 +64,13 @@ public class StudentLifeProposalService {
 	private LifeProposalRepository lifeProposalRepo;
 
 	@Autowired
-	private LifePolicyService commonLifeProposalService;
-
-	@Autowired
 	private PaymentTypeService paymentTypeService;
 
 	@Autowired
 	private AgentService agentService;
+	
+	@Autowired
+	private ProductService productService;
 
 	@Autowired
 	private BranchService branchService;
@@ -73,13 +94,22 @@ public class StudentLifeProposalService {
 	private SchoolService schoolService;
 
 	@Autowired
+	private ILifeProposalService lifeProposalService;
+	
+	@Value("${studentLifeProductId}")
+	private String studentLifeProductId;
+
+	@Autowired
 	private ICustomIdGenerator customId;
 
-	public List<LifeProposal> createStudentLifeProposalDTOToProposal(StudentLifeDTO studentLifeProposalDTO) {
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public <T> List<LifeProposal> createDtoToProposal(T proposalDto) {
 		try {
 
-			List<LifeProposal> studentLifeProposalList = convertStudentLifeProposalDTOToProposal(
-					studentLifeProposalDTO);
+			StudentLifeDTO studentLifeProposalDTO = (StudentLifeDTO) proposalDto;
+
+			List<LifeProposal> studentLifeProposalList = convertProposalDTOToProposal(studentLifeProposalDTO);
 			lifeProposalRepo.saveAll(studentLifeProposalList);
 
 			String id = DateUtils.formattedSqlDate(new Date()).concat(studentLifeProposalList.get(0).getProposalNo());
@@ -100,7 +130,10 @@ public class StudentLifeProposalService {
 		}
 	}
 
-	private List<LifeProposal> convertStudentLifeProposalDTOToProposal(StudentLifeDTO studentLifeProposalDTO) {
+	@Override
+	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto) {
+
+		StudentLifeDTO studentLifeProposalDTO = (StudentLifeDTO) proposalDto;
 
 		Optional<Branch> branchOptional = branchService.findById(studentLifeProposalDTO.getBranchId());
 		Optional<Customer> customerOptional = customerService.findById(studentLifeProposalDTO.getCustomerId());
@@ -115,8 +148,11 @@ public class StudentLifeProposalService {
 			studentLifeProposalDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
 				LifeProposal lifeProposal = new LifeProposal();
+				
+				lifeProposalService.setPeriodMonthForKeyFacterValue(
+						studentLifeProposalDTO.getPeriodMonth(), studentLifeProposalDTO.getPaymentTypeId());
 
-				lifeProposal.getProposalInsuredPersonList().add(createInsuredPersonForStudent(insuredPerson));
+				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
 				lifeProposal.setComplete(true);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
@@ -145,6 +181,9 @@ public class StudentLifeProposalService {
 				lifeProposal.setEndDate(studentLifeProposalDTO.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
 
+				lifeProposal = lifeProposalService.calculatePremium(lifeProposal);
+				lifeProposalService.calculateTermPremium(lifeProposal);
+
 				lifeProposalList.add(lifeProposal);
 
 			});
@@ -156,9 +195,13 @@ public class StudentLifeProposalService {
 		return lifeProposalList;
 	}
 
-	private ProposalInsuredPerson createInsuredPersonForStudent(StudentLifeProposalInsuredPersonDTO dto) {
+	@Override
+	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
 		try {
 
+			StudentLifeProposalInsuredPersonDTO dto = (StudentLifeProposalInsuredPersonDTO) proposalInsuredPersonDTO;
+			
+			Optional<Product> productOptional = productService.findById(studentLifeProductId);
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			Optional<GradeInfo> gradeInfoOptional = gradeInfoServie.findById(dto.getGrateInfoId());
@@ -204,9 +247,17 @@ public class StudentLifeProposalService {
 			if (schoolOptional.isPresent()) {
 				insuredPerson.setSchool(schoolOptional.get());
 			}
+			if (productOptional.isPresent()) {
+				insuredPerson.setProduct(productOptional.get());
+			}
 
 			String insPersonCodeNo = customId.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
+
+			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
+				insuredPerson.getKeyFactorValueList()
+						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
 
 			return insuredPerson;
 		} catch (DAOException e) {
@@ -214,10 +265,16 @@ public class StudentLifeProposalService {
 		}
 	}
 
-//	public List<LifePolicy> retrievePolicyInfo(ProposalLifeDTO proposalDto) {
-//
-//		return commonLifeProposalService.retrieveLifePolicyList(proposalDto);
-//
-//	}
+	@Override
+	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

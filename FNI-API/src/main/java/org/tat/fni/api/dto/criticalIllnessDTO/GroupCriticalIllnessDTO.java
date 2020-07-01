@@ -18,7 +18,7 @@ import lombok.Data;
 @Data
 public class GroupCriticalIllnessDTO {
 
-	@ApiModelProperty(position = 0, required = true)
+	@ApiModelProperty(position = 0, example="10", required = true)
 	@NotNull(message = "Period Month is mandatory")
 	private int periodMonth;
 

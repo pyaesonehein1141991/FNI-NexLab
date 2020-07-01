@@ -3,6 +3,7 @@ package org.tat.fni.api.controller.criticalillnessController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,12 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.MedicalProposal;
-import org.tat.fni.api.domain.services.CriticalillnessProposalService;
+import org.tat.fni.api.domain.services.Interfaces.IMedicalProductsProposalService;
 import org.tat.fni.api.domain.services.PolicyDataService.MedicalPolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalIllnessPolicyDataDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.GroupCriticalIllnessDTO;
-import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
@@ -33,8 +33,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "Group Criticalillness")
 public class GroupCriticalIllnessController {
 
-	@Autowired
-	private CriticalillnessProposalService medicalProposalService;
+	@Resource(name = "criticalillnessProposalService")
+	private IMedicalProductsProposalService medicalProposalService;
 
 	@Autowired
 	private MedicalPolicyService medicalPolicyService;
@@ -54,7 +54,7 @@ public class GroupCriticalIllnessController {
 		GroupCriticalIllnessDTO dto = mapper.map(criticalillnessDTO, GroupCriticalIllnessDTO.class);
 
 		// create Individual Critical illness proposal
-		proposallist = medicalProposalService.criticalillnessDTOToProposal(dto);
+		proposallist = medicalProposalService.createDtoToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();

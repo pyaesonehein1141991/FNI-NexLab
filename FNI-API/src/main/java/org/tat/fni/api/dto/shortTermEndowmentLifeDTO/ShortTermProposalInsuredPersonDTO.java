@@ -14,10 +14,6 @@ import lombok.Data;
 @Data
 public class ShortTermProposalInsuredPersonDTO {
 
-  @ApiModelProperty(position = 0, example = "10", required = true)
-  @NotNull(message = "Period Month is mandatory")
-  private int periodMonth;
-
   @ApiModelProperty(position = 0, example = "U", required = true)
   @NotBlank(message = "InitialId is mandatory")
   private String initialId;
