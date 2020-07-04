@@ -156,6 +156,9 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 
 			criticalIllnessDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				MedicalProposal medicalProposal = new MedicalProposal();
+				
+				medicalProposalService.setPeriodMonthForKeyFacterValue(criticalIllnessDTO.getPeriodMonth(),
+						criticalIllnessDTO.getPaymentTypeId());
 
 				medicalProposal.getMedicalProposalInsuredPersonList()
 						.add(createInsuredPerson(insuredPerson, criticalIllnessDTO));
@@ -221,6 +224,9 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 
 			criticalIllnessDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				MedicalProposal medicalProposal = new MedicalProposal();
+				
+				medicalProposalService.setPeriodMonthForKeyFacterValue(criticalIllnessDTO.getPeriodMonth(),
+						criticalIllnessDTO.getPaymentTypeId());
 
 				medicalProposal.getMedicalProposalInsuredPersonList()
 						.add(createInsuredPerson(insuredPerson, criticalIllnessDTO));
