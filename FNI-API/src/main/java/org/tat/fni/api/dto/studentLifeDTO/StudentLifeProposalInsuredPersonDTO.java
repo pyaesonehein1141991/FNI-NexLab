@@ -49,7 +49,7 @@ public class StudentLifeProposalInsuredPersonDTO {
 	@NotNull(message = "idNo is mandatory")
 	private String idNo;
 
-	@ApiModelProperty(position = 9, example = "12", required = true)
+	@ApiModelProperty(position = 9, example = "10", required = true)
 	@NotNull(message = "age is mandatory")
 	private int age;
 

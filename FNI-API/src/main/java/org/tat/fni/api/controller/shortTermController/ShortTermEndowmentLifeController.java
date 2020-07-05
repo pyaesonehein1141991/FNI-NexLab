@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
-import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
+import org.tat.fni.api.domain.services.Interfaces.IPolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
@@ -35,9 +35,9 @@ public class ShortTermEndowmentLifeController {
 
 	@Resource(name = "shortTermLifeProposalService")
 	private ILifeProductsProposalService lifeProposalService;
-	
+
 	@Autowired
-	private LifePolicyService lifePolicyService;
+	private IPolicyService policyService;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -86,8 +86,8 @@ public class ShortTermEndowmentLifeController {
 
 		PolicyDataCriteria dto = mapper.map(policyDto, PolicyDataCriteria.class);
 
-		// Get response data list of policy infomation
-		responseList = lifePolicyService.getResponseData(dto);
+		// Get response data list of policy information
+		responseList = policyService.getResponseData(dto);
 
 		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 		return responseDTO;

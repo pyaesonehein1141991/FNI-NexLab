@@ -20,6 +20,7 @@ import org.tat.fni.api.domain.MedicalPolicyInsuredPersonBeneficiaries;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.repository.MedicalPolicyRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
+import org.tat.fni.api.domain.services.Interfaces.IPolicyDataService;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
 import org.tat.fni.api.dto.retrieveDTO.NameDto;
 import org.tat.fni.api.dto.retrieveDTO.policyData.AgentData;
@@ -33,7 +34,7 @@ import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
 @Service
-public class MedicalPolicyService {
+public class MedicalPolicyService implements IPolicyDataService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -42,7 +43,7 @@ public class MedicalPolicyService {
 
 	@Autowired
 	private MedicalPolicyRepository medicalPolicyRepo;
-	
+
 	// == declare class variable ==
 	List<MedicalPolicy> medicalPolicyList;
 
@@ -72,7 +73,7 @@ public class MedicalPolicyService {
 	}
 
 	// Getting medical policy
-	private PolicyData getPolicyData(PolicyDataCriteria policyDto) {
+	public PolicyData getPolicyData(PolicyDataCriteria policyDto) {
 
 		try {
 			// Get policy list
@@ -107,7 +108,7 @@ public class MedicalPolicyService {
 	}
 
 	// Getting customer
-	private CustomerData getCustomerData(PolicyDataCriteria policyDto) {
+	public CustomerData getCustomerData(PolicyDataCriteria policyDto) {
 
 		try {
 
@@ -150,7 +151,7 @@ public class MedicalPolicyService {
 	}
 
 	// Getting agent
-	private AgentData getAgentData(PolicyDataCriteria policyDto) {
+	public AgentData getAgentData(PolicyDataCriteria policyDto) {
 
 		try {
 
@@ -187,7 +188,7 @@ public class MedicalPolicyService {
 	}
 
 	// Getting policy insured person data
-	private List<InsuredPersonMedicalData> getInsuredPersonData(PolicyDataCriteria policyDto) {
+	public List<InsuredPersonMedicalData> getInsuredPersonData(PolicyDataCriteria policyDto) {
 
 		try {
 
@@ -225,15 +226,15 @@ public class MedicalPolicyService {
 	}
 
 	// Getting policy insured person beneficiary data
-	private List<BeneficiaryMedicalData> getBeneficiaryData(PolicyDataCriteria policyDto) {
+	public List<BeneficiaryMedicalData> getBeneficiaryData(PolicyDataCriteria policyDto) {
 
 		try {
 
 			List<BeneficiaryMedicalData> beneficiaryDataList = new ArrayList<BeneficiaryMedicalData>();
 
 			// Get beneficiary list
-			List<MedicalPolicyInsuredPersonBeneficiaries> beneficiaryList = retrievePolicyInsuredPersonList(policyDto)
-					.isEmpty() ? Collections.emptyList()
+			List<MedicalPolicyInsuredPersonBeneficiaries> beneficiaryList = 
+					retrievePolicyInsuredPersonList(policyDto).isEmpty() ? Collections.emptyList()
 							: retrievePolicyInsuredPersonList(policyDto).get(0)
 									.getPolicyInsuredPersonBeneficiariesList();
 
@@ -268,7 +269,7 @@ public class MedicalPolicyService {
 	}
 
 	// Getting bill collection data
-	private List<BillCollectionData> getBillCollectionData(PolicyDataCriteria policyDto) {
+	public List<BillCollectionData> getBillCollectionData(PolicyDataCriteria policyDto) {
 
 		try {
 
@@ -278,7 +279,7 @@ public class MedicalPolicyService {
 			medicalPolicyList = retrieveMedicalPolicyList(policyDto);
 
 			if (!medicalPolicyList.isEmpty()) {
-				
+
 				List<String> remainingDateList = getRemainingDates(policyDto);
 
 				medicalPolicyList.forEach(policy -> {
@@ -330,7 +331,7 @@ public class MedicalPolicyService {
 		return getApprovalStatusFromRepo(proposalId);
 	}
 
-	private String getProposalIdFromRepo(String proposalNumber) {
+	public String getProposalIdFromRepo(String proposalNumber) {
 
 		try {
 			// get proposal id based on proposal number
@@ -357,8 +358,7 @@ public class MedicalPolicyService {
 
 		try {
 
-			medicalPolicyList = medicalPolicyRepo
-					.getPolicyList(getProposalIdFromRepo(policyDto.getProposalNo()));
+			medicalPolicyList = medicalPolicyRepo.getPolicyList(getProposalIdFromRepo(policyDto.getProposalNo()));
 
 			return medicalPolicyList;
 

@@ -1,6 +1,5 @@
 package org.tat.fni.api.domain.services.Interfaces;
 
-import java.util.List;
 
 import org.tat.fni.api.common.KeyFactor;
 import org.tat.fni.api.domain.InsuredPersonKeyFactorValue;

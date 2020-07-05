@@ -20,6 +20,8 @@ import org.tat.fni.api.domain.lifepolicy.PolicyInsuredPersonBeneficiaries;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifePolicyRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
+import org.tat.fni.api.domain.services.Interfaces.IPolicyDataService;
+import org.tat.fni.api.domain.services.Interfaces.IPolicyService;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
 import org.tat.fni.api.dto.retrieveDTO.NameDto;
 import org.tat.fni.api.dto.retrieveDTO.policyData.AgentData;
@@ -33,13 +35,13 @@ import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
 @Service
-public class LifePolicyService {
+public class LifePolicyService implements IPolicyDataService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private LifeProposalRepository lifeProposalRepo;
-
+	
 	@Autowired
 	private LifePolicyRepository lifePolicyRepo;
 
@@ -71,7 +73,7 @@ public class LifePolicyService {
 	}
 
 	// Getting life policy
-	private PolicyData getPolicyData(PolicyDataCriteria policyDto) {
+	public PolicyData getPolicyData(PolicyDataCriteria policyDto) {
 
 		try {
 			// Get policy list
@@ -106,7 +108,7 @@ public class LifePolicyService {
 	}
 
 	// Getting customer
-	private CustomerData getCustomerData(PolicyDataCriteria policyDto) {
+	public CustomerData getCustomerData(PolicyDataCriteria policyDto) {
 
 		try {
 
@@ -149,7 +151,7 @@ public class LifePolicyService {
 	}
 
 	// Getting agent
-	private AgentData getAgentData(PolicyDataCriteria policyDto) {
+	public AgentData getAgentData(PolicyDataCriteria policyDto) {
 
 		try {
 
@@ -186,7 +188,7 @@ public class LifePolicyService {
 	}
 
 	// Getting policy insured person data
-	private List<InsuredPersonLifeData> getInsuredPersonData(PolicyDataCriteria policyDto) {
+	public List<InsuredPersonLifeData> getInsuredPersonData(PolicyDataCriteria policyDto) {
 
 		try {
 
@@ -226,7 +228,7 @@ public class LifePolicyService {
 	}
 
 	// Getting policy insured person beneficiary data
-	private List<BeneficiaryLifeData> getBeneficiaryData(PolicyDataCriteria policyDto) {
+	public List<BeneficiaryLifeData> getBeneficiaryData(PolicyDataCriteria policyDto) {
 
 		try {
 
@@ -269,7 +271,7 @@ public class LifePolicyService {
 	}
 
 	// Getting bill collection data
-	private List<BillCollectionData> getBillCollectionData(PolicyDataCriteria policyDto) {
+	public List<BillCollectionData> getBillCollectionData(PolicyDataCriteria policyDto) {
 
 		try {
 
@@ -300,87 +302,87 @@ public class LifePolicyService {
 		}
 
 	}
-
+	
 	// Getting remaining date of policy payment
-	private List<String> getRemainingDates(PolicyDataCriteria policyDto) {
+		private List<String> getRemainingDates(PolicyDataCriteria policyDto) {
 
-		// Get policy list
-		lifePolicyList = retrieveLifePolicyList(policyDto);
+			// Get policy list
+			lifePolicyList = retrieveLifePolicyList(policyDto);
 
-		int month = lifePolicyList.get(0).getPaymentType().getMonth();
-		Date coverageDate = (lifePolicyList.get(0).getCoverageDate());
-		Date policyEndDate = (lifePolicyList.get(0).getActivedPolicyEndDate());
+			int month = lifePolicyList.get(0).getPaymentType().getMonth();
+			Date coverageDate = (lifePolicyList.get(0).getCoverageDate());
+			Date policyEndDate = (lifePolicyList.get(0).getActivedPolicyEndDate());
 
-		LocalDate start = new java.sql.Date(coverageDate.getTime()).toLocalDate();
-		LocalDate end = new java.sql.Date(policyEndDate.getTime()).toLocalDate();
+			LocalDate start = new java.sql.Date(coverageDate.getTime()).toLocalDate();
+			LocalDate end = new java.sql.Date(policyEndDate.getTime()).toLocalDate();
 
-		List<String> remainingDates = new ArrayList<String>();
+			List<String> remainingDates = new ArrayList<String>();
 
-		while (!start.isEqual(end)) {
-			start = start.plusMonths(month);
-			remainingDates.add(start.toString());
+			while (!start.isEqual(end)) {
+				start = start.plusMonths(month);
+				remainingDates.add(start.toString());
+			}
+
+			return remainingDates;
 		}
 
-		return remainingDates;
-	}
+		// Getting approve status based on policy number from dto
+		private boolean getApprove(PolicyDataCriteria policyDto) {
 
-	// Getting approve status based on policy number from dto
-	private boolean getApprove(PolicyDataCriteria policyDto) {
-
-		String proposalId = getProposalIdFromRepo(policyDto.getProposalNo());
-		return getApprovalStatusFromRepo(proposalId);
-	}
-
-	private String getProposalIdFromRepo(String proposalNumber) {
-
-		try {
-			// get proposal id based on proposal number
-			String lifeProposalId = lifeProposalRepo.getProposalId(proposalNumber);
-			return lifeProposalId;
-		} catch (DAOException e) {
-			throw new SystemException(e.getErrorCode(), e.getMessage());
+			String proposalId = getProposalIdFromRepo(policyDto.getProposalNo());
+			return getApprovalStatusFromRepo(proposalId);
 		}
-	}
 
-	private boolean getApprovalStatusFromRepo(String proposalId) {
+		public String getProposalIdFromRepo(String proposalNumber) {
 
-		try {
-			// Get approve status
-			List<Boolean> isApprove = lifeProposalRepo.getApprovalStatus(proposalId);
-			return isApprove.isEmpty() ? false : isApprove.get(0);
-		} catch (DAOException e) {
-			throw new SystemException(e.getErrorCode(), e.getMessage());
+			try {
+				// get proposal id based on proposal number
+				String lifeProposalId = lifeProposalRepo.getProposalId(proposalNumber);
+				return lifeProposalId;
+			} catch (DAOException e) {
+				throw new SystemException(e.getErrorCode(), e.getMessage());
+			}
 		}
-	}
 
-	// Getting life policy list
-	private List<LifePolicy> retrieveLifePolicyList(PolicyDataCriteria policyDto) {
+		private boolean getApprovalStatusFromRepo(String proposalId) {
 
-		try {
-
-			lifePolicyList = lifePolicyRepo.getPolicyList(getProposalIdFromRepo(policyDto.getProposalNo()));
-
-			return lifePolicyList;
-
-		} catch (DAOException e) {
-			throw new SystemException(e.getErrorCode(), e.getMessage());
+			try {
+				// Get approve status
+				List<Boolean> isApprove = lifeProposalRepo.getApprovalStatus(proposalId);
+				return isApprove.isEmpty() ? false : isApprove.get(0);
+			} catch (DAOException e) {
+				throw new SystemException(e.getErrorCode(), e.getMessage());
+			}
 		}
-	}
 
-	// Getting policy insured person list
-	private List<PolicyInsuredPerson> retrievePolicyInsuredPersonList(PolicyDataCriteria policyDto) {
+		// Getting life policy list
+		private List<LifePolicy> retrieveLifePolicyList(PolicyDataCriteria policyDto) {
 
-		try {
+			try {
 
-			List<PolicyInsuredPerson> insuredPersonList = retrieveLifePolicyList(policyDto).isEmpty()
-					? Collections.emptyList()
-					: retrieveLifePolicyList(policyDto).get(0).getPolicyInsuredPersonList();
+				lifePolicyList = lifePolicyRepo.getPolicyList(getProposalIdFromRepo(policyDto.getProposalNo()));
 
-			return insuredPersonList;
+				return lifePolicyList;
 
-		} catch (DAOException e) {
-			throw new SystemException(e.getErrorCode(), e.getMessage());
+			} catch (DAOException e) {
+				throw new SystemException(e.getErrorCode(), e.getMessage());
+			}
 		}
-	}
+
+		// Getting policy insured person list
+		private List<PolicyInsuredPerson> retrievePolicyInsuredPersonList(PolicyDataCriteria policyDto) {
+
+			try {
+
+				List<PolicyInsuredPerson> insuredPersonList = retrieveLifePolicyList(policyDto).isEmpty()
+						? Collections.emptyList()
+						: retrieveLifePolicyList(policyDto).get(0).getPolicyInsuredPersonList();
+
+				return insuredPersonList;
+
+			} catch (DAOException e) {
+				throw new SystemException(e.getErrorCode(), e.getMessage());
+			}
+		}
 
 }

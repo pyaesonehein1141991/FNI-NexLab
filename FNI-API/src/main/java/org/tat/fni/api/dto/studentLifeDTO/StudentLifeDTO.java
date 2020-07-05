@@ -37,7 +37,7 @@ public class StudentLifeDTO {
 	@NotBlank(message = "Customer ID is mandatory")
 	private String customerId;
 
-	@ApiModelProperty(position = 5, example = "ISSYS0090001000000000129032013", required = true)
+	@ApiModelProperty(position = 5, example = "ISSYS0090001000000000329032013", required = true)
 	@NotBlank(message = "Payment Type ID is mandatory")
 	private String paymentTypeId;
 
