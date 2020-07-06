@@ -18,9 +18,9 @@ import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifeDTO;
 import org.tat.fni.api.dto.groupLifeDTO.GroupLifePolicyDataDTO;
+import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
-import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,9 +35,6 @@ public class GroupLifeController {
 
 	@Resource(name = "groupLifeProposalService")
 	private ILifeProductsProposalService groupLifeProposalService;
-
-	@Autowired
-	private LifePolicyService lifePolicyService;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -64,26 +61,6 @@ public class GroupLifeController {
 					.proposalNo(proposal.getProposalNo()).proposedPremium(proposal.getProposedPremium()).build();
 			responseList.add(groupLifeResponsedto);
 		});
-
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
-		return responseDTO;
-	}
-
-	@PostMapping("/policyinfo")
-	@ApiResponses(value = { //
-			@ApiResponse(code = 400, message = "Something went wrong"),
-			@ApiResponse(code = 403, message = "Access denied"),
-			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${GroupLifeController.getpolicyinfobyproposalno}")
-	public ResponseDTO<Object> retrievePolicyInfo(
-			@ApiParam("Proposal Number") @Valid @RequestBody GroupLifePolicyDataDTO policyDto) {
-
-		List<ResponseDataLifeDTO> responseList = new ArrayList<ResponseDataLifeDTO>();
-
-		PolicyDataCriteria dto = mapper.map(policyDto, PolicyDataCriteria.class);
-
-		// Get response data list of policy infomation
-		responseList = lifePolicyService.getResponseData(dto);
 
 		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 		return responseDTO;

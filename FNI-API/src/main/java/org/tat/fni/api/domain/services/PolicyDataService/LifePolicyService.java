@@ -22,6 +22,7 @@ import org.tat.fni.api.domain.repository.LifePolicyRepository;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.services.Interfaces.IPolicyDataService;
 import org.tat.fni.api.domain.services.Interfaces.IPolicyService;
+import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
 import org.tat.fni.api.dto.retrieveDTO.NameDto;
 import org.tat.fni.api.dto.retrieveDTO.policyData.AgentData;
@@ -30,7 +31,6 @@ import org.tat.fni.api.dto.retrieveDTO.policyData.BillCollectionData;
 import org.tat.fni.api.dto.retrieveDTO.policyData.CustomerData;
 import org.tat.fni.api.dto.retrieveDTO.policyData.InsuredPersonLifeData;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyData;
-import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -48,24 +48,21 @@ public class LifePolicyService implements IPolicyDataService {
 	// == declare class variable ==
 	private List<LifePolicy> lifePolicyList;
 
-	public List<ResponseDataLifeDTO> getResponseData(PolicyDataCriteria policyDto) {
+	public ResponseDataLifeDTO getResponseData(String proposalNo) {
 
 		try {
 
-			List<ResponseDataLifeDTO> responseDataList = new ArrayList<ResponseDataLifeDTO>();
-
 			// Get approval status based on proposal id
-			boolean isApprove = getApprove(policyDto);
+			boolean isApprove = getApprove(proposalNo);
 
-			ResponseDataLifeDTO responseDataDTO = ResponseDataLifeDTO.builder().proposalNo(policyDto.getProposalNo())
-					.isApprove(isApprove).policyData(isApprove ? getPolicyData(policyDto) : null)
-					.customer(getCustomerData(policyDto)).agent(getAgentData(policyDto))
-					.insuredPersonDataList(isApprove ? getInsuredPersonData(policyDto) : null)
-					.beneficiaryDataList(isApprove ? getBeneficiaryData(policyDto) : null)
-					.billCollectionDataList(isApprove ? getBillCollectionData(policyDto) : null).build();
-			responseDataList.add(responseDataDTO);
+			ResponseDataLifeDTO responseDataDTO = ResponseDataLifeDTO.builder().proposalNo(proposalNo)
+					.isApprove(isApprove).policyData(isApprove ? getPolicyData(proposalNo) : null)
+					.customer(getCustomerData(proposalNo)).agent(getAgentData(proposalNo))
+					.insuredPersonDataList(isApprove ? getInsuredPersonData(proposalNo) : null)
+					.beneficiaryDataList(isApprove ? getBeneficiaryData(proposalNo) : null)
+					.billCollectionDataList(isApprove ? getBillCollectionData(proposalNo) : null).build();
 
-			return responseDataList;
+			return responseDataDTO;
 
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -73,12 +70,12 @@ public class LifePolicyService implements IPolicyDataService {
 	}
 
 	// Getting life policy
-	public PolicyData getPolicyData(PolicyDataCriteria policyDto) {
+	public PolicyData getPolicyData(String proposalNo) {
 
 		try {
 			// Get policy list
-			LifePolicy policy = retrieveLifePolicyList(policyDto).isEmpty() ? null
-					: retrieveLifePolicyList(policyDto).get(0);
+			LifePolicy policy = retrieveLifePolicyList(proposalNo).isEmpty() ? null
+					: retrieveLifePolicyList(proposalNo).get(0);
 
 			// Instantiate policyData model
 			PolicyData policyData = null;
@@ -86,7 +83,7 @@ public class LifePolicyService implements IPolicyDataService {
 			if (policy != null) {
 
 				// Get product name from insuredPersonList
-				List<PolicyInsuredPerson> insuredPersonList = retrievePolicyInsuredPersonList(policyDto);
+				List<PolicyInsuredPerson> insuredPersonList = retrievePolicyInsuredPersonList(proposalNo);
 				String productName = insuredPersonList.get(0).getProduct() == null ? null
 						: insuredPersonList.get(0).getProduct().getProductContent().getName();
 
@@ -108,16 +105,16 @@ public class LifePolicyService implements IPolicyDataService {
 	}
 
 	// Getting customer
-	public CustomerData getCustomerData(PolicyDataCriteria policyDto) {
+	public CustomerData getCustomerData(String proposalNo) {
 
 		try {
 
 			// Get policy list
-			lifePolicyList = retrieveLifePolicyList(policyDto);
+			lifePolicyList = retrieveLifePolicyList(proposalNo);
 
 			// Get proposal list if policy is empty
 			Optional<LifeProposal> lifeProposalListOpt = lifeProposalRepo
-					.findById(getProposalIdFromRepo(policyDto.getProposalNo()));
+					.findById(getProposalIdFromRepo(proposalNo));
 			List<LifeProposal> lifeProposalList = lifePolicyList.isEmpty()
 					? Collections.singletonList(lifeProposalListOpt.get())
 					: Collections.emptyList();
@@ -151,16 +148,16 @@ public class LifePolicyService implements IPolicyDataService {
 	}
 
 	// Getting agent
-	public AgentData getAgentData(PolicyDataCriteria policyDto) {
+	public AgentData getAgentData(String proposalNo) {
 
 		try {
 
 			// Get policy list
-			lifePolicyList = retrieveLifePolicyList(policyDto);
+			lifePolicyList = retrieveLifePolicyList(proposalNo);
 
 			// Get proposal list if policy is empty
 			Optional<LifeProposal> lifeProposalListOpt = lifeProposalRepo
-					.findById(getProposalIdFromRepo(policyDto.getProposalNo()));
+					.findById(getProposalIdFromRepo(proposalNo));
 			List<LifeProposal> lifeProposalList = lifePolicyList.isEmpty()
 					? Collections.singletonList(lifeProposalListOpt.get())
 					: Collections.emptyList();
@@ -188,14 +185,14 @@ public class LifePolicyService implements IPolicyDataService {
 	}
 
 	// Getting policy insured person data
-	public List<InsuredPersonLifeData> getInsuredPersonData(PolicyDataCriteria policyDto) {
+	public List<InsuredPersonLifeData> getInsuredPersonData(String proposalNo) {
 
 		try {
 
 			List<InsuredPersonLifeData> insuredPersonDataList = new ArrayList<InsuredPersonLifeData>();
 
 			// Get insured person list
-			List<PolicyInsuredPerson> policyInsuredPersonList = retrievePolicyInsuredPersonList(policyDto);
+			List<PolicyInsuredPerson> policyInsuredPersonList = retrievePolicyInsuredPersonList(proposalNo);
 
 			if (!policyInsuredPersonList.isEmpty()) {
 
@@ -228,16 +225,16 @@ public class LifePolicyService implements IPolicyDataService {
 	}
 
 	// Getting policy insured person beneficiary data
-	public List<BeneficiaryLifeData> getBeneficiaryData(PolicyDataCriteria policyDto) {
+	public List<BeneficiaryLifeData> getBeneficiaryData(String proposalNo) {
 
 		try {
 
 			List<BeneficiaryLifeData> beneficiaryDataList = new ArrayList<BeneficiaryLifeData>();
 
 			// Get beneficiary list
-			List<PolicyInsuredPersonBeneficiaries> beneficiaryList = retrievePolicyInsuredPersonList(policyDto)
+			List<PolicyInsuredPersonBeneficiaries> beneficiaryList = retrievePolicyInsuredPersonList(proposalNo)
 					.isEmpty() ? Collections.emptyList()
-							: retrievePolicyInsuredPersonList(policyDto).get(0)
+							: retrievePolicyInsuredPersonList(proposalNo).get(0)
 									.getPolicyInsuredPersonBeneficiariesList();
 
 			if (!beneficiaryList.isEmpty()) {
@@ -271,18 +268,18 @@ public class LifePolicyService implements IPolicyDataService {
 	}
 
 	// Getting bill collection data
-	public List<BillCollectionData> getBillCollectionData(PolicyDataCriteria policyDto) {
+	public List<BillCollectionData> getBillCollectionData(String proposalNo) {
 
 		try {
 
 			List<BillCollectionData> billCollectionDataList = new ArrayList<BillCollectionData>();
 
 			// Get policy list
-			lifePolicyList = retrieveLifePolicyList(policyDto);
+			lifePolicyList = retrieveLifePolicyList(proposalNo);
 
 			if (!lifePolicyList.isEmpty()) {
 
-				List<String> remainingDateList = getRemainingDates(policyDto);
+				List<String> remainingDateList = getRemainingDates(proposalNo);
 
 				lifePolicyList.forEach(policy -> {
 					BillCollectionData billCollectionData = BillCollectionData.builder()
@@ -304,10 +301,10 @@ public class LifePolicyService implements IPolicyDataService {
 	}
 	
 	// Getting remaining date of policy payment
-		private List<String> getRemainingDates(PolicyDataCriteria policyDto) {
+		private List<String> getRemainingDates(String proposalNo) {
 
 			// Get policy list
-			lifePolicyList = retrieveLifePolicyList(policyDto);
+			lifePolicyList = retrieveLifePolicyList(proposalNo);
 
 			int month = lifePolicyList.get(0).getPaymentType().getMonth();
 			Date coverageDate = (lifePolicyList.get(0).getCoverageDate());
@@ -327,17 +324,17 @@ public class LifePolicyService implements IPolicyDataService {
 		}
 
 		// Getting approve status based on policy number from dto
-		private boolean getApprove(PolicyDataCriteria policyDto) {
+		private boolean getApprove(String proposalNo) {
 
-			String proposalId = getProposalIdFromRepo(policyDto.getProposalNo());
+			String proposalId = getProposalIdFromRepo(proposalNo);
 			return getApprovalStatusFromRepo(proposalId);
 		}
 
-		public String getProposalIdFromRepo(String proposalNumber) {
+		public String getProposalIdFromRepo(String proposalNo) {
 
 			try {
 				// get proposal id based on proposal number
-				String lifeProposalId = lifeProposalRepo.getProposalId(proposalNumber);
+				String lifeProposalId = lifeProposalRepo.getProposalId(proposalNo);
 				return lifeProposalId;
 			} catch (DAOException e) {
 				throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -356,11 +353,11 @@ public class LifePolicyService implements IPolicyDataService {
 		}
 
 		// Getting life policy list
-		private List<LifePolicy> retrieveLifePolicyList(PolicyDataCriteria policyDto) {
+		private List<LifePolicy> retrieveLifePolicyList(String proposalNo) {
 
 			try {
 
-				lifePolicyList = lifePolicyRepo.getPolicyList(getProposalIdFromRepo(policyDto.getProposalNo()));
+				lifePolicyList = lifePolicyRepo.getPolicyList(getProposalIdFromRepo(proposalNo));
 
 				return lifePolicyList;
 
@@ -370,13 +367,13 @@ public class LifePolicyService implements IPolicyDataService {
 		}
 
 		// Getting policy insured person list
-		private List<PolicyInsuredPerson> retrievePolicyInsuredPersonList(PolicyDataCriteria policyDto) {
+		private List<PolicyInsuredPerson> retrievePolicyInsuredPersonList(String proposalNo) {
 
 			try {
 
-				List<PolicyInsuredPerson> insuredPersonList = retrieveLifePolicyList(policyDto).isEmpty()
+				List<PolicyInsuredPerson> insuredPersonList = retrieveLifePolicyList(proposalNo).isEmpty()
 						? Collections.emptyList()
-						: retrieveLifePolicyList(policyDto).get(0).getPolicyInsuredPersonList();
+						: retrieveLifePolicyList(proposalNo).get(0).getPolicyInsuredPersonList();
 
 				return insuredPersonList;
 

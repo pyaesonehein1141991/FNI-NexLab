@@ -1,4 +1,4 @@
-package org.tat.fni.api.dto.retrieveDTO.policyData;
+package org.tat.fni.api.dto.policyDataDTO;
 
 import java.util.List;
 
@@ -14,10 +14,6 @@ import lombok.Data;
 @ApiModel
 public class PolicyDataCriteria {
 	
-	private String proposalNo;
-
-//	@ApiModelProperty(position = 0, required = true)
-//	@NotBlank(message = "ProposalNo is mandatory")
-//	private List<FarmerPolicyDto> proposalNoList;
+	public List<PolicyDataDTO> policyDataList;
 
 }

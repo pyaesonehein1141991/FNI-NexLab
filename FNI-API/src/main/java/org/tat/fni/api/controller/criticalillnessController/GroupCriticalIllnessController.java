@@ -18,9 +18,9 @@ import org.tat.fni.api.domain.services.PolicyDataService.MedicalPolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalIllnessPolicyDataDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.GroupCriticalIllnessDTO;
+import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
-import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,9 +35,6 @@ public class GroupCriticalIllnessController {
 
 	@Resource(name = "criticalillnessProposalService")
 	private IMedicalProductsProposalService medicalProposalService;
-
-	@Autowired
-	private MedicalPolicyService medicalPolicyService;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -69,27 +66,6 @@ public class GroupCriticalIllnessController {
 		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
 
 		return responseDTO;
-	}
-
-	@PostMapping("/policyinfo")
-	@ApiResponses(value = { //
-			@ApiResponse(code = 400, message = "Something went wrong"),
-			@ApiResponse(code = 403, message = "Access denied"),
-			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${GroupCriticalIllnessController.getpolicyinfobyproposalno}")
-	public ResponseDTO<Object> retrievePolicyInfo(
-			@ApiParam("Proposal Number") @Valid @RequestBody CriticalIllnessPolicyDataDTO policyDto) {
-
-		List<ResponseDataMedicalDTO> responseList = new ArrayList<ResponseDataMedicalDTO>();
-
-		PolicyDataCriteria dto = mapper.map(policyDto, PolicyDataCriteria.class);
-
-		// Get response data list of policy infomation
-		responseList = medicalPolicyService.getResponseData(dto);
-
-		ResponseDTO<Object> responseDTO = ResponseDTO.builder().status("Success!").responseBody(responseList).build();
-		return responseDTO;
-
 	}
 
 }

@@ -21,6 +21,7 @@ import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.repository.MedicalPolicyRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
 import org.tat.fni.api.domain.services.Interfaces.IPolicyDataService;
+import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
 import org.tat.fni.api.dto.retrieveDTO.NameDto;
 import org.tat.fni.api.dto.retrieveDTO.policyData.AgentData;
@@ -29,7 +30,6 @@ import org.tat.fni.api.dto.retrieveDTO.policyData.BillCollectionData;
 import org.tat.fni.api.dto.retrieveDTO.policyData.CustomerData;
 import org.tat.fni.api.dto.retrieveDTO.policyData.InsuredPersonMedicalData;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyData;
-import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyDataCriteria;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -47,25 +47,22 @@ public class MedicalPolicyService implements IPolicyDataService {
 	// == declare class variable ==
 	List<MedicalPolicy> medicalPolicyList;
 
-	public List<ResponseDataMedicalDTO> getResponseData(PolicyDataCriteria policyDto) {
+	public ResponseDataMedicalDTO getResponseData(String proposalNo) {
 
 		try {
-
-			List<ResponseDataMedicalDTO> responseDataList = new ArrayList<ResponseDataMedicalDTO>();
-
+			
 			// Get approval status based on proposal id
-			boolean isApprove = getApprove(policyDto);
+			boolean isApprove = getApprove(proposalNo);
 
 			ResponseDataMedicalDTO responseDataDTO = ResponseDataMedicalDTO.builder()
-					.proposalNo(policyDto.getProposalNo()).isApprove(isApprove)
-					.policyData(isApprove ? getPolicyData(policyDto) : null).customer(getCustomerData(policyDto))
-					.agent(getAgentData(policyDto))
-					.insuredPersonDataList(isApprove ? getInsuredPersonData(policyDto) : null)
-					.beneficiaryDataList(isApprove ? getBeneficiaryData(policyDto) : null)
-					.billCollectionDataList(isApprove ? getBillCollectionData(policyDto) : null).build();
-			responseDataList.add(responseDataDTO);
+					.proposalNo(proposalNo).isApprove(isApprove)
+					.policyData(isApprove ? getPolicyData(proposalNo) : null).customer(getCustomerData(proposalNo))
+					.agent(getAgentData(proposalNo))
+					.insuredPersonDataList(isApprove ? getInsuredPersonData(proposalNo) : null)
+					.beneficiaryDataList(isApprove ? getBeneficiaryData(proposalNo) : null)
+					.billCollectionDataList(isApprove ? getBillCollectionData(proposalNo) : null).build();
 
-			return responseDataList;
+			return responseDataDTO;
 
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -73,12 +70,12 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting medical policy
-	public PolicyData getPolicyData(PolicyDataCriteria policyDto) {
+	public PolicyData getPolicyData(String proposalNo) {
 
 		try {
 			// Get policy list
-			MedicalPolicy policy = retrieveMedicalPolicyList(policyDto).isEmpty() ? null
-					: retrieveMedicalPolicyList(policyDto).get(0);
+			MedicalPolicy policy = retrieveMedicalPolicyList(proposalNo).isEmpty() ? null
+					: retrieveMedicalPolicyList(proposalNo).get(0);
 
 			// Instantiate policyData model
 			PolicyData policyData = null;
@@ -86,7 +83,7 @@ public class MedicalPolicyService implements IPolicyDataService {
 			if (policy != null) {
 
 				// Get product name from insuredPersonList
-				List<MedicalPolicyInsuredPerson> insuredPersonList = retrievePolicyInsuredPersonList(policyDto);
+				List<MedicalPolicyInsuredPerson> insuredPersonList = retrievePolicyInsuredPersonList(proposalNo);
 				String productName = insuredPersonList.get(0).getProduct() == null ? null
 						: insuredPersonList.get(0).getProduct().getProductContent().getName();
 
@@ -108,16 +105,16 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting customer
-	public CustomerData getCustomerData(PolicyDataCriteria policyDto) {
+	public CustomerData getCustomerData(String proposalNo) {
 
 		try {
 
 			// Get policy list
-			medicalPolicyList = retrieveMedicalPolicyList(policyDto);
+			medicalPolicyList = retrieveMedicalPolicyList(proposalNo);
 
 			// Get proposal list if policy is empty
 			Optional<MedicalProposal> medicalProposalListOpt = medicalProposalRepo
-					.findById(getProposalIdFromRepo(policyDto.getProposalNo()));
+					.findById(getProposalIdFromRepo(proposalNo));
 			List<MedicalProposal> medicalProposalList = medicalPolicyList.isEmpty()
 					? Collections.singletonList(medicalProposalListOpt.get())
 					: Collections.emptyList();
@@ -151,16 +148,16 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting agent
-	public AgentData getAgentData(PolicyDataCriteria policyDto) {
+	public AgentData getAgentData(String proposalNo) {
 
 		try {
 
 			// Get policy list
-			medicalPolicyList = retrieveMedicalPolicyList(policyDto);
+			medicalPolicyList = retrieveMedicalPolicyList(proposalNo);
 
 			// Get proposal list if policy is empty
 			Optional<MedicalProposal> medicalProposalListOpt = medicalProposalRepo
-					.findById(getProposalIdFromRepo(policyDto.getProposalNo()));
+					.findById(getProposalIdFromRepo(proposalNo));
 			List<MedicalProposal> medicalProposalList = medicalPolicyList.isEmpty()
 					? Collections.singletonList(medicalProposalListOpt.get())
 					: Collections.emptyList();
@@ -188,14 +185,14 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting policy insured person data
-	public List<InsuredPersonMedicalData> getInsuredPersonData(PolicyDataCriteria policyDto) {
+	public List<InsuredPersonMedicalData> getInsuredPersonData(String proposalNo) {
 
 		try {
 
 			List<InsuredPersonMedicalData> insuredPersonDataList = new ArrayList<InsuredPersonMedicalData>();
 
 			// Get insured person list
-			List<MedicalPolicyInsuredPerson> policyInsuredPersonList = retrievePolicyInsuredPersonList(policyDto);
+			List<MedicalPolicyInsuredPerson> policyInsuredPersonList = retrievePolicyInsuredPersonList(proposalNo);
 
 			if (!policyInsuredPersonList.isEmpty()) {
 
@@ -226,7 +223,7 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting policy insured person beneficiary data
-	public List<BeneficiaryMedicalData> getBeneficiaryData(PolicyDataCriteria policyDto) {
+	public List<BeneficiaryMedicalData> getBeneficiaryData(String proposalNo) {
 
 		try {
 
@@ -234,8 +231,8 @@ public class MedicalPolicyService implements IPolicyDataService {
 
 			// Get beneficiary list
 			List<MedicalPolicyInsuredPersonBeneficiaries> beneficiaryList = 
-					retrievePolicyInsuredPersonList(policyDto).isEmpty() ? Collections.emptyList()
-							: retrievePolicyInsuredPersonList(policyDto).get(0)
+					retrievePolicyInsuredPersonList(proposalNo).isEmpty() ? Collections.emptyList()
+							: retrievePolicyInsuredPersonList(proposalNo).get(0)
 									.getPolicyInsuredPersonBeneficiariesList();
 
 			if (!beneficiaryList.isEmpty()) {
@@ -269,18 +266,18 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting bill collection data
-	public List<BillCollectionData> getBillCollectionData(PolicyDataCriteria policyDto) {
+	public List<BillCollectionData> getBillCollectionData(String proposalNo) {
 
 		try {
 
 			List<BillCollectionData> billCollectionDataList = new ArrayList<BillCollectionData>();
 
 			// Get policy list
-			medicalPolicyList = retrieveMedicalPolicyList(policyDto);
+			medicalPolicyList = retrieveMedicalPolicyList(proposalNo);
 
 			if (!medicalPolicyList.isEmpty()) {
 
-				List<String> remainingDateList = getRemainingDates(policyDto);
+				List<String> remainingDateList = getRemainingDates(proposalNo);
 
 				medicalPolicyList.forEach(policy -> {
 					BillCollectionData billCollectionData = BillCollectionData.builder()
@@ -302,10 +299,10 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting remaining date of policy payment
-	private List<String> getRemainingDates(PolicyDataCriteria policyDto) {
+	private List<String> getRemainingDates(String proposalNo) {
 
 		// Get policy list
-		medicalPolicyList = retrieveMedicalPolicyList(policyDto);
+		medicalPolicyList = retrieveMedicalPolicyList(proposalNo);
 
 		int month = medicalPolicyList.get(0).getPaymentType().getMonth();
 		Date coverageDate = (medicalPolicyList.get(0).getCoverageDate());
@@ -325,17 +322,17 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting approve status based on policy number from dto
-	private boolean getApprove(PolicyDataCriteria policyDto) {
+	private boolean getApprove(String proposalNo) {
 
-		String proposalId = getProposalIdFromRepo(policyDto.getProposalNo());
+		String proposalId = getProposalIdFromRepo(proposalNo);
 		return getApprovalStatusFromRepo(proposalId);
 	}
 
-	public String getProposalIdFromRepo(String proposalNumber) {
+	public String getProposalIdFromRepo(String proposalNo) {
 
 		try {
 			// get proposal id based on proposal number
-			String medicalProposalId = medicalProposalRepo.getProposalId(proposalNumber);
+			String medicalProposalId = medicalProposalRepo.getProposalId(proposalNo);
 			return medicalProposalId;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -354,11 +351,11 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting medical policy list
-	private List<MedicalPolicy> retrieveMedicalPolicyList(PolicyDataCriteria policyDto) {
+	private List<MedicalPolicy> retrieveMedicalPolicyList(String proposalNo) {
 
 		try {
 
-			medicalPolicyList = medicalPolicyRepo.getPolicyList(getProposalIdFromRepo(policyDto.getProposalNo()));
+			medicalPolicyList = medicalPolicyRepo.getPolicyList(getProposalIdFromRepo(proposalNo));
 
 			return medicalPolicyList;
 
@@ -368,13 +365,13 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting policy insured person list
-	private List<MedicalPolicyInsuredPerson> retrievePolicyInsuredPersonList(PolicyDataCriteria policyDto) {
+	private List<MedicalPolicyInsuredPerson> retrievePolicyInsuredPersonList(String proposalNo) {
 
 		try {
 
-			List<MedicalPolicyInsuredPerson> insuredPersonList = retrieveMedicalPolicyList(policyDto).isEmpty()
+			List<MedicalPolicyInsuredPerson> insuredPersonList = retrieveMedicalPolicyList(proposalNo).isEmpty()
 					? Collections.emptyList()
-					: retrieveMedicalPolicyList(policyDto).get(0).getPolicyInsuredPersonList();
+					: retrieveMedicalPolicyList(proposalNo).get(0).getPolicyInsuredPersonList();
 
 			return insuredPersonList;
 
