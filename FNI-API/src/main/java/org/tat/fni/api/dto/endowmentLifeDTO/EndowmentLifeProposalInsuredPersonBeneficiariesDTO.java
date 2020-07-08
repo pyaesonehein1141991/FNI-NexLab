@@ -1,4 +1,4 @@
-package org.tat.fni.api.dto.publicLifeDTO;
+package org.tat.fni.api.dto.endowmentLifeDTO;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class PublicLifeProposalInsuredPersonBeneficiariesDTO {
+public class EndowmentLifeProposalInsuredPersonBeneficiariesDTO {
 	
 	@ApiModelProperty(position = 0, example = "U", required = true)
 	@NotBlank(message = "InitialId is mandatory")

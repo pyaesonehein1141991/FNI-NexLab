@@ -1,4 +1,4 @@
-package org.tat.fni.api.controller.publicLifeController;
+package org.tat.fni.api.controller.endowmentLifeController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
-import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
-import org.tat.fni.api.dto.publicLifeDTO.PublicLifeDTO;
-import org.tat.fni.api.dto.publicLifeDTO.PublicLifePolicyDataDTO;
+import org.tat.fni.api.dto.endowmentLifeDTO.EndowmentLifeDTO;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,12 +25,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/publicLife")
-@Api(tags = "Public-Life")
-public class PublicLifeController {
+@RequestMapping("/endowmentLife")
+@Api(tags = "Endowment Life")
+public class EndowmentLifeController {
 	
-	@Resource(name = "publicLifeProposalService")
-	private ILifeProductsProposalService publicLifeProposalService;
+	@Resource(name = "endowmentLifeProposalService")
+	private ILifeProductsProposalService endowmentLifeProposalService;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -43,15 +39,15 @@ public class PublicLifeController {
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${PublicLifeController.submitproposal}")
+	@ApiOperation(value = "${EndowmentLifeController.submitproposal}")
 	public ResponseDTO<Object> submitproposal(
-			@ApiParam("Submit Public Life Proposal") @Valid @RequestBody PublicLifeDTO publicLifeDTO) {
+			@ApiParam("Submit Endowment Life Proposal") @Valid @RequestBody EndowmentLifeDTO publicLifeDTO) {
 
 		List<LifeProposal> proposallist = new ArrayList<>();
-		PublicLifeDTO dto = mapper.map(publicLifeDTO, PublicLifeDTO.class);
+		EndowmentLifeDTO dto = mapper.map(publicLifeDTO, EndowmentLifeDTO.class);
 
 		// create Farmer proposal
-		proposallist = publicLifeProposalService.createDtoToProposal(dto);
+		proposallist = endowmentLifeProposalService.createDtoToProposal(dto);
 
 		// create response object
 		List<ProposalResponseDTO> responseList = new ArrayList<ProposalResponseDTO>();

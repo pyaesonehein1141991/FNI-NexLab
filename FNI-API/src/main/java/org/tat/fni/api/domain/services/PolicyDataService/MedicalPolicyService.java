@@ -5,30 +5,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.tat.fni.api.common.Name;
-import org.tat.fni.api.domain.Agent;
-import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.MedicalPolicy;
 import org.tat.fni.api.domain.MedicalPolicyInsuredPerson;
-import org.tat.fni.api.domain.MedicalPolicyInsuredPersonBeneficiaries;
-import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.repository.MedicalPolicyRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
 import org.tat.fni.api.domain.services.Interfaces.IPolicyDataService;
-import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
-import org.tat.fni.api.dto.retrieveDTO.NameDto;
-import org.tat.fni.api.dto.retrieveDTO.policyData.AgentData;
-import org.tat.fni.api.dto.retrieveDTO.policyData.BeneficiaryMedicalData;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.BillCollectionData;
-import org.tat.fni.api.dto.retrieveDTO.policyData.CustomerData;
-import org.tat.fni.api.dto.retrieveDTO.policyData.InsuredPersonMedicalData;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyData;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
@@ -47,19 +35,16 @@ public class MedicalPolicyService implements IPolicyDataService {
 	// == declare class variable ==
 	List<MedicalPolicy> medicalPolicyList;
 
-	public ResponseDataMedicalDTO getResponseData(String proposalNo) {
+	public ResponseDataDTO getResponseData(String proposalNo) {
 
 		try {
 			
 			// Get approval status based on proposal id
 			boolean isApprove = getApprove(proposalNo);
 
-			ResponseDataMedicalDTO responseDataDTO = ResponseDataMedicalDTO.builder()
+			ResponseDataDTO responseDataDTO = ResponseDataDTO.builder()
 					.proposalNo(proposalNo).isApprove(isApprove)
-					.policyData(isApprove ? getPolicyData(proposalNo) : null).customer(getCustomerData(proposalNo))
-					.agent(getAgentData(proposalNo))
-					.insuredPersonDataList(isApprove ? getInsuredPersonData(proposalNo) : null)
-					.beneficiaryDataList(isApprove ? getBeneficiaryData(proposalNo) : null)
+					.policyData(isApprove ? getPolicyData(proposalNo) : null)
 					.billCollectionDataList(isApprove ? getBillCollectionData(proposalNo) : null).build();
 
 			return responseDataDTO;
@@ -97,167 +82,6 @@ public class MedicalPolicyService implements IPolicyDataService {
 
 			}
 			return policyData;
-
-		} catch (DAOException e) {
-			throw new SystemException(e.getErrorCode(), e.getMessage());
-		}
-
-	}
-
-	// Getting customer
-	public CustomerData getCustomerData(String proposalNo) {
-
-		try {
-
-			// Get policy list
-			medicalPolicyList = retrieveMedicalPolicyList(proposalNo);
-
-			// Get proposal list if policy is empty
-			Optional<MedicalProposal> medicalProposalListOpt = medicalProposalRepo
-					.findById(getProposalIdFromRepo(proposalNo));
-			List<MedicalProposal> medicalProposalList = medicalPolicyList.isEmpty()
-					? Collections.singletonList(medicalProposalListOpt.get())
-					: Collections.emptyList();
-
-			Customer customer = medicalPolicyList.isEmpty() ? medicalProposalList.get(0).getCustomer()
-					: medicalPolicyList.get(0).getCustomer();
-
-			// Get name obj
-			Name nameObj = customer == null ? null : customer.getName();
-
-			// Get customer name
-			NameDto customerName = nameObj == null ? null
-					: NameDto.builder().firstName(nameObj.getFirstName()).middleName(nameObj.getMiddleName())
-							.lastName(nameObj.getLastName()).build();
-
-			CustomerData customerData = customer == null ? null
-					: CustomerData.builder().name(customerName).idNo(customer.getFullIdNo())
-							.dateOfBirth(customer.getDateOfBirth())
-							.address(customer.getResidentAddress() == null ? null
-									: customer.getResidentAddress().getTownship().getFullTownShip())
-							.phoneNo(customer.getPhone()).fatherName(customer.getFatherName())
-							.gender(customer.getGender())
-							.occupation(customer.getOccupation() == null ? null : customer.getOccupation().getName())
-							.build();
-
-			return customerData;
-
-		} catch (DAOException e) {
-			throw new SystemException(e.getErrorCode(), e.getMessage());
-		}
-	}
-
-	// Getting agent
-	public AgentData getAgentData(String proposalNo) {
-
-		try {
-
-			// Get policy list
-			medicalPolicyList = retrieveMedicalPolicyList(proposalNo);
-
-			// Get proposal list if policy is empty
-			Optional<MedicalProposal> medicalProposalListOpt = medicalProposalRepo
-					.findById(getProposalIdFromRepo(proposalNo));
-			List<MedicalProposal> medicalProposalList = medicalPolicyList.isEmpty()
-					? Collections.singletonList(medicalProposalListOpt.get())
-					: Collections.emptyList();
-
-			Agent agent = medicalPolicyList.isEmpty() ? medicalProposalList.get(0).getAgent()
-					: medicalPolicyList.get(0).getAgent();
-
-			// Get name obj
-			Name nameObj = agent == null ? null : agent.getName();
-
-			// Get customer name
-			NameDto agentName = nameObj == null ? null
-					: NameDto.builder().firstName(nameObj.getFirstName()).middleName(nameObj.getMiddleName())
-							.lastName(nameObj.getLastName()).build();
-
-			AgentData agentData = agent == null ? null
-					: AgentData.builder().name(agentName).codeNo(agent.getCodeNo()).fatherName(agent.getFatherName())
-							.gender(agent.getGender()).idNo(agent.getFullIdNo()).email(agent.getEmail()).build();
-
-			return agentData;
-
-		} catch (DAOException e) {
-			throw new SystemException(e.getErrorCode(), e.getMessage());
-		}
-	}
-
-	// Getting policy insured person data
-	public List<InsuredPersonMedicalData> getInsuredPersonData(String proposalNo) {
-
-		try {
-
-			List<InsuredPersonMedicalData> insuredPersonDataList = new ArrayList<InsuredPersonMedicalData>();
-
-			// Get insured person list
-			List<MedicalPolicyInsuredPerson> policyInsuredPersonList = retrievePolicyInsuredPersonList(proposalNo);
-
-			if (!policyInsuredPersonList.isEmpty()) {
-
-				// Get name obj
-				String insuredPersonName = policyInsuredPersonList.get(0).getFullName();
-
-				// Get insured person name
-//				NameDto insuredPersonName = nameObj == null ? null
-//						: NameDto.builder().firstName(nameObj.getFirstName()).middleName(nameObj.getMiddleName())
-//								.lastName(nameObj.getLastName()).build();
-
-				policyInsuredPersonList.forEach(person -> {
-					InsuredPersonMedicalData insuredPersonData = InsuredPersonMedicalData.builder()
-							.proposedSumInsured(person.getSumInsured()).proposedPremium(person.getPremium())
-							.idNo(person.getId()).fatherName(person.getFatherName())
-							.dateOfBirth(person.getDateOfBirth()).address(person.getFullAddress())
-							.name(insuredPersonName).build();
-					insuredPersonDataList.add(insuredPersonData);
-				});
-
-			}
-			return policyInsuredPersonList.isEmpty() ? null : insuredPersonDataList;
-
-		} catch (DAOException e) {
-			throw new SystemException(e.getErrorCode(), e.getMessage());
-		}
-
-	}
-
-	// Getting policy insured person beneficiary data
-	public List<BeneficiaryMedicalData> getBeneficiaryData(String proposalNo) {
-
-		try {
-
-			List<BeneficiaryMedicalData> beneficiaryDataList = new ArrayList<BeneficiaryMedicalData>();
-
-			// Get beneficiary list
-			List<MedicalPolicyInsuredPersonBeneficiaries> beneficiaryList = 
-					retrievePolicyInsuredPersonList(proposalNo).isEmpty() ? Collections.emptyList()
-							: retrievePolicyInsuredPersonList(proposalNo).get(0)
-									.getPolicyInsuredPersonBeneficiariesList();
-
-			if (!beneficiaryList.isEmpty()) {
-
-				// Get name obj
-				Name nameObj = beneficiaryList.get(0).getName();
-
-				// Get insured beneficiary person name
-				NameDto beneName = nameObj == null ? null
-						: NameDto.builder().firstName(nameObj.getFirstName()).middleName(nameObj.getMiddleName())
-								.lastName(nameObj.getLastName()).build();
-
-				beneficiaryList.forEach(beneficiary -> {
-					BeneficiaryMedicalData beneficiaryData = BeneficiaryMedicalData.builder().name(beneName)
-							.dateOfBirth(beneficiary.getDateOfBirth()).idNo(beneficiary.getIdNo())
-							.relationship(beneficiary.getRelationship().getName())
-							.percentage(beneficiary.getPercentage())
-							.address(beneficiary.getResidentAddress() == null ? null
-									: beneficiary.getResidentAddress().getTownship().getFullTownShip())
-							.build();
-					beneficiaryDataList.add(beneficiaryData);
-				});
-
-			}
-			return beneficiaryList.isEmpty() ? null : beneficiaryDataList;
 
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());

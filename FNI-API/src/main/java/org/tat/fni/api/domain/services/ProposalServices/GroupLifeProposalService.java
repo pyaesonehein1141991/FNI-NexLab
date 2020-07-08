@@ -91,16 +91,16 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 
 	@Autowired
 	private RelationshipService relationshipService;
-	
+
 	@Autowired
 	private ProductService productService;
 
 	@Autowired
 	private CustomerRepository customerRepo;
-	
+
 	@Autowired
 	private ILifeProposalService lifeProposalService;
-	
+
 	@Value("${groupLifeProductId}")
 	private String groupLifeProductId;
 
@@ -136,11 +136,10 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 
 	@Override
 	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto) {
-		
+
 		GroupLifeDTO groupLifeDTO = (GroupLifeDTO) proposalDto;
-		
+
 		Optional<Branch> branchOptional = branchService.findById(groupLifeDTO.getBranchId());
-		Optional<Customer> customerOptional = customerService.findById(groupLifeDTO.getCustomerId());
 		Optional<Organization> organizationOptional = organizationService.findById(groupLifeDTO.getOrganizationId());
 		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(groupLifeDTO.getPaymentTypeId());
 		Optional<Agent> agentOptional = agentService.findById(groupLifeDTO.getAgentId());
@@ -152,9 +151,17 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 			groupLifeDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
 				LifeProposal lifeProposal = new LifeProposal();
-				
-				lifeProposalService.setPeriodMonthForKeyFacterValue(
-						groupLifeDTO.getPeriodMonth(), groupLifeDTO.getPaymentTypeId());
+
+				Customer customer = lifeProposalService.checkCustomerAvailability(groupLifeDTO.getCustomer());
+
+				if (customer == null) {
+					lifeProposalService.createNewCustomer(groupLifeDTO.getCustomer());
+				} else {
+					lifeProposal.setCustomer(customer);
+				}
+
+				lifeProposalService.setPeriodMonthForKeyFacterValue(groupLifeDTO.getPeriodMonth(),
+						groupLifeDTO.getPaymentTypeId());
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 				lifeProposal.setComplete(true);
@@ -178,15 +185,12 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 				if (salePointOptional.isPresent()) {
 					lifeProposal.setSalesPoints(salePointOptional.get());
 				}
-				if (customerOptional.isPresent()) {
-					lifeProposal.setCustomer(customerOptional.get());
-				}
 
 				String proposalNo = customId.getNextId("GROUPLIFE_PROPOSAL_NO", null);
 				lifeProposal.setStartDate(groupLifeDTO.getStartDate());
 				lifeProposal.setEndDate(groupLifeDTO.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
-				
+
 				lifeProposal = lifeProposalService.calculatePremium(lifeProposal);
 				lifeProposalService.calculateTermPremium(lifeProposal);
 
@@ -203,12 +207,11 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 
 	@Override
 	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
-		
+
 		try {
 			GroupLifeProposalInsuredPersonDTO dto = (GroupLifeProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 
 			Optional<Product> productOptional = productService.findById(groupLifeProductId);
-			Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
@@ -243,11 +246,6 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 			insuredPerson.setResidentAddress(residentAddress);
 			insuredPerson.setName(name);
 
-			if (customerOptional.isPresent()) {
-				insuredPerson.setCustomer(customerOptional.get());
-			} else {
-				insuredPerson.setCustomer(createNewCustomer(insuredPerson));
-			}
 			if (occupationOptional.isPresent()) {
 				insuredPerson.setOccupation(occupationOptional.get());
 			}
@@ -261,9 +259,10 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
-			
+
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
-				insuredPerson.getKeyFactorValueList().add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+				insuredPerson.getKeyFactorValueList()
+						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
 			});
 
 			return insuredPerson;
@@ -273,33 +272,11 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 	}
 
 	@Override
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
-		Customer customer = new Customer();
-		try {
-			customer.setInitialId(insuredPersonDto.getInitialId());
-			customer.setFatherName(insuredPersonDto.getFatherName());
-			customer.setIdNo(insuredPersonDto.getIdNo());
-			customer.setDateOfBirth(insuredPersonDto.getDateOfBirth());
-			customer.setGender(insuredPersonDto.getGender());
-			customer.setIdType(insuredPersonDto.getIdType());
-			customer.setResidentAddress(insuredPersonDto.getResidentAddress());
-			customer.setName(insuredPersonDto.getName());
-			customer.setOccupation(insuredPersonDto.getOccupation());
-			customer.setRecorder(insuredPersonDto.getRecorder());
-			customer = customerRepo.save(customer);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return customer;
-	}
-
-	@Override
 	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
-		
+
 		try {
-			GroupLifeProposalInsuredPersonBeneficiariesDTO dto = 
-					(GroupLifeProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
-			
+			GroupLifeProposalInsuredPersonBeneficiariesDTO dto = (GroupLifeProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 

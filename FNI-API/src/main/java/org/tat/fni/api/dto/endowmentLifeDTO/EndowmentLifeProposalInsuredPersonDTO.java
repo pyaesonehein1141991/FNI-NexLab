@@ -1,4 +1,4 @@
-package org.tat.fni.api.dto.publicLifeDTO;
+package org.tat.fni.api.dto.endowmentLifeDTO;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class PublicLifeProposalInsuredPersonDTO {
+public class EndowmentLifeProposalInsuredPersonDTO {
 	
 	@ApiModelProperty(position = 0, example = "U", required = true)
 	@NotBlank(message = "InitialId is mandatory")
@@ -48,7 +48,7 @@ public class PublicLifeProposalInsuredPersonDTO {
 	private String gender;
 	
 	@ApiModelProperty(position = 7, example = "098166", required = true)
-	@NotBlank(message = "idType is mandatory")
+	@NotBlank(message = "idNo is mandatory")
 	private String idNo;
 	
 	@ApiModelProperty(position = 8, example = "NRCNO", required = true)
@@ -77,6 +77,6 @@ public class PublicLifeProposalInsuredPersonDTO {
 	@Valid
 	@ApiModelProperty(position = 14)
 	@NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-	private List<PublicLifeProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
+	private List<EndowmentLifeProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 
 }

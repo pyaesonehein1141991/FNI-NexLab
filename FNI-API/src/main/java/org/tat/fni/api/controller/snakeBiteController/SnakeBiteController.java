@@ -14,13 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
-import org.tat.fni.api.domain.services.PolicyDataService.LifePolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
 import org.tat.fni.api.dto.snakeBiteDTO.SnakeBiteDTO;
-import org.tat.fni.api.dto.snakeBiteDTO.SnakeBitePolicyDataDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

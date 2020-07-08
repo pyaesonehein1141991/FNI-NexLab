@@ -87,45 +87,39 @@ TownshipController:
   townships: Get All Townships
 ReligionController:
   religions: Get All Religions
+QualificationController:
+  qualifications: Get All Qualifications
+TypeOfSportController:
+  typeOfSports: Get All Type of sports
+  
+PolicyDataController:
+  getPolicyData: Returns policy information
 
-PublicLifeController:
-  submitproposal: Create Public Life Proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
+EndowmentLifeController:
+  submitproposal: Create Endowment Life Proposal and return proposal number
 GroupHealthController:
   submitproposal: Create Group Health Proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 GroupCriticalIllnessController:
   submitproposal: Create Group Critical Illness Proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 FarmerController:
   submitproposal: Create Farmer Life Proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 GroupLifeController:
   submitproposal: Create Group Life Proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 ShortTermEndowmentLifeController:
   submitproposal: Create Short Term Endowment Life proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 StudentLifeController:
   submitproposal: Create Student Life proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 BillCollectionController:
   payment: Create Subsequent Payment
 SnakeBiteController:
   submitproposal: Create Snake Bite Life proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 IndividualHealthController:
   submitproposal: Create Individual Health proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 IndividualCriticalillnessController:
   submitproposal: Create Critical Illness proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 MicroHealthController:
   submitproposal: Create Micro Health proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 PersonalAccidentController:
   submitproposal: Create Personal Accident proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved
 SportManController:
   submitproposal: Create Sportman proposal and return proposal number
-  getpolicyinfobyproposalno: Returns policy information if proposal status is approved

@@ -14,13 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.services.Interfaces.IMedicalProductsProposalService;
-import org.tat.fni.api.domain.services.PolicyDataService.MedicalPolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
-import org.tat.fni.api.dto.criticalIllnessDTO.CriticalIllnessPolicyDataDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.GroupCriticalIllnessDTO;
-import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -3,10 +3,12 @@ package org.tat.fni.api.dto.personalAccidentDTO;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.tat.fni.api.configuration.DateHandler;
+import org.tat.fni.api.dto.customerDTO.CustomerDto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -31,10 +33,15 @@ public class PersonalAccidentDTO {
 	@ApiModelProperty(position = 3, example = "BANCH00000000000000129032013", required = true)
 	@NotBlank(message = "Branch ID is mandatory")
 	private String branchId;
+	
+	@Valid
+	@ApiModelProperty(position = 4, required = true)
+	@NotNull(message = "customer is mandatory")
+	private CustomerDto customer;
 
-	@ApiModelProperty(position = 4, example = "ISSYS001001000000000103062019", required = true)
-	@NotBlank(message = "Customer ID is mandatory")
-	private String customerId;
+//	@ApiModelProperty(position = 4, example = "ISSYS001001000000000103062019", required = true)
+//	@NotBlank(message = "Customer ID is mandatory")
+//	private String customerId;
 
 	@ApiModelProperty(position = 5, example = "ISSYS033001000000000104062019", required = true)
 	@NotBlank(message = "Organization ID is mandatory")

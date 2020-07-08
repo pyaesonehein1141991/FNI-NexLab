@@ -23,8 +23,10 @@ import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.InsuredPersonKeyFactorValue;
+import org.tat.fni.api.domain.MedicalKeyFactorValue;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.MedicalProposalInsuredPerson;
+import org.tat.fni.api.domain.MedicalProposalInsuredPersonAddOn;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonBeneficiaries;
 import org.tat.fni.api.domain.Occupation;
 import org.tat.fni.api.domain.Organization;
@@ -34,8 +36,10 @@ import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.RelationShip;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
+import org.tat.fni.api.domain.addon.AddOn;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
+import org.tat.fni.api.domain.services.AddOnService;
 import org.tat.fni.api.domain.services.AgentService;
 import org.tat.fni.api.domain.services.BranchService;
 import org.tat.fni.api.domain.services.GuardainService;
@@ -49,11 +53,12 @@ import org.tat.fni.api.domain.services.TownShipService;
 import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
 import org.tat.fni.api.domain.services.Interfaces.IMedicalProductsProposalService;
 import org.tat.fni.api.domain.services.Interfaces.IMedicalProposalService;
-import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
+import org.tat.fni.api.dto.InsuredPersonAddOnDTO;
+import org.tat.fni.api.dto.MedProInsuAddOnDTO;
 import org.tat.fni.api.dto.healthInsuranceDTO.GroupHealthInsuranceDTO;
-import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthInsuranceDTO;
 import org.tat.fni.api.dto.healthInsuranceDTO.HealthProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.healthInsuranceDTO.HealthProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.healthInsuranceDTO.IndividualHealthInsuranceDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -96,6 +101,9 @@ public class HealthProposalService implements IMedicalProductsProposalService {
 	private GuardainService guardainService;
 
 	@Autowired
+	private AddOnService addOnService;
+
+	@Autowired
 	private IMedicalProposalService medicalProposalService;
 
 	@Autowired
@@ -106,9 +114,11 @@ public class HealthProposalService implements IMedicalProductsProposalService {
 
 	@Value("${individualHealthProductId}")
 	private String individualHealthProductId;
-	
+
 	@Value("${groupHealthProductId}")
 	private String groupHealthProductId;
+
+	private List<MedProInsuAddOnDTO> insuredPersonAddOnList;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -155,6 +165,14 @@ public class HealthProposalService implements IMedicalProductsProposalService {
 
 			individualHealthInsuranceDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				MedicalProposal medicalProposal = new MedicalProposal();
+				
+				Customer customer = medicalProposalService.checkCustomerAvailability(individualHealthInsuranceDTO.getCustomer());
+
+				if (customer == null) {
+					medicalProposalService.createNewCustomer(individualHealthInsuranceDTO.getCustomer());
+				} else {
+					medicalProposal.setCustomer(customer);
+				}
 
 				medicalProposalService.setPeriodMonthForKeyFacterValue(individualHealthInsuranceDTO.getPeriodMonth(),
 						individualHealthInsuranceDTO.getPaymentTypeId());
@@ -280,6 +298,7 @@ public class HealthProposalService implements IMedicalProductsProposalService {
 
 			insuredPerson.setAge(dto.getAge());
 			insuredPerson.setProduct(productOptional.get());
+
 			insuredPerson.setPremium(dto.getPremium());
 			insuredPerson.setUnit(dto.getUnit());
 			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
@@ -293,8 +312,12 @@ public class HealthProposalService implements IMedicalProductsProposalService {
 				insuredPerson.getKeyFactorValueList()
 						.add(medicalProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
 			});
+			dto.getInsuredPersonAddonOnList().forEach(addon -> {
+				insuredPerson.getInsuredPersonAddOnList().add(createInsuredPersonAddon(addon, insuredPerson));
+			});
 
 			return insuredPerson;
+
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
@@ -352,6 +375,40 @@ public class HealthProposalService implements IMedicalProductsProposalService {
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
+	}
+
+	@Override
+	public MedicalProposalInsuredPersonAddOn createInsuredPersonAddon(InsuredPersonAddOnDTO addOnDTO,
+			MedicalProposalInsuredPerson insuredPerson) {
+
+		try {
+
+			AddOn addOn = addOnService.findAddOnById(addOnDTO.getMedicalProductAddOnId());
+
+			MedicalProposalInsuredPersonAddOn addon = new MedicalProposalInsuredPersonAddOn();
+			addon.setUnit(addOnDTO.getUnit());
+			addon.setSumInsured(insuredPerson.getSumInsured());
+			addon.setPremium(addOnDTO.getPremium());
+			addon.setAddOn(addOn);
+			addon.setKeyFactorValueList(insuredPerson.getKeyFactorValueList());
+
+			return addon;
+
+		} catch (DAOException e) {
+			throw new SystemException(e.getErrorCode(), e.getMessage());
+		}
+
+	}
+
+	/* create KeyfactorValue of addOn */
+	private List<MedicalKeyFactorValue> createNewKeyFactorValueList(AddOn addOn) {
+		List<MedicalKeyFactorValue> addOnKeyFactorValueList = new ArrayList<MedicalKeyFactorValue>();
+		MedicalKeyFactorValue fkv;
+		for (KeyFactor kf : addOn.getKeyFactorList()) {
+			fkv = new MedicalKeyFactorValue(kf);
+			addOnKeyFactorValueList.add(fkv);
+		}
+		return addOnKeyFactorValueList;
 	}
 
 }

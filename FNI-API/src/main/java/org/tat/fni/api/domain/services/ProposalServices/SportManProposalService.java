@@ -73,9 +73,6 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 	private BranchService branchService;
 
 	@Autowired
-	private CustomerRepository customerRepo;
-
-	@Autowired
 	private CustomerService customerService;
 
 	@Autowired
@@ -110,7 +107,7 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 
 	@Autowired
 	private TypesOfSportService typeofsportService;
-	
+
 	@Autowired
 	private ILifeProposalService lifeProposalService;
 
@@ -121,9 +118,9 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 	@Transactional(propagation = Propagation.REQUIRED)
 	public <T> List<LifeProposal> createDtoToProposal(T proposalDto) {
 		try {
-			
+
 			SportManDTO sportMandto = (SportManDTO) proposalDto;
-			
+
 			// convert SportManDTOToProposal to lifeproposal
 			List<LifeProposal> sportmanproposalList = convertProposalDTOToProposal(sportMandto);
 			lifeProposalRepo.saveAll(sportmanproposalList);
@@ -145,7 +142,7 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 
 	@Override
 	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto) {
-		
+
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
 		SportManDTO sportMandto = (SportManDTO) proposalDto;
 		try {
@@ -158,9 +155,17 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 
 			sportMandto.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				LifeProposal lifeProposal = new LifeProposal();
-				
-				lifeProposalService.setPeriodMonthForKeyFacterValue(
-						sportMandto.getPeriodMonth(), sportMandto.getPaymentTypeId());
+
+				Customer customer = lifeProposalService.checkCustomerAvailability(sportMandto.getCustomer());
+
+				if (customer == null) {
+					lifeProposalService.createNewCustomer(sportMandto.getCustomer());
+				} else {
+					lifeProposal.setCustomer(customer);
+				}
+
+				lifeProposalService.setPeriodMonthForKeyFacterValue(sportMandto.getPeriodMonth(),
+						sportMandto.getPaymentTypeId());
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 				lifeProposal.setComplete(true);
@@ -196,10 +201,10 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 				lifeProposal.setSaleChannelType(SaleChannelType.WALKIN);
 				lifeProposal.setPeriodMonth(sportMandto.getPeriodMonth());
 				lifeProposal.setProposalNo(proposalNo);
-				
+
 				lifeProposal = lifeProposalService.calculatePremium(lifeProposal);
 				lifeProposalService.calculateTermPremium(lifeProposal);
-				
+
 				lifeProposalList.add(lifeProposal);
 			});
 		} catch (DAOException e) {
@@ -210,15 +215,15 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 
 	@Override
 	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
-		
+
 		SportManProposalInsuredPersonDTO dto = (SportManProposalInsuredPersonDTO) proposalInsuredPersonDTO;
-		
+
 		try {
 			Optional<Product> productOptional = productService.findById(sportmanProductId);
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
-			Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
-			Optional<RiskyOccupation> riskyOptional = riskyoccupationService.findRiskyOccupationById(dto.getRiskoccupationID());
+			Optional<RiskyOccupation> riskyOptional = riskyoccupationService
+					.findRiskyOccupationById(dto.getRiskoccupationID());
 			Optional<TypesOfSport> typeofsportOptional = typeofsportService.findById(dto.getTypeofSportId());
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -233,7 +238,6 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 			insuredPerson.setProduct(productOptional.get());
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setUnit(dto.getUnit());
-			insuredPerson.setApprovedUnit(dto.getApprovedUnit());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
 
 			insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));
@@ -247,12 +251,6 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 			if (occupationOptional.isPresent()) {
 				insuredPerson.setOccupation(occupationOptional.get());
 			}
-			if (customerOptional.isPresent()) {
-				insuredPerson.setCustomer(customerOptional.get());
-			} else {
-				insuredPerson.setCustomer(createNewCustomer(insuredPerson));
-
-			}
 			if (riskyOptional.isPresent()) {
 				insuredPerson.setRiskyOccupation(riskyOptional.get());
 			}
@@ -265,11 +263,12 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
-			
+
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
-				insuredPerson.getKeyFactorValueList().add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+				insuredPerson.getKeyFactorValueList()
+						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
 			});
-			
+
 			return insuredPerson;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -277,33 +276,11 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 	}
 
 	@Override
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
-		Customer customer = new Customer();
-		try {
-			customer.setInitialId(insuredPersonDto.getInitialId());
-			customer.setFatherName(insuredPersonDto.getFatherName());
-			customer.setIdNo(insuredPersonDto.getIdNo());
-			customer.setDateOfBirth(insuredPersonDto.getDateOfBirth());
-			customer.setGender(insuredPersonDto.getGender());
-			customer.setIdType(insuredPersonDto.getIdType());
-			customer.setResidentAddress(insuredPersonDto.getResidentAddress());
-			customer.setName(insuredPersonDto.getName());
-			customer.setOccupation(insuredPersonDto.getOccupation());
-			customer.setRecorder(insuredPersonDto.getRecorder());
-			customer = customerRepo.save(customer);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return customer;
-	}
-
-	@Override
 	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
 		try {
-			
-			SportManInsuredPersonBeneficiariesDTO dto = 
-					(SportManInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
-			
+
+			SportManInsuredPersonBeneficiariesDTO dto = (SportManInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			ResidentAddress residentAddress = new ResidentAddress();

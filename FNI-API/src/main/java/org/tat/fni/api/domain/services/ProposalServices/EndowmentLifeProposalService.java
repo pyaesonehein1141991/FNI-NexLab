@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.tat.fni.api.common.KeyFactor;
 import org.tat.fni.api.common.Name;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.emumdata.Gender;
@@ -23,7 +22,6 @@ import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
-import org.tat.fni.api.domain.InsuredPersonKeyFactorValue;
 import org.tat.fni.api.domain.Occupation;
 import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
@@ -42,15 +40,15 @@ import org.tat.fni.api.domain.services.SalePointService;
 import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
 import org.tat.fni.api.domain.services.Interfaces.ILifeProductsProposalService;
 import org.tat.fni.api.domain.services.Interfaces.ILifeProposalService;
-import org.tat.fni.api.dto.publicLifeDTO.PublicLifeDTO;
-import org.tat.fni.api.dto.publicLifeDTO.PublicLifeProposalInsuredPersonBeneficiariesDTO;
-import org.tat.fni.api.dto.publicLifeDTO.PublicLifeProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.endowmentLifeDTO.EndowmentLifeDTO;
+import org.tat.fni.api.dto.endowmentLifeDTO.EndowmentLifeProposalInsuredPersonBeneficiariesDTO;
+import org.tat.fni.api.dto.endowmentLifeDTO.EndowmentLifeProposalInsuredPersonDTO;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
 @Service
-public class PublicLifeProposalService extends BaseService implements ILifeProductsProposalService {
-	
+public class EndowmentLifeProposalService extends BaseService implements ILifeProductsProposalService {
+
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
@@ -76,7 +74,7 @@ public class PublicLifeProposalService extends BaseService implements ILifeProdu
 
 	@Autowired
 	private ICustomIdGenerator customId;
-	
+
 	@Autowired
 	private ILifeProposalService lifeProposalService;
 
@@ -87,8 +85,8 @@ public class PublicLifeProposalService extends BaseService implements ILifeProdu
 	@Transactional(propagation = Propagation.REQUIRED)
 	public <T> List<LifeProposal> createDtoToProposal(T proposalDto) {
 		try {
-			
-			PublicLifeDTO publicLifeDTO = (PublicLifeDTO) proposalDto;
+
+			EndowmentLifeDTO publicLifeDTO = (EndowmentLifeDTO) proposalDto;
 
 			List<LifeProposal> publicLifeProposalList = convertProposalDTOToProposal(publicLifeDTO);
 			lifeProposalRepo.saveAll(publicLifeProposalList);
@@ -113,9 +111,9 @@ public class PublicLifeProposalService extends BaseService implements ILifeProdu
 
 	@Override
 	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto) {
-		
-		PublicLifeDTO publicLifeDTO = (PublicLifeDTO) proposalDto;
-		
+
+		EndowmentLifeDTO publicLifeDTO = (EndowmentLifeDTO) proposalDto;
+
 		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(publicLifeDTO.getPaymentTypeId());
 		Optional<Agent> agentOptional = agentService.findById(publicLifeDTO.getAgentId());
 		Optional<SalesPoints> salePointOptional = salePointService.findById(publicLifeDTO.getSalesPointsId());
@@ -127,9 +125,18 @@ public class PublicLifeProposalService extends BaseService implements ILifeProdu
 
 				LifeProposal lifeProposal = new LifeProposal();
 
-				lifeProposalService.setPeriodMonthForKeyFacterValue(
-						publicLifeDTO.getPeriodMonth(), publicLifeDTO.getPaymentTypeId());
+				Customer customer = lifeProposalService.checkCustomerAvailability(publicLifeDTO.getCustomer());
 				
+				if(customer == null) {
+					lifeProposalService.createNewCustomer(publicLifeDTO.getCustomer());
+				}
+				else {
+					lifeProposal.setCustomer(customer);
+				}
+
+				lifeProposalService.setPeriodMonthForKeyFacterValue(publicLifeDTO.getPeriodMonth(),
+						publicLifeDTO.getPaymentTypeId());
+
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
 				lifeProposal.setComplete(true);
@@ -137,7 +144,7 @@ public class PublicLifeProposalService extends BaseService implements ILifeProdu
 				lifeProposal.setSubmittedDate(publicLifeDTO.getSubmittedDate());
 				lifeProposal.setPeriodMonth(publicLifeDTO.getPeriodMonth());
 				lifeProposal.setSaleChannelType(SaleChannelType.AGENT);
-				
+
 				if (paymentTypeOptional.isPresent()) {
 					lifeProposal.setPaymentType(paymentTypeOptional.get());
 				}
@@ -152,7 +159,7 @@ public class PublicLifeProposalService extends BaseService implements ILifeProdu
 				lifeProposal.setStartDate(publicLifeDTO.getStartDate());
 				lifeProposal.setEndDate(publicLifeDTO.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
-				
+
 				lifeProposal = lifeProposalService.calculatePremium(lifeProposal);
 				lifeProposalService.calculateTermPremium(lifeProposal);
 
@@ -166,12 +173,14 @@ public class PublicLifeProposalService extends BaseService implements ILifeProdu
 
 		return lifeProposalList;
 	}
+	
+	
 
 	@Override
 	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
 		try {
-			
-			PublicLifeProposalInsuredPersonDTO dto = (PublicLifeProposalInsuredPersonDTO) proposalInsuredPersonDTO;
+
+			EndowmentLifeProposalInsuredPersonDTO dto = (EndowmentLifeProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 
 			Optional<Product> productOptional = productService.findById(publicTermLifeProductId);
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
@@ -209,7 +218,8 @@ public class PublicLifeProposalService extends BaseService implements ILifeProdu
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
-				insuredPerson.getKeyFactorValueList().add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+				insuredPerson.getKeyFactorValueList()
+						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
 			});
 
 			return insuredPerson;
@@ -218,22 +228,17 @@ public class PublicLifeProposalService extends BaseService implements ILifeProdu
 		}
 	}
 
-	@Override
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
 		try {
-			
-			PublicLifeProposalInsuredPersonBeneficiariesDTO dto = 
-					(PublicLifeProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
-			
+
+			EndowmentLifeProposalInsuredPersonBeneficiariesDTO dto = (EndowmentLifeProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 //			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
-			
+
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
 

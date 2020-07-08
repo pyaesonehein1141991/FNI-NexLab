@@ -3,11 +3,13 @@ package org.tat.fni.api.dto.healthInsuranceDTO;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.tat.fni.api.common.emumdata.ClassificationOfHealth;
 import org.tat.fni.api.configuration.DateHandler;
+import org.tat.fni.api.dto.customerDTO.CustomerDto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -24,14 +26,11 @@ public class IndividualHealthInsuranceDTO {
 	@ApiModelProperty(position = 1, example = "Agent", required = true)
 	@NotBlank(message = "SaleChannel Type is mandatory")
 	private String saleChannelType;
-
-//	@ApiModelProperty(position = 2, example = "Individual Health", required = true)
-//	@NotBlank(message = "Health Type is mandatory")
-//	private String healthType;//
-//
-//	@ApiModelProperty(position = 3, example = "Corporate", required = true)
-//	@NotBlank(message = "Customer Type is mandatory")
-//	private String customerType;//
+	
+	@Valid
+	@ApiModelProperty(position = 3, required = true)
+	@NotNull(message = "customer is mandatory")
+	private CustomerDto customer;
 
 	@ApiModelProperty(position = 4, example = "ISSYS002001000000000103062019", required = true)
 	@NotBlank(message = "Agent ID is mandatory")

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tat.fni.api.domain.services.Interfaces.IPolicyService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +34,7 @@ public class PolicyDataController {
 			@ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
-	@ApiOperation(value = "${ShortTermEndowmentLifeController.getpolicyinfobyproposalno}")
+	@ApiOperation(value = "${PolicyDataController.getPolicyData}")
 	public <T> ResponseDTO<Object> retrievePolicyInfo(
 			@ApiParam("Proposal Number") @Valid @RequestBody PolicyDataCriteria policyDto) {
 

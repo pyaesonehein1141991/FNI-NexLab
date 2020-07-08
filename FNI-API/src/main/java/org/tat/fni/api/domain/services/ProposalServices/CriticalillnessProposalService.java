@@ -25,6 +25,7 @@ import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.InsuredPersonKeyFactorValue;
 import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.MedicalProposalInsuredPerson;
+import org.tat.fni.api.domain.MedicalProposalInsuredPersonAddOn;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonBeneficiaries;
 import org.tat.fni.api.domain.Occupation;
 import org.tat.fni.api.domain.Organization;
@@ -36,6 +37,7 @@ import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
+import org.tat.fni.api.domain.services.AddOnService;
 import org.tat.fni.api.domain.services.AgentService;
 import org.tat.fni.api.domain.services.BranchService;
 import org.tat.fni.api.domain.services.CustomerService;
@@ -49,6 +51,7 @@ import org.tat.fni.api.domain.services.TownShipService;
 import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
 import org.tat.fni.api.domain.services.Interfaces.IMedicalProductsProposalService;
 import org.tat.fni.api.domain.services.Interfaces.IMedicalProposalService;
+import org.tat.fni.api.dto.InsuredPersonAddOnDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.GroupCriticalIllnessDTO;
@@ -93,6 +96,9 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 
 	@Autowired
 	private RelationshipService relationshipService;
+
+	@Autowired
+	private AddOnService addOnService;
 
 	@Autowired
 	private IMedicalProposalService medicalProposalService;
@@ -156,7 +162,15 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 
 			criticalIllnessDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				MedicalProposal medicalProposal = new MedicalProposal();
-				
+
+				Customer customer = medicalProposalService.checkCustomerAvailability(criticalIllnessDTO.getCustomer());
+
+				if (customer == null) {
+					medicalProposalService.createNewCustomer(criticalIllnessDTO.getCustomer());
+				} else {
+					medicalProposal.setCustomer(customer);
+				}
+
 				medicalProposalService.setPeriodMonthForKeyFacterValue(criticalIllnessDTO.getPeriodMonth(),
 						criticalIllnessDTO.getPaymentTypeId());
 
@@ -195,10 +209,10 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 				medicalProposal.setSaleChannelType(SaleChannelType.AGENT);
 				medicalProposal.setPeriodMonth(criticalIllnessDTO.getPeriodMonth());
 				medicalProposal.setProposalNo(proposalNo);
-				
+
 				medicalProposal = medicalProposalService.calculatePremium(medicalProposal);
 				medicalProposalService.calculateTermPremium(medicalProposal);
-				
+
 				medicalProposalList.add(medicalProposal);
 			});
 		} catch (DAOException e) {
@@ -224,7 +238,7 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 
 			criticalIllnessDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				MedicalProposal medicalProposal = new MedicalProposal();
-				
+
 				medicalProposalService.setPeriodMonthForKeyFacterValue(criticalIllnessDTO.getPeriodMonth(),
 						criticalIllnessDTO.getPaymentTypeId());
 
@@ -256,10 +270,10 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 				medicalProposal.setSaleChannelType(SaleChannelType.AGENT);
 				medicalProposal.setPeriodMonth(criticalIllnessDTO.getPeriodMonth());
 				medicalProposal.setProposalNo(proposalNo);
-				
+
 				medicalProposal = medicalProposalService.calculatePremium(medicalProposal);
 				medicalProposalService.calculateTermPremium(medicalProposal);
-				
+
 				medicalProposalList.add(medicalProposal);
 			});
 		} catch (DAOException e) {
@@ -294,11 +308,12 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
+
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
 				insuredPerson.getKeyFactorValueList()
 						.add(medicalProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
 			});
-			
+
 			return insuredPerson;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -357,6 +372,13 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
+	}
+
+	@Override
+	public MedicalProposalInsuredPersonAddOn createInsuredPersonAddon(InsuredPersonAddOnDTO addOnDTO,
+			MedicalProposalInsuredPerson insuredPerson) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

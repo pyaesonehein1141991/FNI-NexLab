@@ -72,9 +72,6 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 	private BranchService branchService;
 
 	@Autowired
-	private CustomerRepository customerRepo;
-
-	@Autowired
 	private CustomerService customerService;
 
 	@Autowired
@@ -106,7 +103,7 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 
 	@Autowired
 	private ICustomIdGenerator customIdRepo;
-	
+
 	@Autowired
 	private ILifeProposalService lifeProposalService;
 
@@ -117,14 +114,15 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 	@Transactional(propagation = Propagation.REQUIRED)
 	public <T> List<LifeProposal> createDtoToProposal(T proposalDto) {
 		try {
-			
+
 			PersonalAccidentDTO personalaccidentdto = (PersonalAccidentDTO) proposalDto;
-			
+
 			// convert PersonalAccidentDtoToProposal to lifeproposal
 			List<LifeProposal> personalaccidentProposalList = convertProposalDTOToProposal(personalaccidentdto);
 			lifeProposalRepo.saveAll(personalaccidentProposalList);
 
-			String id = DateUtils.formattedSqlDate(new Date()).concat(personalaccidentProposalList.get(0).getProposalNo());
+			String id = DateUtils.formattedSqlDate(new Date())
+					.concat(personalaccidentProposalList.get(0).getProposalNo());
 			String referenceNo = personalaccidentProposalList.get(0).getId();
 			String referenceType = "PA";
 			String createdDate = DateUtils.formattedSqlDate(new Date());
@@ -141,23 +139,33 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 
 	@Override
 	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto) {
-		
+
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
 		PersonalAccidentDTO personalaccidentdto = (PersonalAccidentDTO) proposalDto;
-		
+
 		try {
-			Optional<Organization> organizationOptional = organizationService.findById(personalaccidentdto.getOrganizationId());
-			Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(personalaccidentdto.getPaymentTypeId());
+			Optional<Organization> organizationOptional = organizationService
+					.findById(personalaccidentdto.getOrganizationId());
+			Optional<PaymentType> paymentTypeOptional = paymentTypeService
+					.findById(personalaccidentdto.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(personalaccidentdto.getAgentId());
-			Optional<Customer> customerOptional = customerService.findById(personalaccidentdto.getCustomerId());
 			Optional<Branch> branchOptional = branchService.findById(personalaccidentdto.getBranchId());
-			Optional<SalesPoints> salesPointsOptional = salePointService.findById(personalaccidentdto.getSalesPointsId());
+			Optional<SalesPoints> salesPointsOptional = salePointService
+					.findById(personalaccidentdto.getSalesPointsId());
 
 			personalaccidentdto.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				LifeProposal lifeProposal = new LifeProposal();
-				
-				lifeProposalService.setPeriodMonthForKeyFacterValue(
-						personalaccidentdto.getPeriodMonth(), personalaccidentdto.getPaymentTypeId());
+
+				Customer customer = lifeProposalService.checkCustomerAvailability(personalaccidentdto.getCustomer());
+
+				if (customer == null) {
+					lifeProposalService.createNewCustomer(personalaccidentdto.getCustomer());
+				} else {
+					lifeProposal.setCustomer(customer);
+				}
+
+				lifeProposalService.setPeriodMonthForKeyFacterValue(personalaccidentdto.getPeriodMonth(),
+						personalaccidentdto.getPaymentTypeId());
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 				lifeProposal.setComplete(true);
@@ -179,10 +187,6 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 					lifeProposal.setSalesPoints(salesPointsOptional.get());
 				}
 
-				if (customerOptional.isPresent()) {
-					lifeProposal.setCustomer(customerOptional.get());
-				}
-
 				if (branchOptional.isPresent()) {
 					lifeProposal.setBranch(branchOptional.get());
 				}
@@ -193,10 +197,10 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 				lifeProposal.setSaleChannelType(SaleChannelType.DIRECTMARKETING);
 				lifeProposal.setPeriodMonth(personalaccidentdto.getPeriodMonth());
 				lifeProposal.setProposalNo(proposalNo);
-				
+
 				lifeProposal = lifeProposalService.calculatePremium(lifeProposal);
 				lifeProposalService.calculateTermPremium(lifeProposal);
-				
+
 				lifeProposalList.add(lifeProposal);
 			});
 		} catch (DAOException e) {
@@ -207,15 +211,15 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 
 	@Override
 	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
-		
+
 		try {
 			PersonalAccidentProposalInsuredPersonDTO dto = (PersonalAccidentProposalInsuredPersonDTO) proposalInsuredPersonDTO;
-			
+
 			Optional<Product> productOptional = productService.findById(personalaccidentProductId);
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
-			Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
-			Optional<RiskyOccupation> riskyOptional = riskyoccupationService.findRiskyOccupationById(dto.getRiskoccupationID());
+			Optional<RiskyOccupation> riskyOptional = riskyoccupationService
+					.findRiskyOccupationById(dto.getRiskoccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -249,23 +253,18 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 			if (riskyOptional.isPresent()) {
 				insuredPerson.setRiskyOccupation(riskyOptional.get());
 			}
-			if (customerOptional.isPresent()) {
-				insuredPerson.setCustomer(customerOptional.get());
-			} else {
-				insuredPerson.setCustomer(createNewCustomer(insuredPerson));
-
-			}
 
 			String insPersonCodeNo = customIdRepo.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
-			
+
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
-				insuredPerson.getKeyFactorValueList().add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+				insuredPerson.getKeyFactorValueList()
+						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
 			});
-			
+
 			return insuredPerson;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -273,33 +272,11 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 	}
 
 	@Override
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
-		Customer customer = new Customer();
-		try {
-			customer.setInitialId(insuredPersonDto.getInitialId());
-			customer.setFatherName(insuredPersonDto.getFatherName());
-			customer.setIdNo(insuredPersonDto.getIdNo());
-			customer.setDateOfBirth(insuredPersonDto.getDateOfBirth());
-			customer.setGender(insuredPersonDto.getGender());
-			customer.setIdType(insuredPersonDto.getIdType());
-			customer.setResidentAddress(insuredPersonDto.getResidentAddress());
-			customer.setName(insuredPersonDto.getName());
-			customer.setOccupation(insuredPersonDto.getOccupation());
-			customer.setRecorder(insuredPersonDto.getRecorder());
-			customer = customerRepo.save(customer);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return customer;
-	}
-
-	@Override
 	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
 		try {
-			
-			PersonalAccidentProposalInsuredPersonBeneficiariesDTO dto =
-					(PersonalAccidentProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
-			
+
+			PersonalAccidentProposalInsuredPersonBeneficiariesDTO dto = (PersonalAccidentProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			ResidentAddress residentAddress = new ResidentAddress();

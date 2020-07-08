@@ -99,7 +99,7 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 
 	@Autowired
 	private RiskyOccupationService riskyOccupationService;
-	
+
 	@Autowired
 	private ILifeProposalService lifeProposalService;
 
@@ -112,7 +112,7 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public <T> List<LifeProposal> createDtoToProposal(T proposalDto) {
-		
+
 		try {
 			FarmerProposalDTO farmerProposalDTO = (FarmerProposalDTO) proposalDto;
 
@@ -139,9 +139,9 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 
 	@Override
 	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto) {
-		
+
 		FarmerProposalDTO farmerProposalDTO = (FarmerProposalDTO) proposalDto;
-		
+
 		Optional<Product> productOptional = productService.findById(farmerProposalDTO.getProductId());
 		Optional<Branch> branchOptional = branchService.findById(farmerProposalDTO.getBranchId());
 		Optional<Customer> customerOptional = customerService.findById(farmerProposalDTO.getCustomerId());
@@ -157,9 +157,17 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 			farmerProposalDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
 				LifeProposal lifeProposal = new LifeProposal();
-				
-				lifeProposalService.setPeriodMonthForKeyFacterValue(
-						farmerProposalDTO.getPeriodMonth(), farmerProposalDTO.getPaymentTypeId());
+
+				Customer customer = lifeProposalService.checkCustomerAvailability(farmerProposalDTO.getCustomer());
+
+				if (customer == null) {
+					lifeProposalService.createNewCustomer(farmerProposalDTO.getCustomer());
+				} else {
+					lifeProposal.setCustomer(customer);
+				}
+
+				lifeProposalService.setPeriodMonthForKeyFacterValue(farmerProposalDTO.getPeriodMonth(),
+						farmerProposalDTO.getPaymentTypeId());
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
@@ -192,7 +200,7 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 				lifeProposal.setStartDate(farmerProposalDTO.getStartDate());
 				lifeProposal.setEndDate(farmerProposalDTO.getEndDate());
 				lifeProposal.setProposalNo(proposalNo);
-				
+
 				lifeProposal = lifeProposalService.calculatePremium(lifeProposal);
 				lifeProposalService.calculateTermPremium(lifeProposal);
 
@@ -209,7 +217,7 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 
 	@Override
 	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
-		
+
 		try {
 			FarmerProposalInsuredPersonDTO dto = (FarmerProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 
@@ -264,9 +272,10 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
-			
+
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
-				insuredPerson.getKeyFactorValueList().add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+				insuredPerson.getKeyFactorValueList()
+						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
 			});
 
 			return insuredPerson;
@@ -276,18 +285,11 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 	}
 
 	@Override
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
-		
+
 		try {
-			FarmerProposalInsuredPersonBeneficiariesDTO dto = 
-					(FarmerProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
-			
+			FarmerProposalInsuredPersonBeneficiariesDTO dto = (FarmerProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 

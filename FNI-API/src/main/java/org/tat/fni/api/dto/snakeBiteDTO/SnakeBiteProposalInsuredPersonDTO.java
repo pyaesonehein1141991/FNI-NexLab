@@ -51,10 +51,6 @@ public class SnakeBiteProposalInsuredPersonDTO {
 	@NotNull(message = "idNo is mandatory")
 	private String idNo;
 
-	@ApiModelProperty(position = 0, example = "ISSYS001001000000000103062019", required = true)
-	@NotBlank(message = "customerID is mandatory")
-	private String customerID;
-
 	@ApiModelProperty(position = 9, example = "ISSYS0120001000000000129032013", required = true)
 	@NotBlank(message = "relationshipId is mandatory")
 	private String relationshipId;
@@ -90,20 +86,16 @@ public class SnakeBiteProposalInsuredPersonDTO {
 	@NotNull(message = "needMedicalCheckup is mandatory")
 	private boolean needMedicalCheckup;
 
-	@ApiModelProperty(position = 18, required = true)
-	@NotNull(message = "approvedUnit is mandatory")
-	private int approvedUnit;
-
-	@ApiModelProperty(position = 19, example = "100000", required = true)
+	@ApiModelProperty(position = 18, example = "100000", required = true)
 	@NotNull(message = "proposedPremium is mandatory")
 	private double proposedPremium;
 
-	@ApiModelProperty(position = 20, example = "true", required = true)
+	@ApiModelProperty(position = 19, example = "true", required = true)
 	@NotNull(message = "approve is mandatory")
 	private boolean approve;
 
 	@Valid
-	@ApiModelProperty(position = 21)
+	@ApiModelProperty(position = 20)
 	@NotNull(message = "insuredPersonBeneficiariesList is mandatory")
 	private List<SnakeBiteProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 

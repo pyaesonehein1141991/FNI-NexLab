@@ -1,18 +1,15 @@
 package org.tat.fni.api.domain.services.PolicyDataService;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.tat.fni.api.common.emumdata.ProductType;
 import org.tat.fni.api.domain.services.Interfaces.IPolicyDataService;
 import org.tat.fni.api.domain.services.Interfaces.IPolicyService;
 import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataLifeDTO;
-import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataMedicalDTO;
+import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
 
 @Service
 public class PolicyService implements IPolicyService {
@@ -23,8 +20,8 @@ public class PolicyService implements IPolicyService {
 	@Resource(name = "medicalPolicyService")
 	private IPolicyDataService medicalPolicyDataService;
 	
-	ResponseDataLifeDTO responseLifeData;
-	List<ResponseDataMedicalDTO> responseMedicalDataList = new ArrayList<ResponseDataMedicalDTO>();
+	ResponseDataDTO responseLifeData;
+	List<ResponseDataDTO> responseMedicalDataList = new ArrayList<ResponseDataDTO>();
 	
 	
 	@Override

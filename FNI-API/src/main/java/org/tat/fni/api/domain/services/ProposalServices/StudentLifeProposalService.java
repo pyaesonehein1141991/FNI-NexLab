@@ -68,7 +68,7 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 
 	@Autowired
 	private AgentService agentService;
-	
+
 	@Autowired
 	private ProductService productService;
 
@@ -95,7 +95,7 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 
 	@Autowired
 	private ILifeProposalService lifeProposalService;
-	
+
 	@Value("${studentLifeProductId}")
 	private String studentLifeProductId;
 
@@ -136,7 +136,6 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 		StudentLifeDTO studentLifeProposalDTO = (StudentLifeDTO) proposalDto;
 
 		Optional<Branch> branchOptional = branchService.findById(studentLifeProposalDTO.getBranchId());
-		Optional<Customer> customerOptional = customerService.findById(studentLifeProposalDTO.getCustomerId());
 		Optional<PaymentType> paymentTypeOptional = paymentTypeService
 				.findById(studentLifeProposalDTO.getPaymentTypeId());
 		Optional<Agent> agentOptional = agentService.findById(studentLifeProposalDTO.getAgentId());
@@ -148,9 +147,17 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 			studentLifeProposalDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
 				LifeProposal lifeProposal = new LifeProposal();
-				
-				lifeProposalService.setPeriodMonthForKeyFacterValue(
-						studentLifeProposalDTO.getPeriodMonth(), studentLifeProposalDTO.getPaymentTypeId());
+
+				Customer customer = lifeProposalService.checkCustomerAvailability(studentLifeProposalDTO.getCustomer());
+
+				if (customer == null) {
+					lifeProposalService.createNewCustomer(studentLifeProposalDTO.getCustomer());
+				} else {
+					lifeProposal.setCustomer(customer);
+				}
+
+				lifeProposalService.setPeriodMonthForKeyFacterValue(studentLifeProposalDTO.getPeriodMonth(),
+						studentLifeProposalDTO.getPaymentTypeId());
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
@@ -171,9 +178,6 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 				}
 				if (salePointOptional.isPresent()) {
 					lifeProposal.setSalesPoints(salePointOptional.get());
-				}
-				if (customerOptional.isPresent()) {
-					lifeProposal.setCustomer(customerOptional.get());
 				}
 
 				String proposalNo = customId.getNextId("STUDENT_LIFE_PROPOSAL_NO", null);
@@ -200,7 +204,7 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 		try {
 
 			StudentLifeProposalInsuredPersonDTO dto = (StudentLifeProposalInsuredPersonDTO) proposalInsuredPersonDTO;
-			
+
 			Optional<Product> productOptional = productService.findById(studentLifeProductId);
 			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
@@ -263,12 +267,6 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
-	}
-
-	@Override
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

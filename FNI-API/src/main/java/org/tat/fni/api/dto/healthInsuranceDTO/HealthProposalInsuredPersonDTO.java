@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 
 import org.tat.fni.api.common.emumdata.Gender;
 import org.tat.fni.api.configuration.DateHandler;
+import org.tat.fni.api.dto.InsuredPersonAddOnDTO;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -106,10 +107,9 @@ public class HealthProposalInsuredPersonDTO {
 	@NotNull(message = "insuredPersonBeneficiariesList is mandatory")
 	private List<HealthProposalInsuredPersonBeneficiariesDTO> insuredPersonBeneficiariesList;
 
-	// @Valid
-	// @ApiModelProperty(position = 21)
-	// @NotNull(message = "insuredPersonBeneficiariesList is mandatory")
-	// private List<IndividualHealthinsuredPersonPolicyHistoryRecordDTO>
-	// insuredPersonPolicyHistoryRecordList;
+	@Valid
+	@ApiModelProperty(position = 21)
+	@NotNull(message = "insuredPersonAddonOnList is mandatory")
+	private List<InsuredPersonAddOnDTO> insuredPersonAddonOnList;
 
 }

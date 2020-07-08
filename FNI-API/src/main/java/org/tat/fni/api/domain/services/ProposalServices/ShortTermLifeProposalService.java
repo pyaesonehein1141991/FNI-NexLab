@@ -68,9 +68,6 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 	private BranchService branchService;
 
 	@Autowired
-	private CustomerRepository customerRepo;
-
-	@Autowired
 	private CustomerService customerService;
 
 	@Autowired
@@ -150,7 +147,6 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 			Optional<PaymentType> paymentTypeOptional = paymentTypeService
 					.findById(shortTermEndowmentLifeDto.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(shortTermEndowmentLifeDto.getAgentId());
-			Optional<Customer> customerOptional = customerService.findById(shortTermEndowmentLifeDto.getCustomerId());
 			Optional<Branch> branchOptional = branchService.findById(shortTermEndowmentLifeDto.getBranchId());
 			Optional<SalesPoints> salesPointsOptional = salePointService
 					.findById(shortTermEndowmentLifeDto.getSalesPointsId());
@@ -158,9 +154,17 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 			shortTermEndowmentLifeDto.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
 				LifeProposal lifeProposal = new LifeProposal();
-				
-				lifeProposalService.setPeriodMonthForKeyFacterValue(
-						shortTermEndowmentLifeDto.getPeriodMonth(), shortTermEndowmentLifeDto.getPaymentTypeId());
+
+				Customer customer = lifeProposalService.checkCustomerAvailability(shortTermEndowmentLifeDto.getCustomer());
+
+				if (customer == null) {
+					lifeProposalService.createNewCustomer(shortTermEndowmentLifeDto.getCustomer());
+				} else {
+					lifeProposal.setCustomer(customer);
+				}
+
+				lifeProposalService.setPeriodMonthForKeyFacterValue(shortTermEndowmentLifeDto.getPeriodMonth(),
+						shortTermEndowmentLifeDto.getPaymentTypeId());
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
@@ -178,10 +182,6 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 
 				if (paymentTypeOptional.isPresent()) {
 					lifeProposal.setPaymentType(paymentTypeOptional.get());
-				}
-
-				if (customerOptional.isPresent()) {
-					lifeProposal.setCustomer(customerOptional.get());
 				}
 
 				if (branchOptional.isPresent()) {
@@ -218,9 +218,7 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 			ShortTermProposalInsuredPersonDTO dto = (ShortTermProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 
 			Optional<Product> productOptional = productService.findById(shorttermLifeProductId);
-			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
-			Optional<Customer> customerOptional = customerService.findById(dto.getCustomerID());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
 					.findRiskyOccupationById(dto.getRiskoccupationID());
@@ -255,12 +253,6 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 			if (occupationOptional.isPresent()) {
 				insuredPerson.setOccupation(occupationOptional.get());
 			}
-			if (customerOptional.isPresent()) {
-				insuredPerson.setCustomer(customerOptional.get());
-			} else {
-				insuredPerson.setCustomer(createNewCustomer(insuredPerson));
-
-			}
 			if (riskyOccupationOptional.isPresent()) {
 				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
 			}
@@ -286,27 +278,6 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
-	}
-
-	@Override
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
-		Customer customer = new Customer();
-		try {
-			customer.setInitialId(insuredPersonDto.getInitialId());
-			customer.setFatherName(insuredPersonDto.getFatherName());
-			customer.setIdNo(insuredPersonDto.getIdNo());
-			customer.setDateOfBirth(insuredPersonDto.getDateOfBirth());
-			customer.setGender(insuredPersonDto.getGender());
-			customer.setIdType(insuredPersonDto.getIdType());
-			customer.setResidentAddress(insuredPersonDto.getResidentAddress());
-			customer.setName(insuredPersonDto.getName());
-			customer.setOccupation(insuredPersonDto.getOccupation());
-			customer.setRecorder(insuredPersonDto.getRecorder());
-			customer = customerRepo.save(customer);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return customer;
 	}
 
 	@Override
