@@ -91,6 +91,8 @@ QualificationController:
   qualifications: Get All Qualifications
 TypeOfSportController:
   typeOfSports: Get All Type of sports
+AddonController:
+  addons: Get All Addons
   
 PolicyDataController:
   getPolicyData: Returns policy information
