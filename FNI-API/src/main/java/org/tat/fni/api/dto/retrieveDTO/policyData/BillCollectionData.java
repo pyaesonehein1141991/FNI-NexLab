@@ -11,14 +11,11 @@ import lombok.Data;
 public class BillCollectionData {
 	
 	private int lastPaymentTerm;
-	
-	private Date coverageDate;
-	
+
+	private Date coverDate;
+
 	private int totalPaymentTerm;
+
+	private List<RemainingDate> remainingDateList;
 	
-	private List<String> remainingDateList;
-	
-	private double agentCommission;
-	
-	private double termPremium;
 }

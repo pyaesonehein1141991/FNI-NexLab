@@ -63,8 +63,13 @@ public class PersonalAccidentUsdDTO {
 	@ApiModelProperty(position = 10, example = "ISSYS052001000000000101062019", required = true)
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
+	
+	@ApiModelProperty(position = 11, example = "false", required = true)
+	@NotNull(message = "status is mandatory")
+	private boolean status;
 
-	@ApiModelProperty(position = 11, required = true)
+
+	@ApiModelProperty(position = 12, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
 	private List<ProposalInsuredPerson> proposalInsuredPersonList;
 

@@ -76,6 +76,11 @@ public class ShortTermEndowmentLifeDTO {
 	 * @ApiModelProperty(position = 12, required = false) private
 	 * List<InsuredPersonAttachment> attachmentList;
 	 */
+	
+	@ApiModelProperty(position = 12, example = "false", required = true)
+	@NotNull(message = "status is mandatory")
+	private boolean status;
+
 
 	@ApiModelProperty(position = 13, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")

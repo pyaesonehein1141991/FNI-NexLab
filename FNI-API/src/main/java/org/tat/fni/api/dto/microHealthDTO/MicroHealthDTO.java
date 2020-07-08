@@ -77,8 +77,13 @@ public class MicroHealthDTO {
 	@ApiModelProperty(position = 13, example = "ISSYS052001000000000101062019", required = true)
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
+	
+	@ApiModelProperty(position = 14, example = "false", required = true)
+	@NotNull(message = "status is mandatory")
+	private boolean status;
 
-	@ApiModelProperty(position = 14, required = true)
+
+	@ApiModelProperty(position = 15, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
 	private List<MicroHealthProposalInsuredPersonDTO> microhealthproposalInsuredPersonList;
 

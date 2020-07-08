@@ -82,13 +82,18 @@ public class IndividualCriticalIllnessDTO {
 	@ApiModelProperty(position = 14, required = true)
 	@NotNull(message = "Customer Classification Of Health is mandatory")
 	private ClassificationOfHealth customerClsOfHealth;
+	
+	@ApiModelProperty(position = 15, example = "false", required = true)
+	@NotNull(message = "status is mandatory")
+	private boolean status;
+
 
 	/*
 	 * @ApiModelProperty(position = 14, required = false) private
 	 * List<InsuredPersonAttachment> attachmentList;
 	 */
 
-	@ApiModelProperty(position = 15, required = true)
+	@ApiModelProperty(position = 16, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
 	private List<CriticalillnessProposalInsuredPersonDTO> proposalInsuredPersonList;
 

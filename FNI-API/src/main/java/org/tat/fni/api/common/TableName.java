@@ -196,6 +196,7 @@ public class TableName {
 	/* Life Proposal */
 	public static final String LIFESURVEY = "LPROPOSAL_SURVEY_LINK";
 	public static final String LIFEPROPOSAL = "LIFEPROPOSAL";
+	public static final String LIFEPROPOSALTEMP = "LIFEPROPOSAL_TEMP";
 	public static final String PROPOSALINSUREDPERSON = "LIFEPROPOSAL_INSUREDPERSON_LINK";
 	public static final String LIFEPROPOSALATTACHMENT = "LIFEPROPOSAL_ATTACH_LINK";
 	public static final String INSUREDPERSONADDON = "LIFEPROPOSAL_INSUREDPERSON_ADDON_LINK";
@@ -523,6 +524,7 @@ public class TableName {
 	public static final String TOWNSHIPCODE = "TOWNSHIPCODE";
 	/* Medical proposal */
 	public static final String MEDICALPROPOSAL = "MEDICALPROPOSAL";
+	public static final String MEDICALPROPOSALTEMP = "MEDICALPROPOSAL_TEMP";
 	public static final String MEDICALPROPOSALATTACHMENT = "MEDICALPROPOSAL_ATTACH_LINK";
 	public static final String MEDICALPROPOSALINSUREDPERSON = "MEDICALPROPOSAL_INSUREDPERSON_LINK";
 	public static final String MEDICALPROPOSALINSUREDPERSONATTACHMENT = "MEDICALPROPOSAL_INSUREDPERSON_ATTACH_LINK";

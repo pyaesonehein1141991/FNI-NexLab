@@ -140,6 +140,7 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
 				lifeProposal.setComplete(true);
+				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(publicLifeDTO.getSubmittedDate());
 				lifeProposal.setPeriodMonth(publicLifeDTO.getPeriodMonth());

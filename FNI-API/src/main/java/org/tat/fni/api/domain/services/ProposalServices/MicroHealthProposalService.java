@@ -164,6 +164,7 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 				medicalProposal.getMedicalProposalInsuredPersonList()
 					.add(createInsuredPerson(insuredPerson, microHealthInsuranceDTO));
 				medicalProposal.setComplete(true);
+				medicalProposal.setStatus(false);
 				medicalProposal.setProposalType(ProposalType.UNDERWRITING);
 				medicalProposal.setSubmittedDate(microHealthInsuranceDTO.getSubmittedDate());
 

@@ -55,7 +55,7 @@ import org.tat.fni.api.domain.SurveyQuestionAnswer;
 import lombok.Data;
 
 @Entity
-@Table(name = TableName.LIFEPROPOSAL)
+@Table(name = TableName.LIFEPROPOSALTEMP)
 @TableGenerator(name = "LIFEPROPOSAL_GEN", table = "ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", pkColumnValue = "LIFEPROPOSAL_GEN", allocationSize = 10)
 @NamedQueries(value = { @NamedQuery(name = "LifeProposal.findAll", query = "SELECT m FROM LifeProposal m "),
 		@NamedQuery(name = "LifeProposal.findByDate", query = "SELECT m FROM LifeProposal m WHERE m.submittedDate BETWEEN :startDate AND :endDate"),
@@ -66,6 +66,7 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 	private static final long serialVersionUID = 7564214263861012292L;
 
 	private boolean complete;
+	private boolean status;
 
 	@Column(name = "PERIODOFMONTH")
 	private int periodMonth;

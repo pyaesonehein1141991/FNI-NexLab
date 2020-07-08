@@ -172,6 +172,7 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
 				lifeProposal.setComplete(true);
+				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(farmerProposalDTO.getSubmittedDate());
 				lifeProposal.setPeriodMonth(farmerProposalDTO.getPeriodMonth());

@@ -78,11 +78,15 @@ public class FarmerProposalDTO {
 	@ApiModelProperty(position = 13, example = "SECONDCLASS", required = true)
 	@NotNull(message = "Customer Classification Of Health is mandatory")
 	private ClassificationOfHealth customerClsOfHealth;
+	
+	@ApiModelProperty(position = 14, example = "false", required = true)
+	@NotNull(message = "status is mandatory")
+	private boolean status;
 
 	// @ApiModelProperty(position = 13, required = false)
 	// private List<InsuredPersonAttachment> attachmentList;
 
-	@ApiModelProperty(position = 14, required = true)
+	@ApiModelProperty(position = 15, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
 	private List<FarmerProposalInsuredPersonDTO> proposalInsuredPersonList;
 

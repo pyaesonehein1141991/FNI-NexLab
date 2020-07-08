@@ -18,6 +18,7 @@ import org.tat.fni.api.domain.services.Interfaces.IPolicyDataService;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
 import org.tat.fni.api.dto.retrieveDTO.policyData.BillCollectionData;
 import org.tat.fni.api.dto.retrieveDTO.policyData.PolicyData;
+import org.tat.fni.api.dto.retrieveDTO.policyData.RemainingDate;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -33,19 +34,18 @@ public class MedicalPolicyService implements IPolicyDataService {
 	private MedicalPolicyRepository medicalPolicyRepo;
 
 	// == declare class variable ==
-	List<MedicalPolicy> medicalPolicyList;
+	private List<MedicalPolicy> medicalPolicyList;
+	private BillCollectionData billCollectionData;
 
 	public ResponseDataDTO getResponseData(String proposalNo) {
 
 		try {
-			
+
 			// Get approval status based on proposal id
 			boolean isApprove = getApprove(proposalNo);
 
-			ResponseDataDTO responseDataDTO = ResponseDataDTO.builder()
-					.proposalNo(proposalNo).isApprove(isApprove)
-					.policyData(isApprove ? getPolicyData(proposalNo) : null)
-					.billCollectionDataList(isApprove ? getBillCollectionData(proposalNo) : null).build();
+			ResponseDataDTO responseDataDTO = ResponseDataDTO.builder().proposalNo(proposalNo).isApprove(isApprove).policyData(isApprove ? getPolicyData(proposalNo) : null)
+					.billCollectionData(isApprove ? getBillCollectionData(proposalNo) : null).build();
 
 			return responseDataDTO;
 
@@ -59,8 +59,7 @@ public class MedicalPolicyService implements IPolicyDataService {
 
 		try {
 			// Get policy list
-			MedicalPolicy policy = retrieveMedicalPolicyList(proposalNo).isEmpty() ? null
-					: retrieveMedicalPolicyList(proposalNo).get(0);
+			MedicalPolicy policy = retrieveMedicalPolicyList(proposalNo).isEmpty() ? null : retrieveMedicalPolicyList(proposalNo).get(0);
 
 			// Instantiate policyData model
 			PolicyData policyData = null;
@@ -69,16 +68,13 @@ public class MedicalPolicyService implements IPolicyDataService {
 
 				// Get product name from insuredPersonList
 				List<MedicalPolicyInsuredPerson> insuredPersonList = retrievePolicyInsuredPersonList(proposalNo);
-				String productName = insuredPersonList.get(0).getProduct() == null ? null
-						: insuredPersonList.get(0).getProduct().getProductContent().getName();
+				String productName = insuredPersonList.get(0).getProduct() == null ? null : insuredPersonList.get(0).getProduct().getProductContent().getName();
 
-				policyData = PolicyData.builder().policyStartDate(policy.getActivedPolicyStartDate())
-						.policyEndDate(policy.getActivedPolicyEndDate()).periodMonth(policy.getPeriodMonth())
-						.commenmanceDate(policy.getCommenmanceDate()).policyNo(policy.getPolicyNo())
-						.saleChannelType(policy.getSaleChannelType())
-						.paymentType(policy.getPaymentType() == null ? null : policy.getPaymentType().getDescription())
-						.salesPoints(policy.getSalesPoints() == null ? null : policy.getSalesPoints().getName())
-						.coverageDate(policy.getCoverageDate()).productName(productName).build();
+				policyData = PolicyData.builder().policyStartDate(policy.getActivedPolicyStartDate()).policyEndDate(policy.getActivedPolicyEndDate())
+						.periodMonth(policy.getPeriodMonth()).commenmanceDate(policy.getCommenmanceDate()).policyNo(policy.getPolicyNo())
+						.saleChannelType(policy.getSaleChannelType()).paymentType(policy.getPaymentType() == null ? null : policy.getPaymentType().getDescription())
+						.salesPoints(policy.getSalesPoints() == null ? null : policy.getSalesPoints().getName()).coverageDate(policy.getCoverageDate()).productName(productName)
+						.build();
 
 			}
 			return policyData;
@@ -90,31 +86,22 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting bill collection data
-	public List<BillCollectionData> getBillCollectionData(String proposalNo) {
+	public BillCollectionData getBillCollectionData(String proposalNo) {
 
 		try {
-
-			List<BillCollectionData> billCollectionDataList = new ArrayList<BillCollectionData>();
 
 			// Get policy list
 			medicalPolicyList = retrieveMedicalPolicyList(proposalNo);
 
 			if (!medicalPolicyList.isEmpty()) {
 
-				List<String> remainingDateList = getRemainingDates(proposalNo);
-
 				medicalPolicyList.forEach(policy -> {
-					BillCollectionData billCollectionData = BillCollectionData.builder()
-							.lastPaymentTerm(policy.getLastPaymentTerm()).coverageDate(policy.getCoverageDate())
-							.totalPaymentTerm(policy.getPeriodMonth()).remainingDateList(remainingDateList)
-							.agentCommission(policy.getAgentCommission())
-							.termPremium(policy.getPolicyInsuredPersonList().get(0).getBasicTermPremium()).build();
-
-					billCollectionDataList.add(billCollectionData);
+					billCollectionData = BillCollectionData.builder().lastPaymentTerm(policy.getLastPaymentTerm()).coverDate(policy.getCoverageDate())
+							.totalPaymentTerm(policy.getPeriodMonth()).remainingDateList(getRemainingDates(policy)).build();
 				});
 
 			}
-			return medicalPolicyList.isEmpty() ? null : billCollectionDataList;
+			return medicalPolicyList.isEmpty() ? null : billCollectionData;
 
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -123,23 +110,26 @@ public class MedicalPolicyService implements IPolicyDataService {
 	}
 
 	// Getting remaining date of policy payment
-	private List<String> getRemainingDates(String proposalNo) {
-
-		// Get policy list
-		medicalPolicyList = retrieveMedicalPolicyList(proposalNo);
+	private List<RemainingDate> getRemainingDates(MedicalPolicy lifePolicy) {
 
 		int month = medicalPolicyList.get(0).getPaymentType().getMonth();
-		Date coverageDate = (medicalPolicyList.get(0).getCoverageDate());
+		Date policyStartDate = (medicalPolicyList.get(0).getActivedPolicyStartDate());
 		Date policyEndDate = (medicalPolicyList.get(0).getActivedPolicyEndDate());
+		int paidTimes = lifePolicy.getLastPaymentTerm();
 
-		LocalDate start = new java.sql.Date(coverageDate.getTime()).toLocalDate();
+		LocalDate start = new java.sql.Date(policyStartDate.getTime()).toLocalDate();
 		LocalDate end = new java.sql.Date(policyEndDate.getTime()).toLocalDate();
 
-		List<String> remainingDates = new ArrayList<String>();
+		List<RemainingDate> remainingDates = new ArrayList<RemainingDate>();
+		int i = 1;
 
-		while (!start.isEqual(end)) {
+		while (!start.isAfter(end)) {
+			RemainingDate remainingDate = RemainingDate.builder().termPremium(lifePolicy.getPolicyInsuredPersonList().get(0).getBasicTermPremium())
+					.agentCommission(lifePolicy.getAgentCommission()).date(start.toString())
+					.paid(!(i > paidTimes)).build();
+			remainingDates.add(remainingDate);
 			start = start.plusMonths(month);
-			remainingDates.add(start.toString());
+			i++;
 		}
 
 		return remainingDates;
@@ -193,8 +183,7 @@ public class MedicalPolicyService implements IPolicyDataService {
 
 		try {
 
-			List<MedicalPolicyInsuredPerson> insuredPersonList = retrieveMedicalPolicyList(proposalNo).isEmpty()
-					? Collections.emptyList()
+			List<MedicalPolicyInsuredPerson> insuredPersonList = retrieveMedicalPolicyList(proposalNo).isEmpty() ? Collections.emptyList()
 					: retrieveMedicalPolicyList(proposalNo).get(0).getPolicyInsuredPersonList();
 
 			return insuredPersonList;

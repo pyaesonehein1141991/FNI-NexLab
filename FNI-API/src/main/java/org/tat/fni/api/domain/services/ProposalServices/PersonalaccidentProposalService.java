@@ -169,6 +169,7 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 				lifeProposal.setComplete(true);
+				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(personalaccidentdto.getSubmittedDate());
 

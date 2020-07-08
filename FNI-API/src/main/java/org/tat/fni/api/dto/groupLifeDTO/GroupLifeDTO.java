@@ -74,6 +74,11 @@ public class GroupLifeDTO {
 	@ApiModelProperty(position = 11, example = "FIRSTCLASS", required = true)
 	@NotNull(message = "Customer Classification Of Health is mandatory")
 	private ClassificationOfHealth customerClsOfHealth;
+	
+	@ApiModelProperty(position = 12, example = "false", required = true)
+	@NotNull(message = "status is mandatory")
+	private boolean status;
+
 
 	// @ApiModelProperty(position = 12, required = false)
 	// private List<InsuredPersonAttachment> attachmentList;

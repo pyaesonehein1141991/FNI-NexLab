@@ -63,8 +63,13 @@ public class GroupCriticalIllnessDTO {
 	@ApiModelProperty(position = 9, example = "ISSYS052001000000000101062019", required = true)
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
+	
+	@ApiModelProperty(position = 10, example = "false", required = true)
+	@NotNull(message = "status is mandatory")
+	private boolean status;
 
-	@ApiModelProperty(position = 10, required = true)
+
+	@ApiModelProperty(position = 11, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
 	private List<CriticalillnessProposalInsuredPersonDTO> proposalInsuredPersonList;
 
