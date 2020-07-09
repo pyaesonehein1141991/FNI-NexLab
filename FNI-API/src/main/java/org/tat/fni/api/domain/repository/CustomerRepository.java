@@ -18,7 +18,7 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
 	@Query(value = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CUSTOMER'", nativeQuery = true)
 	List<Object> findAllColumnName();
 	
-	@Query(value = "SELECT * FROM CUSTOMER WHERE FULLIDNO LIKE '%?1' AND IDTYPE = '?2'", nativeQuery = true)
-	Customer findCustomerByIdNoAndIdType(String IdNo, IdType IdType);
+	@Query(value = "SELECT * FROM CUSTOMER WHERE FULLIDNO LIKE %?1 AND IDTYPE = ?2", nativeQuery = true)
+	Customer findCustomerByIdNoAndIdType(String idNo, String idType);
 
 }

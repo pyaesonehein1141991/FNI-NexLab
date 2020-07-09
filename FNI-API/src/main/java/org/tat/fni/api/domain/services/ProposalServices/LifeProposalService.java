@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -22,7 +24,6 @@ import org.tat.fni.api.common.PermanentAddress;
 import org.tat.fni.api.common.ResidentAddress;
 import org.tat.fni.api.common.RiskyOccupation;
 import org.tat.fni.api.common.emumdata.ContentInfo;
-import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.domain.Country;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.IPremiumCalculatorService;
@@ -424,8 +425,8 @@ public class LifeProposalService implements ILifeProposalService {
 
 		try {
 
-			String idNo = dto.getIdNo();
-			IdType idType = dto.getIdType();
+			String idNo = StringUtils.isBlank(dto.getIdNo()) ? "idNo" : dto.getIdNo();
+			String idType = (dto.getIdType()).toString();
 
 			Customer customer = customerRepository.findCustomerByIdNoAndIdType(idNo, idType);
 

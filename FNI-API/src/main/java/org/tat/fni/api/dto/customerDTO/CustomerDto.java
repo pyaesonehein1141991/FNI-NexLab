@@ -29,7 +29,7 @@ public class CustomerDto implements Serializable {
 	@ApiModelProperty(position = 1, required = false)
 	private String fatherName;
 
-	@ApiModelProperty(position = 2, required = false)
+	@ApiModelProperty(position = 2, example="009354", required = false)
 	private String idNo;
 
 	@ApiModelProperty(position = 3, example = "2020-12-16", required = true)
@@ -44,7 +44,7 @@ public class CustomerDto implements Serializable {
 	@NotNull(message = "Gender is mandatory")
 	private Gender gender;
 
-	@ApiModelProperty(position = 6,example = "STILL_APPLYING", required = true)
+	@ApiModelProperty(position = 6,example = "NRCNO", required = true)
 	@NotNull(message = "Id Type is mandatory")
 	private IdType idType;
 

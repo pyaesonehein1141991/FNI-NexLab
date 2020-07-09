@@ -325,7 +325,7 @@ public class MedicalProposalService implements IMedicalProposalService {
 		try {
 
 			String idNo = dto.getIdNo();
-			IdType idType = dto.getIdType();
+			String idType = (dto.getIdType()).toString();
 
 			Customer customer = customerRepository.findCustomerByIdNoAndIdType(idNo, idType);
 

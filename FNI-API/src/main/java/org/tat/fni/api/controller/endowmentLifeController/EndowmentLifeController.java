@@ -25,7 +25,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/endowmentLife")
+@RequestMapping("/endowment-life")
 @Api(tags = "Endowment Life")
 public class EndowmentLifeController {
 	
@@ -35,7 +35,7 @@ public class EndowmentLifeController {
 	@Autowired
 	private ModelMapper mapper;
 
-	@PostMapping("/submitproposal")
+	@PostMapping("/submit-proposal")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })

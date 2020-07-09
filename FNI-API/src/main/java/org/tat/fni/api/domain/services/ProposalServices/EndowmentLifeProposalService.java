@@ -128,7 +128,7 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 				Customer customer = lifeProposalService.checkCustomerAvailability(publicLifeDTO.getCustomer());
 				
 				if(customer == null) {
-					lifeProposalService.createNewCustomer(publicLifeDTO.getCustomer());
+					lifeProposal.setCustomer(lifeProposalService.createNewCustomer(publicLifeDTO.getCustomer()));
 				}
 				else {
 					lifeProposal.setCustomer(customer);
