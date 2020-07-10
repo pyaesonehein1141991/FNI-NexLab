@@ -180,7 +180,7 @@ public class HealthProposalService implements IMedicalProductsProposalService {
 				medicalProposal.getMedicalProposalInsuredPersonList()
 						.add(createInsuredPerson(insuredPerson, individualHealthInsuranceDTO));
 				medicalProposal.setComplete(true);
-				medicalProposal.setStatus(false);
+//				medicalProposal.setStatus(false);
 				medicalProposal.setProposalType(ProposalType.UNDERWRITING);
 				medicalProposal.setSubmittedDate(individualHealthInsuranceDTO.getSubmittedDate());
 

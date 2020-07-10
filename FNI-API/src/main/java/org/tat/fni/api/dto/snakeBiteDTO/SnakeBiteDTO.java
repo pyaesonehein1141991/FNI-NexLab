@@ -74,9 +74,9 @@ public class SnakeBiteDTO {
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
 	
-	@ApiModelProperty(position = 12, example = "false", required = true)
-	@NotNull(message = "status is mandatory")
-	private boolean status;
+//	@ApiModelProperty(position = 12, example = "false", required = true)
+//	@NotNull(message = "status is mandatory")
+//	private boolean status;
 
 
 	@ApiModelProperty(position = 13, required = true)

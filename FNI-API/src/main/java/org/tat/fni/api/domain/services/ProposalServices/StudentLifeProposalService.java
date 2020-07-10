@@ -162,7 +162,7 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
 				lifeProposal.setComplete(true);
-				lifeProposal.setStatus(false);
+//				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(studentLifeProposalDTO.getSubmittedDate());
 				lifeProposal.setPeriodMonth(studentLifeProposalDTO.getPeriodMonth());

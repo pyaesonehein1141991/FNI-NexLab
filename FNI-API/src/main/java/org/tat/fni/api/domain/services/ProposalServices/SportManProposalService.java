@@ -169,7 +169,7 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 				lifeProposal.setComplete(true);
-				lifeProposal.setStatus(false);
+//				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(sportMandto.getSubmittedDate());
 

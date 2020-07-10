@@ -177,7 +177,7 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 				medicalProposal.getMedicalProposalInsuredPersonList()
 						.add(createInsuredPerson(insuredPerson, criticalIllnessDTO));
 				medicalProposal.setComplete(true);
-				medicalProposal.setStatus(false);
+//				medicalProposal.setStatus(false);
 				medicalProposal.setPeriodMonth(criticalIllnessDTO.getPeriodMonth());
 				medicalProposal.setProposalType(ProposalType.UNDERWRITING);
 				medicalProposal.setSubmittedDate(criticalIllnessDTO.getSubmittedDate());

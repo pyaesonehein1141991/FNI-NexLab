@@ -71,9 +71,9 @@ public class StudentLifeDTO {
 	@NotNull(message = "Customer Classification Of Health is mandatory")
 	private ClassificationOfHealth customerClsOfHealth;
 	
-	@ApiModelProperty(position = 11, example = "false", required = true)
-	@NotNull(message = "status is mandatory")
-	private boolean status;
+//	@ApiModelProperty(position = 11, example = "false", required = true)
+//	@NotNull(message = "status is mandatory")
+//	private boolean status;
 
 
 	// @ApiModelProperty(position = 11, required = false)

@@ -169,7 +169,7 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
 				lifeProposal.setComplete(true);
-				lifeProposal.setStatus(false);
+//				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(snakeBiteDTO.getSubmittedDate());
 				lifeProposal.setPeriodMonth(snakeBiteDTO.getPeriodMonth());

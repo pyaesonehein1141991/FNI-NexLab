@@ -165,7 +165,7 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 				lifeProposal.setComplete(true);
-				lifeProposal.setStatus(false);
+//				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(groupLifeDTO.getSubmittedDate());
 				lifeProposal.setPeriodMonth(groupLifeDTO.getPeriodMonth());

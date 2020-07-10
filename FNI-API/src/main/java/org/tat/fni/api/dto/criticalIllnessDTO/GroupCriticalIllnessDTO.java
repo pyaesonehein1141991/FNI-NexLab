@@ -64,9 +64,9 @@ public class GroupCriticalIllnessDTO {
 	@NotBlank(message = "Sales Points ID is mandatory")
 	private String salesPointsId;
 	
-	@ApiModelProperty(position = 10, example = "false", required = true)
-	@NotNull(message = "status is mandatory")
-	private boolean status;
+//	@ApiModelProperty(position = 10, example = "false", required = true)
+//	@NotNull(message = "status is mandatory")
+//	private boolean status;
 
 
 	@ApiModelProperty(position = 11, required = true)
