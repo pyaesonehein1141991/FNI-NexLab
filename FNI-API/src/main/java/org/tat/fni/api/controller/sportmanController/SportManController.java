@@ -25,7 +25,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/sport-man")
+@RequestMapping("/sportMan")
 @Api(tags = "Sport Man")
 public class SportManController {
 
@@ -35,7 +35,7 @@ public class SportManController {
 	@Autowired
 	private ModelMapper mapper;
 
-	@PostMapping("/submit-proposal")
+	@PostMapping("/submitproposal")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"), @ApiResponse(code = 403, message = "Access denied"),
 	@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
 	@ApiOperation(value = "${SportManController.submitproposal}")

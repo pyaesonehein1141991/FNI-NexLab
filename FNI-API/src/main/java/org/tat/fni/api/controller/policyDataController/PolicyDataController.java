@@ -22,14 +22,14 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/policy-data")
+@RequestMapping("/policyData")
 @Api(tags = "Policy Data")
 public class PolicyDataController {
 	
 	@Autowired
 	private IPolicyService policyService;
 	
-	@PostMapping("/policy-data")
+	@PostMapping("/policyData")
 	@ApiResponses(value = { //
 			@ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),

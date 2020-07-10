@@ -25,7 +25,7 @@ public class RelationshipController {
 	@Autowired
 	private RelationshipService relationshipService;
 
-	@GetMapping("/relationships")
+	@GetMapping("/relationship")
 	@ApiOperation(value = "${RelationshipController.relationships}")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),

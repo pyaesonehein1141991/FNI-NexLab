@@ -25,7 +25,7 @@ public class ProvinceController {
 	@Autowired
 	private ProvinceService provinceService;
 
-	@GetMapping("/provinces")
+	@GetMapping("/province")
 	@ApiOperation(value = "${ProvinceController.provinces}")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),

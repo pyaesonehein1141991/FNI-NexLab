@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/student-life")
+@RequestMapping("/studentlife")
 @Api(tags = "Student-Life")
 public class StudentLifeController {
 

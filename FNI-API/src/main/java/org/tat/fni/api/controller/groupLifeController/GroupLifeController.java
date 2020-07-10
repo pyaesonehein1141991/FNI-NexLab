@@ -25,7 +25,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/group-life")
+@RequestMapping("/groupLife")
 @Api(tags = "groupLife")
 public class GroupLifeController {
 
@@ -35,7 +35,7 @@ public class GroupLifeController {
 	@Autowired
 	private ModelMapper mapper;
 
-	@PostMapping("/submit-proposal")
+	@PostMapping("/submitproposal")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token") })
