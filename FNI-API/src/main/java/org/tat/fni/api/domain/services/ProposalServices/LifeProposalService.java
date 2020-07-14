@@ -391,7 +391,9 @@ public class LifeProposalService implements ILifeProposalService {
 			customer.setGender(dto.getGender());
 			customer.setIdNo(dto.getIdNo());
 			customer.setIdType(dto.getIdType());
-			customer.setMaritalStatus(dto.getMaritalStatus());
+			if (StringUtils.isNotBlank(String.valueOf(dto.getMaritalStatus()))) {
+				customer.setMaritalStatus(dto.getMaritalStatus());
+			}
 			customer.setOfficeAddress(officeAddress);
 			customer.setPermanentAddress(permanentAddress);
 			customer.setResidentAddress(residentAddress);
