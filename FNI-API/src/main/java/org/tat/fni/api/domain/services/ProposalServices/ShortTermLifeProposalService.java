@@ -102,6 +102,12 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 
 	@Autowired
 	private ILifeProposalService lifeProposalService;
+	
+	@Value("${branchId}")
+	private String branchId;
+	
+	@Value("${salespointId}")
+	private String salespointId;
 
 	@Value("${shorttermLifeProductId}")
 	private String shorttermLifeProductId;
@@ -147,9 +153,9 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 			Optional<PaymentType> paymentTypeOptional = paymentTypeService
 					.findById(shortTermEndowmentLifeDto.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(shortTermEndowmentLifeDto.getAgentId());
-			Optional<Branch> branchOptional = branchService.findById(shortTermEndowmentLifeDto.getBranchId());
+			Optional<Branch> branchOptional = branchService.findById(branchId);
 			Optional<SalesPoints> salesPointsOptional = salePointService
-					.findById(shortTermEndowmentLifeDto.getSalesPointsId());
+					.findById(salespointId);
 
 			shortTermEndowmentLifeDto.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
@@ -220,9 +226,9 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 
 			Optional<Product> productOptional = productService.findById(shorttermLifeProductId);
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
-			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
-					.findRiskyOccupationById(dto.getRiskoccupationID());
+//			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
+//			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
+//					.findRiskyOccupationById(dto.getRiskoccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -237,29 +243,29 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
-			insuredPerson.setApprovedSumInsured(dto.getApprovedSumInsured());
-			insuredPerson.setBasicTermPremium(dto.getBasicTermPremium());
+//			insuredPerson.setApprovedSumInsured(dto.getApprovedSumInsured());
+//			insuredPerson.setBasicTermPremium(dto.getBasicTermPremium());
 			insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));
 			insuredPerson.setIdNo(dto.getIdNo());
-			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
-			insuredPerson.setRejectReason(dto.getRejectReason());
+//			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
+//			insuredPerson.setRejectReason(dto.getRejectReason());
 			insuredPerson.setFatherName(dto.getFatherName());
 			insuredPerson.setDateOfBirth(dto.getDateOfBirth());
 			insuredPerson.setAge(DateUtils.getAgeForNextYear(dto.getDateOfBirth()));
 			insuredPerson.setGender(Gender.valueOf(dto.getGender()));
 			insuredPerson.setResidentAddress(residentAddress);
-			insuredPerson.setPhone(dto.getPhone());
+//			insuredPerson.setPhone(dto.getPhone());
 			insuredPerson.setName(name);
 
 			if (occupationOptional.isPresent()) {
 				insuredPerson.setOccupation(occupationOptional.get());
 			}
-			if (riskyOccupationOptional.isPresent()) {
-				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
-			}
-			if (relationshipOptional.isPresent()) {
-				insuredPerson.setRelationship(relationshipOptional.get());
-			}
+//			if (riskyOccupationOptional.isPresent()) {
+//				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
+//			}
+//			if (relationshipOptional.isPresent()) {
+//				insuredPerson.setRelationship(relationshipOptional.get());
+//			}
 			if (productOptional.isPresent()) {
 				insuredPerson.setProduct(productOptional.get());
 			}
