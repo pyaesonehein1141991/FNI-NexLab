@@ -225,7 +225,7 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<RiskyOccupation> riskyOptional = riskyoccupationService
-					.findRiskyOccupationById(dto.getRiskoccupationID());
+					.findRiskyOccupationById(dto.getRiskyoccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -241,8 +241,6 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
-			insuredPerson.setApprovedSumInsured(dto.getApprovedSumInsured());
-			insuredPerson.setBasicTermPremium(dto.getBasicTermPremium());
 			insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));
 			insuredPerson.setIdNo(dto.getIdNo());
 			insuredPerson.setFatherName(dto.getFatherName());
@@ -250,7 +248,6 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 			insuredPerson.setAge(DateUtils.getAgeForNextYear(dto.getDateOfBirth()));
 			insuredPerson.setGender(Gender.valueOf(dto.getGender()));
 			insuredPerson.setResidentAddress(residentAddress);
-			insuredPerson.setApproved(dto.isApprove());
 			insuredPerson.setName(name);
 			if (occupationOptional.isPresent()) {
 				insuredPerson.setOccupation(occupationOptional.get());

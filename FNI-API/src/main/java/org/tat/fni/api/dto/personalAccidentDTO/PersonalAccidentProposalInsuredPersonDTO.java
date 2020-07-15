@@ -69,7 +69,7 @@ public class PersonalAccidentProposalInsuredPersonDTO {
 	private String occupationID;
 
 	@ApiModelProperty(position = 13, example = "ISSYSO52001000000000123052019", required = true)
-	private String riskoccupationID;
+	private String riskyoccupationID;
 
 	@ApiModelProperty(position = 14, example = "MALE", required = true)
 	@NotNull(message = "gender is mandatory")
@@ -79,29 +79,12 @@ public class PersonalAccidentProposalInsuredPersonDTO {
 	@NotNull(message = "proposedSumInsured is mandatory")
 	private double proposedSumInsured;
 
-	@ApiModelProperty(position = 16, example = "true", required = true)
-	@NotNull(message = "approve is mandatory")
+	@ApiModelProperty(position = 16)
 	private boolean isRiskyOccupation;
-
-	@ApiModelProperty(position = 17, example = "true", required = true)
-	@NotNull(message = "approve is mandatory")
-	private boolean approve;
 
 	@ApiModelProperty(position = 18, example = "100000", required = true)
 	@NotNull(message = "proposedPremium is mandatory")
 	private double proposedPremium;
-
-	@ApiModelProperty(position = 19, example = "10000", required = true)
-	@NotNull(message = "approvedSumInsured is mandatory")
-	private double approvedSumInsured;
-
-	@ApiModelProperty(position = 20, example = "10000", required = true)
-	@NotNull(message = "approvedPremium is mandatory")
-	private double approvedPremium;
-
-	@ApiModelProperty(position = 21, example = "10000", required = true)
-	@NotNull(message = "basicTermPremium is mandatory")
-	private double basicTermPremium;
 
 	@Valid
 	@ApiModelProperty(position = 22)

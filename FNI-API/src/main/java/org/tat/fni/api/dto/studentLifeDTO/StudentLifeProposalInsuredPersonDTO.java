@@ -73,28 +73,9 @@ public class StudentLifeProposalInsuredPersonDTO {
 	@NotNull(message = "proposedSumInsured is mandatory")
 	private double proposedSumInsured;
 
-	@ApiModelProperty(position = 15, example = "some reason")
-	private String rejectReason;
-
-	@ApiModelProperty(position = 16, example = "false", required = true)
-	@NotNull(message = "needMedicalCheckup is mandatory")
-	private boolean needMedicalCheckup;
-
 	@ApiModelProperty(position = 17, example = "100000", required = true)
 	@NotNull(message = "proposedPremium is mandatory")
 	private double proposedPremium;
-
-	@ApiModelProperty(position = 18, example = "10000", required = true)
-	@NotNull(message = "approvedSumInsured is mandatory")
-	private double approvedSumInsured;
-
-	@ApiModelProperty(position = 19, example = "10000", required = true)
-	@NotNull(message = "basicTermPremium is mandatory")
-	private double basicTermPremium;
-
-	@ApiModelProperty(position = 20, example = "true", required = true)
-	@NotNull(message = "approve is mandatory")
-	private boolean approve;
 
 	@ApiModelProperty(position = 21, example = "U Maung Maung", required = true)
 	@NotNull(message = "parentName is mandatory")

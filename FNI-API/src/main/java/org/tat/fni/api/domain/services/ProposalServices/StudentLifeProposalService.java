@@ -231,10 +231,6 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
-			insuredPerson.setApprovedSumInsured(dto.getApprovedSumInsured());
-			insuredPerson.setApproved(dto.isApprove());
-			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
-			insuredPerson.setRejectReason(dto.getRejectReason());
 			insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));
 			insuredPerson.setIdNo(dto.getIdNo());
 			insuredPerson.setFatherName(dto.getFatherName());

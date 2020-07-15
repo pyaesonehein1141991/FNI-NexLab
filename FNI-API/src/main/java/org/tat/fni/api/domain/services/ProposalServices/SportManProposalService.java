@@ -137,8 +137,8 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
 
-			lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
-			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate, workflowDate);
+			lifeProposalRepo.saveToWorkflowApprove(id, referenceNo, referenceType, createdDate);
+			lifeProposalRepo.saveToWorkflowHistoryApprove(id, referenceNo, referenceType, createdDate, workflowDate);
 			return sportmanproposalList;
 		} catch (Exception e) {
 			logger.error("JOEERROR:" + e.getMessage(), e);

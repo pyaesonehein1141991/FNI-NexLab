@@ -130,8 +130,8 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
 
-			lifeProposalRepo.saveToWorkflow(id, referenceNo, referenceType, createdDate);
-			lifeProposalRepo.saveToWorkflowHistory(id, referenceNo, referenceType, createdDate, workflowDate);
+			lifeProposalRepo.saveToWorkflowApprove(id, referenceNo, referenceType, createdDate);
+			lifeProposalRepo.saveToWorkflowHistoryApprove(id, referenceNo, referenceType, createdDate, workflowDate);
 
 			return snakeBiteProposalList;
 		} catch (DAOException e) {
@@ -242,9 +242,7 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 			insuredPerson.setProduct(productOptional.get());
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
-			insuredPerson.setApproved(dto.isApprove());
-			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
-			insuredPerson.setRejectReason(dto.getRejectReason());
+			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));
 			insuredPerson.setIdNo(dto.getIdNo());
 			insuredPerson.setFatherName(dto.getFatherName());

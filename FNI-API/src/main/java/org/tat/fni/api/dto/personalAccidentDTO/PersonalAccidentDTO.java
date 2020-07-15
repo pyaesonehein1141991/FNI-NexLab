@@ -31,18 +31,9 @@ public class PersonalAccidentDTO {
 	@NotNull(message = "customer is mandatory")
 	private CustomerDto customer;
 
-//	@ApiModelProperty(position = 4, example = "ISSYS001001000000000103062019", required = true)
-//	@NotBlank(message = "Customer ID is mandatory")
-//	private String customerId;
-
-	@ApiModelProperty(position = 5, example = "ISSYS033001000000000104062019", required = true)
-	@NotBlank(message = "Organization ID is mandatory")
+	@ApiModelProperty(position = 5)
 	private String organizationId;
-
-	@ApiModelProperty(position = 6, example = "ISPRD0030001000000002331032013", required = true)
-	@NotBlank(message = "Product ID is mandatory")
-	private String productId;
-
+	
 	@ApiModelProperty(position = 7, example = "ISSYS0090001000000000229032013", required = true)
 	@NotBlank(message = "Payment Type ID is mandatory")
 	private String paymentTypeId;

@@ -40,7 +40,7 @@ public class CriticalillnessProposalInsuredPersonDTO {
 
 	@ApiModelProperty(position = 5, example = "100000", required = true)
 	@NotNull(message = "premium is mandatory")
-	private double premium;
+	private double premium;// to remove
 
 	@ApiModelProperty(position = 6, example = "U Maung Maung", required = true)
 	@NotBlank(message = "fatherName is mandatory")

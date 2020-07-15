@@ -57,7 +57,6 @@ public class SnakeBiteDTO {
 //	@NotNull(message = "status is mandatory")
 //	private boolean status;
 
-
 	@ApiModelProperty(position = 13, required = true)
 	@NotNull(message = "proposalInsuredPersonList is mandatory")
 	private List<SnakeBiteProposalInsuredPersonDTO> proposalInsuredPersonList;

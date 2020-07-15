@@ -30,6 +30,21 @@ public interface LifeProposalRepository extends JpaRepository<LifeProposal, Stri
       String createdDate, String workflowDate);
   
   @Transactional
+  @Modifying
+  @Query(nativeQuery = true,
+      value = "INSERT INTO WORKFLOW VALUES (?1,?2,?3,NULL,'UNDERWRITING',1,'APPROVAL',?4,'INUSR001001000000000107062019',NULL,NULL,'INUSR001001000000000107062019','INUSR001001000000000107062019','BANCH00000000000000129032013')")
+  public void saveToWorkflowApprove(String id, String referenceNo, String referenceType,
+      String createdDate);
+
+
+  @Transactional
+  @Modifying
+  @Query(nativeQuery = true,
+      value = "INSERT INTO WORKFLOW_HIST VALUES (?1,?2,?3,NULL,1,?5,'APPROVAL',?4,'INUSR001001000000000107062019',NULL,NULL,'INUSR001001000000000107062019','INUSR001001000000000107062019','UNDERWRITING','BANCH00000000000000129032013')")
+  public void saveToWorkflowHistoryApprove(String id, String referenceNo, String referenceType,
+      String createdDate, String workflowDate);
+  
+  @Transactional
   @Query(nativeQuery = true,
   	value = "SELECT ID FROM LIFEPROPOSAL WHERE PROPOSALNO=?1")
   public String getProposalId(String proposalNo);

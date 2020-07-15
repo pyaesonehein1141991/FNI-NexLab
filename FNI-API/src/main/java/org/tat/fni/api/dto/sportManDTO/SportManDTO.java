@@ -31,13 +31,8 @@ public class SportManDTO {
 	@NotNull(message = "customer is mandatory")
 	private CustomerDto customer;
 
-	@ApiModelProperty(position = 6, example = "ISSYS033001000000000104062019", required = true)
-	@NotBlank(message = "Organization ID is mandatory")
+	@ApiModelProperty(position = 6)
 	private String organizationId;
-
-	@ApiModelProperty(position = 7, example = "ISPRD0030001000000002331032013", required = true)
-	@NotBlank(message = "Product ID is mandatory")
-	private String productId;
 
 	@ApiModelProperty(position = 8, example = "ISSYS0090001000000000229032013", required = true)
 	@NotBlank(message = "Payment Type ID is mandatory")
