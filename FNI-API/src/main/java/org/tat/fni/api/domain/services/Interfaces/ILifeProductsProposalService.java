@@ -11,13 +11,14 @@ import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.dto.endowmentLifeDTO.EndowmentLifeProposalInsuredPersonDTO;
 
 public interface ILifeProductsProposalService {
-	
+
 	public <T> List<LifeProposal> createDtoToProposal(T proposalDto);
-	
+
 	public <T> List<LifeProposal> convertProposalDTOToProposal(T proposalDto);
-	
+
 	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO);
-	
-	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto);
+
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto,
+			ProposalInsuredPerson insuredPerson);
 
 }

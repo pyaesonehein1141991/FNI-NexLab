@@ -20,7 +20,6 @@ import org.tat.fni.api.dto.policyDataDTO.PolicyDataCriteria;
 import org.tat.fni.api.dto.responseDTO.ProposalResponseDTO;
 import org.tat.fni.api.dto.responseDTO.policyResponse.ResponseDataDTO;
 import org.tat.fni.api.dto.studentLifeDTO.StudentLifeDTO;
-import org.tat.fni.api.dto.studentLifeDTO.StudentLifePolicyDataDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

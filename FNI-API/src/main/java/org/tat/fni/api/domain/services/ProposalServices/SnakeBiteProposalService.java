@@ -104,6 +104,12 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 
 	@Value("${snakeBiteProductId}")
 	private String snakeBiteProductId;
+	
+	@Value("${branchId}")
+	private String branchId;
+
+	@Value("${salespointId}")
+	private String salespointId;
 
 	@Autowired
 	private ICustomIdGenerator customId;
@@ -140,12 +146,12 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 
 		SnakeBiteDTO snakeBiteDTO = (SnakeBiteDTO) proposalDto;
 
-		Optional<Product> productOptional = productService.findById(snakeBiteDTO.getProductId());
-		Optional<Branch> branchOptional = branchService.findById(snakeBiteDTO.getBranchId());
+		Optional<Product> productOptional = productService.findById(snakeBiteProductId);
+		Optional<Branch> branchOptional = branchService.findById(branchId);
 		Optional<Organization> organizationOptional = organizationService.findById(snakeBiteDTO.getOrganizationId());
 		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(snakeBiteDTO.getPaymentTypeId());
 		Optional<Agent> agentOptional = agentService.findById(snakeBiteDTO.getAgentId());
-		Optional<SalesPoints> salePointOptional = salePointService.findById(snakeBiteDTO.getSalesPointsId());
+		Optional<SalesPoints> salePointOptional = salePointService.findById(salespointId);
 
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
 
@@ -168,7 +174,7 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
-				lifeProposal.setComplete(true);
+				lifeProposal.setComplete(false);
 //				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(snakeBiteDTO.getSubmittedDate());
@@ -217,7 +223,7 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 			SnakeBiteProposalInsuredPersonDTO dto = (SnakeBiteProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 
 			Optional<Product> productOptional = productService.findById(snakeBiteProductId);
-			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
+			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
@@ -263,13 +269,13 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 			String insPersonCodeNo = customId.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
 
-			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
-				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
-			});
-
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
 				insuredPerson.getKeyFactorValueList()
 						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
+			
+			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
+				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary, insuredPerson));
 			});
 
 			return insuredPerson;
@@ -279,12 +285,13 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 	}
 
 	@Override
-	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto,
+			ProposalInsuredPerson insuredPerson) {
 		try {
 
 			SnakeBiteProposalInsuredPersonBeneficiariesDTO dto = (SnakeBiteProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
 
-			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
+			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 
 			ResidentAddress residentAddress = new ResidentAddress();
@@ -306,6 +313,7 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 			beneficiary.setResidentAddress(residentAddress);
 			beneficiary.setAge(dto.getAge());
 			beneficiary.setName(name);
+			beneficiary.setProposalInsuredPerson(insuredPerson);
 
 			if (relationshipOptional.isPresent()) {
 				beneficiary.setRelationship(relationshipOptional.get());

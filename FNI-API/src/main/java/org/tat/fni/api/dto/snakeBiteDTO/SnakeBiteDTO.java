@@ -22,33 +22,16 @@ public class SnakeBiteDTO {
 	@NotNull(message = "Period Month is mandatory")
 	private int periodMonth;
 
-	@ApiModelProperty(position = 1, example = "ISPRD0030001000000002231032013", required = true)
-	@NotBlank(message = "Product ID is mandatory")
-	private String productId;
-
-	@ApiModelProperty(position = 2, example = "Agent", required = true)
-	@NotBlank(message = "SaleChannel Type is mandatory")
-	private String saleChannelType;
-
 	@ApiModelProperty(position = 3, example = "ISSYS002001000000000103062019", required = true)
 	@NotBlank(message = "Agent ID is mandatory")
 	private String agentId;
-
-	@ApiModelProperty(position = 4, example = "BANCH00000000000000129032013", required = true)
-	@NotBlank(message = "Branch ID is mandatory")
-	private String branchId;
 	
 	@Valid
 	@ApiModelProperty(position = 5, required = true)
 	@NotNull(message = "customer is mandatory")
 	private CustomerDto customer;
 
-//	@ApiModelProperty(position = 5, example = "ISSYS001001000000000103062019", required = true)
-//	@NotBlank(message = "Customer ID is mandatory")
-//	private String customerId;
-
-	@ApiModelProperty(position = 6, example = "ISSYS033001000000000104062019", required = true)
-	@NotBlank(message = "Organization ID is mandatory")
+	@ApiModelProperty(position = 6)
 	private String organizationId;
 
 	@ApiModelProperty(position = 7, example = "ISSYS0090001000000000229032013", required = true)
@@ -69,10 +52,6 @@ public class SnakeBiteDTO {
 	@NotNull(message = "EndDate is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date endDate;
-
-	@ApiModelProperty(position = 11, example = "ISSYS052001000000000101062019", required = true)
-	@NotBlank(message = "Sales Points ID is mandatory")
-	private String salesPointsId;
 	
 //	@ApiModelProperty(position = 12, example = "false", required = true)
 //	@NotNull(message = "status is mandatory")

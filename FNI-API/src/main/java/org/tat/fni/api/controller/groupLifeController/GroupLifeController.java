@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/groupLife")
-@Api(tags = "groupLife")
+@Api(tags = "Group Life")
 public class GroupLifeController {
 
 	@Resource(name = "groupLifeProposalService")

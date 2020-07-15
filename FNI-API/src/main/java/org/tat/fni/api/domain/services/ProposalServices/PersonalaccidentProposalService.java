@@ -109,6 +109,12 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 
 	@Value("${personalaccidentProductId}")
 	private String personalaccidentProductId;
+	
+	@Value("${branchId}")
+	private String branchId;
+
+	@Value("${salespointId}")
+	private String salespointId;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -149,9 +155,8 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 			Optional<PaymentType> paymentTypeOptional = paymentTypeService
 					.findById(personalaccidentdto.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(personalaccidentdto.getAgentId());
-			Optional<Branch> branchOptional = branchService.findById(personalaccidentdto.getBranchId());
-			Optional<SalesPoints> salesPointsOptional = salePointService
-					.findById(personalaccidentdto.getSalesPointsId());
+			Optional<Branch> branchOptional = branchService.findById(branchId);
+			Optional<SalesPoints> salesPointsOptional = salePointService.findById(salespointId);
 
 			personalaccidentdto.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				LifeProposal lifeProposal = new LifeProposal();
@@ -168,7 +173,7 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 						personalaccidentdto.getPaymentTypeId());
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
-				lifeProposal.setComplete(true);
+				lifeProposal.setComplete(false);
 //				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(personalaccidentdto.getSubmittedDate());
@@ -257,13 +262,14 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 
 			String insPersonCodeNo = customIdRepo.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
-			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
-				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
-			});
 
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
 				insuredPerson.getKeyFactorValueList()
 						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
+			
+			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
+				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary, insuredPerson));
 			});
 
 			return insuredPerson;
@@ -273,7 +279,8 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 	}
 
 	@Override
-	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto,
+			ProposalInsuredPerson insuredPerson) {
 		try {
 
 			PersonalAccidentProposalInsuredPersonBeneficiariesDTO dto = (PersonalAccidentProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
@@ -294,6 +301,8 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 			beneficiary.setIdNo(dto.getIdNo());
 			beneficiary.setResidentAddress(residentAddress);
 			beneficiary.setName(name);
+			beneficiary.setProposalInsuredPerson(insuredPerson);
+			
 			if (relationshipOptional.isPresent()) {
 				beneficiary.setRelationship(relationshipOptional.get());
 			}

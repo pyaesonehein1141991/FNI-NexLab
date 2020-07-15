@@ -113,6 +113,12 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 
 	@Value("${sportmanProductId}")
 	private String sportmanProductId;
+	
+	@Value("${branchId}")
+	private String branchId;
+
+	@Value("${salespointId}")
+	private String salespointId;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -149,9 +155,8 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 			Optional<Organization> organizationOptional = organizationService.findById(sportMandto.getOrganizationId());
 			Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(sportMandto.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(sportMandto.getAgentId());
-			Optional<Customer> customerOptional = customerService.findById(sportMandto.getCustomerId());
-			Optional<Branch> branchOptional = branchService.findById(sportMandto.getBranchId());
-			Optional<SalesPoints> salesPointsOptional = salePointService.findById(sportMandto.getSalesPointsId());
+			Optional<Branch> branchOptional = branchService.findById(branchId);
+			Optional<SalesPoints> salesPointsOptional = salePointService.findById(salespointId);
 
 			sportMandto.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				LifeProposal lifeProposal = new LifeProposal();
@@ -168,7 +173,7 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 						sportMandto.getPaymentTypeId());
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
-				lifeProposal.setComplete(true);
+				lifeProposal.setComplete(false);
 //				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(sportMandto.getSubmittedDate());
@@ -186,10 +191,6 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 				}
 				if (salesPointsOptional.isPresent()) {
 					lifeProposal.setSalesPoints(salesPointsOptional.get());
-				}
-
-				if (customerOptional.isPresent()) {
-					lifeProposal.setCustomer(customerOptional.get());
 				}
 
 				if (branchOptional.isPresent()) {
@@ -261,13 +262,14 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 
 			String insPersonCodeNo = customIdRepo.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
-			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
-				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
-			});
 
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
 				insuredPerson.getKeyFactorValueList()
 						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
+			
+			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
+				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary, insuredPerson));
 			});
 
 			return insuredPerson;
@@ -277,7 +279,8 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 	}
 
 	@Override
-	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto,
+			ProposalInsuredPerson insuredPerson) {
 		try {
 
 			SportManInsuredPersonBeneficiariesDTO dto = (SportManInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
@@ -298,6 +301,8 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 			beneficiary.setIdNo(dto.getIdNo());
 			beneficiary.setResidentAddress(residentAddress);
 			beneficiary.setName(name);
+			beneficiary.setProposalInsuredPerson(insuredPerson);
+			
 			if (relationshipOptional.isPresent()) {
 				beneficiary.setRelationship(relationshipOptional.get());
 			}

@@ -60,8 +60,8 @@ public class FarmerProposalInsuredPersonDTO {
 	private String residentAddress;
 
 	@ApiModelProperty(position = 11, example = "ISSYS004001000000731326012017", required = true)
-	@NotBlank(message = "residentTownshipId is mandatory")
-	private String residentTownshipId;
+	@NotBlank(message = "townshipId is mandatory")
+	private String townshipId;
 
 	@ApiModelProperty(position = 12, example = "ISSYS011000009823001042019", required = true)
 	@NotBlank(message = "occupationID is mandatory")
@@ -79,24 +79,9 @@ public class FarmerProposalInsuredPersonDTO {
 	@NotNull(message = "proposedSumInsured is mandatory")
 	private double proposedSumInsured;
 
-	@ApiModelProperty(position = 16, example = "some reason")
-	private String rejectReason;
-
-	@ApiModelProperty(position = 17, example = "false", required = true)
-	@NotNull(message = "needMedicalCheckup is mandatory")
-	private boolean needMedicalCheckup;
-
 	@ApiModelProperty(position = 18, example = "100000", required = true)
 	@NotNull(message = "proposedPremium is mandatory")
 	private double proposedPremium;
-
-	@ApiModelProperty(position = 19, example = "10000", required = true)
-	@NotNull(message = "approvedSumInsured is mandatory")
-	private double approvedSumInsured;
-
-	@ApiModelProperty(position = 20, example = "true", required = true)
-	@NotNull(message = "approve is mandatory")
-	private boolean approve;
 
 	@Valid
 	@ApiModelProperty(position = 21)

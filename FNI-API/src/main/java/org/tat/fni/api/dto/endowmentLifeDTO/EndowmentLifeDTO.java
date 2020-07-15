@@ -25,10 +25,6 @@ public class EndowmentLifeDTO {
 	@NotNull(message = "Period Month is mandatory")
 	private int periodMonth;
 
-	@ApiModelProperty(position = 1, example = "Agent", required = true)
-	@NotBlank(message = "SaleChannelType is mandatory")
-	private String saleChannelType;
-
 	@ApiModelProperty(position = 2, example = "ISSYS002001000000000103062019", required = true)
 	@NotBlank(message = "Agent ID is mandatory")
 	private String agentId;
@@ -56,10 +52,6 @@ public class EndowmentLifeDTO {
 	@NotNull(message = "EndDate is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date endDate;
-
-	@ApiModelProperty(position = 8, example = "ISSYS052001000000000101062019", required = true)
-	@NotBlank(message = "Sales Points ID is mandatory")
-	private String salesPointsId;
 
 	@ApiModelProperty(position = 9, required = true)
 	@NotNull(message = "Customer Classification Of Health is mandatory")

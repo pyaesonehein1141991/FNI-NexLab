@@ -19,6 +19,7 @@ import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.common.emumdata.ProposalType;
 import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.domain.Agent;
+import org.tat.fni.api.domain.Branch;
 import org.tat.fni.api.domain.Customer;
 import org.tat.fni.api.domain.DateUtils;
 import org.tat.fni.api.domain.InsuredPersonBeneficiaries;
@@ -32,6 +33,7 @@ import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.services.AgentService;
 import org.tat.fni.api.domain.services.BaseService;
+import org.tat.fni.api.domain.services.BranchService;
 import org.tat.fni.api.domain.services.OccupationService;
 import org.tat.fni.api.domain.services.PaymentTypeService;
 import org.tat.fni.api.domain.services.ProductService;
@@ -59,6 +61,9 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 
 	@Autowired
 	private ProductService productService;
+	
+	@Autowired
+	private BranchService branchService;
 
 	@Autowired
 	private AgentService agentService;
@@ -80,6 +85,12 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 
 	@Value("${publicTermLifeProductId}")
 	private String publicTermLifeProductId;
+	
+	@Value("${branchId}")
+	private String branchId;
+
+	@Value("${salespointId}")
+	private String salespointId;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -93,7 +104,7 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 
 			String id = DateUtils.formattedSqlDate(new Date()).concat(publicLifeProposalList.get(0).getProposalNo());
 			String referenceNo = publicLifeProposalList.get(0).getId();
-			String referenceType = "FARMER";
+			String referenceType = "ENDOWMENT_LIFE";
 			String createdDate = DateUtils.formattedSqlDate(new Date());
 			String workflowDate = DateUtils.formattedSqlDate(new Date());
 
@@ -116,7 +127,8 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 
 		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(publicLifeDTO.getPaymentTypeId());
 		Optional<Agent> agentOptional = agentService.findById(publicLifeDTO.getAgentId());
-		Optional<SalesPoints> salePointOptional = salePointService.findById(publicLifeDTO.getSalesPointsId());
+		Optional<Branch> branchOptional = branchService.findById(branchId);
+		Optional<SalesPoints> salePointOptional = salePointService.findById(salespointId);
 
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
 
@@ -126,11 +138,10 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 				LifeProposal lifeProposal = new LifeProposal();
 
 				Customer customer = lifeProposalService.checkCustomerAvailability(publicLifeDTO.getCustomer());
-				
-				if(customer == null) {
+
+				if (customer == null) {
 					lifeProposal.setCustomer(lifeProposalService.createNewCustomer(publicLifeDTO.getCustomer()));
-				}
-				else {
+				} else {
 					lifeProposal.setCustomer(customer);
 				}
 
@@ -139,7 +150,7 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
-				lifeProposal.setComplete(true);
+				lifeProposal.setComplete(false);
 //				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(publicLifeDTO.getSubmittedDate());
@@ -154,6 +165,9 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 				}
 				if (salePointOptional.isPresent()) {
 					lifeProposal.setSalesPoints(salePointOptional.get());
+				}
+				if (branchOptional.isPresent()) {
+					lifeProposal.setBranch(branchOptional.get());
 				}
 
 				String proposalNo = customId.getNextId("PUBLICLIFE_PROPOSAL_NO", null);
@@ -174,8 +188,6 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 
 		return lifeProposalList;
 	}
-	
-	
 
 	@Override
 	public <T> ProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO) {
@@ -215,12 +227,14 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 			String insPersonCodeNo = customId.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
 
-			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
-				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
-			});
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
 				insuredPerson.getKeyFactorValueList()
 						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
+
+			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
+				insuredPerson.getInsuredPersonBeneficiariesList()
+						.add(createInsuredPersonBeneficiareis(beneficiary, insuredPerson));
 			});
 
 			return insuredPerson;
@@ -229,10 +243,9 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 		}
 	}
 
-	
-
 	@Override
-	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto,
+			ProposalInsuredPerson insuredPerson) {
 		try {
 
 			EndowmentLifeProposalInsuredPersonBeneficiariesDTO dto = (EndowmentLifeProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
@@ -258,6 +271,7 @@ public class EndowmentLifeProposalService extends BaseService implements ILifePr
 			beneficiary.setResidentAddress(residentAddress);
 			beneficiary.setAge(dto.getAge());
 			beneficiary.setName(name);
+			beneficiary.setProposalInsuredPerson(insuredPerson);
 
 			if (relationshipOptional.isPresent()) {
 				beneficiary.setRelationship(relationshipOptional.get());

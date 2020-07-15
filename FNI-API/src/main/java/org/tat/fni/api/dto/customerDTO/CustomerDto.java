@@ -48,7 +48,8 @@ public class CustomerDto implements Serializable {
 	@NotNull(message = "Id Type is mandatory")
 	private IdType idType;
 
-	@ApiModelProperty(position = 7, required = false)
+	@ApiModelProperty(position = 7, example = "SINGLE", required = true)
+	@NotNull(message = "Marital status is mandatory")
 	private MaritalStatus maritalStatus;
 
 	@Valid

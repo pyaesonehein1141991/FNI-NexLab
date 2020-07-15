@@ -98,6 +98,12 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 
 	@Value("${studentLifeProductId}")
 	private String studentLifeProductId;
+	
+	@Value("${branchId}")
+	private String branchId;
+
+	@Value("${salespointId}")
+	private String salespointId;
 
 	@Autowired
 	private ICustomIdGenerator customId;
@@ -135,11 +141,11 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 
 		StudentLifeDTO studentLifeProposalDTO = (StudentLifeDTO) proposalDto;
 
-		Optional<Branch> branchOptional = branchService.findById(studentLifeProposalDTO.getBranchId());
+		Optional<Branch> branchOptional = branchService.findById(branchId);
 		Optional<PaymentType> paymentTypeOptional = paymentTypeService
 				.findById(studentLifeProposalDTO.getPaymentTypeId());
 		Optional<Agent> agentOptional = agentService.findById(studentLifeProposalDTO.getAgentId());
-		Optional<SalesPoints> salePointOptional = salePointService.findById(studentLifeProposalDTO.getSalesPointsId());
+		Optional<SalesPoints> salePointOptional = salePointService.findById(salespointId);
 
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
 
@@ -161,7 +167,7 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
-				lifeProposal.setComplete(true);
+				lifeProposal.setComplete(false);
 //				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(studentLifeProposalDTO.getSubmittedDate());
@@ -207,7 +213,7 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 			StudentLifeProposalInsuredPersonDTO dto = (StudentLifeProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 
 			Optional<Product> productOptional = productService.findById(studentLifeProductId);
-			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
+			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			Optional<GradeInfo> gradeInfoOptional = gradeInfoServie.findById(dto.getGrateInfoId());
 			Optional<School> schoolOptional = schoolService.findById(dto.getSchoolId());
@@ -271,7 +277,8 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 	}
 
 	@Override
-	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto,
+			ProposalInsuredPerson insuredPerson) {
 		// TODO Auto-generated method stub
 		return null;
 	}

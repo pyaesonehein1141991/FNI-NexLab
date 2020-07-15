@@ -56,8 +56,8 @@ public class SnakeBiteProposalInsuredPersonBeneficiariesDTO {
 	private String residentAddress;
 
 	@ApiModelProperty(position = 13, example = "ISSYS004001000000731326012017", required = true)
-	@NotBlank(message = "residentTownshipId is mandatory")
+	@NotBlank(message = "townshipId is mandatory")
 	@NotEmpty
-	private String residentTownshipId;
+	private String townshipId;
 
 }

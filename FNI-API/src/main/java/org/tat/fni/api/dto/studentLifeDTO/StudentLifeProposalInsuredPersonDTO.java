@@ -62,8 +62,8 @@ public class StudentLifeProposalInsuredPersonDTO {
 	private String residentAddress;
 
 	@ApiModelProperty(position = 12, example = "ISSYS004001000000731326012017", required = true)
-	@NotBlank(message = "residentTownshipId is mandatory")
-	private String residentTownshipId;
+	@NotBlank(message = "townshipId is mandatory")
+	private String townshipId;
 
 	@ApiModelProperty(position = 13, example = "MALE", required = true)
 	@NotNull(message = "gender is mandatory")

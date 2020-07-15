@@ -22,17 +22,9 @@ public class PersonalAccidentDTO {
 	@NotNull(message = "Period Month is mandatory")
 	private int periodMonth;
 
-	@ApiModelProperty(position = 1, example = "Agent", required = true)
-	@NotBlank(message = "SaleChannel Type is mandatory")
-	private String saleChannelType;
-
 	@ApiModelProperty(position = 2, example = "ISSYS002001000000000103062019", required = true)
 	@NotBlank(message = "Agent ID is mandatory")
 	private String agentId;
-
-	@ApiModelProperty(position = 3, example = "BANCH00000000000000129032013", required = true)
-	@NotBlank(message = "Branch ID is mandatory")
-	private String branchId;
 	
 	@Valid
 	@ApiModelProperty(position = 4, required = true)
@@ -69,10 +61,6 @@ public class PersonalAccidentDTO {
 	@NotNull(message = "EndDate is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date endDate;
-
-	@ApiModelProperty(position = 11, example = "ISSYS052001000000000101062019", required = true)
-	@NotBlank(message = "Sales Points ID is mandatory")
-	private String salesPointsId;
 	
 //	@ApiModelProperty(position = 12, example = "false", required = true)
 //	@NotNull(message = "status is mandatory")

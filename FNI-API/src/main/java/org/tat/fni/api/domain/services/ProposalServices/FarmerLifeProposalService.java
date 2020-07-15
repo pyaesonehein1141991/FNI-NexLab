@@ -108,6 +108,12 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 
 	@Value("${farmerProductId}")
 	private String farmerpProductId;
+	
+	@Value("${branchId}")
+	private String branchId;
+
+	@Value("${salespointId}")
+	private String salespointId;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -143,13 +149,13 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 		FarmerProposalDTO farmerProposalDTO = (FarmerProposalDTO) proposalDto;
 
 		Optional<Product> productOptional = productService.findById(farmerProposalDTO.getProductId());
-		Optional<Branch> branchOptional = branchService.findById(farmerProposalDTO.getBranchId());
+		Optional<Branch> branchOptional = branchService.findById(branchId);
 		Optional<Customer> customerOptional = customerService.findById(farmerProposalDTO.getCustomerId());
 		Optional<Organization> organizationOptional = organizationService
 				.findById(farmerProposalDTO.getOrganizationId());
 		Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(farmerProposalDTO.getPaymentTypeId());
 		Optional<Agent> agentOptional = agentService.findById(farmerProposalDTO.getAgentId());
-		Optional<SalesPoints> salePointOptional = salePointService.findById(farmerProposalDTO.getSalesPointsId());
+		Optional<SalesPoints> salePointOptional = salePointService.findById(salespointId);
 
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
 
@@ -171,7 +177,7 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
-				lifeProposal.setComplete(true);
+				lifeProposal.setComplete(false);
 //				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(farmerProposalDTO.getSubmittedDate());
@@ -223,7 +229,7 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 			FarmerProposalInsuredPersonDTO dto = (FarmerProposalInsuredPersonDTO) proposalInsuredPersonDTO;
 
 			Optional<Product> productOptional = productService.findById(farmerpProductId);
-			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
+			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
@@ -243,10 +249,6 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
-			insuredPerson.setApprovedSumInsured(dto.getApprovedSumInsured());
-			insuredPerson.setApproved(dto.isApprove());
-			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
-			insuredPerson.setRejectReason(dto.getRejectReason());
 			insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));
 			insuredPerson.setIdNo(dto.getIdNo());
 			insuredPerson.setFatherName(dto.getFatherName());
@@ -270,13 +272,13 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 			String insPersonCodeNo = customId.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
 
-			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
-				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
-			});
-
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
 				insuredPerson.getKeyFactorValueList()
 						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
+			
+			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
+				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary, insuredPerson));
 			});
 
 			return insuredPerson;
@@ -286,12 +288,13 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 	}
 
 	@Override
-	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto,
+			ProposalInsuredPerson insuredPerson) {
 
 		try {
 			FarmerProposalInsuredPersonBeneficiariesDTO dto = (FarmerProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
 
-			Optional<Township> townshipOptional = townShipService.findById(dto.getResidentTownshipId());
+			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 
 			ResidentAddress residentAddress = new ResidentAddress();
@@ -313,6 +316,7 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 			beneficiary.setResidentAddress(residentAddress);
 			beneficiary.setAge(dto.getAge());
 			beneficiary.setName(name);
+			beneficiary.setProposalInsuredPerson(insuredPerson);
 
 			if (relationshipOptional.isPresent()) {
 				beneficiary.setRelationship(relationshipOptional.get());

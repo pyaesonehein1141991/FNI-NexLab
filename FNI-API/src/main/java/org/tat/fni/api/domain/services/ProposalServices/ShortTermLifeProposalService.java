@@ -102,10 +102,10 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 
 	@Autowired
 	private ILifeProposalService lifeProposalService;
-	
+
 	@Value("${branchId}")
 	private String branchId;
-	
+
 	@Value("${salespointId}")
 	private String salespointId;
 
@@ -148,20 +148,18 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 		List<LifeProposal> lifeProposalList = new ArrayList<>();
 		ShortTermEndowmentLifeDTO shortTermEndowmentLifeDto = (ShortTermEndowmentLifeDTO) proposalDto;
 		try {
-			Optional<Organization> organizationOptional = organizationService
-					.findById(shortTermEndowmentLifeDto.getOrganizationId());
 			Optional<PaymentType> paymentTypeOptional = paymentTypeService
 					.findById(shortTermEndowmentLifeDto.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(shortTermEndowmentLifeDto.getAgentId());
 			Optional<Branch> branchOptional = branchService.findById(branchId);
-			Optional<SalesPoints> salesPointsOptional = salePointService
-					.findById(salespointId);
+			Optional<SalesPoints> salesPointsOptional = salePointService.findById(salespointId);
 
 			shortTermEndowmentLifeDto.getProposalInsuredPersonList().forEach(insuredPerson -> {
 
 				LifeProposal lifeProposal = new LifeProposal();
 
-				Customer customer = lifeProposalService.checkCustomerAvailability(shortTermEndowmentLifeDto.getCustomer());
+				Customer customer = lifeProposalService
+						.checkCustomerAvailability(shortTermEndowmentLifeDto.getCustomer());
 
 				if (customer == null) {
 					lifeProposalService.createNewCustomer(shortTermEndowmentLifeDto.getCustomer());
@@ -174,14 +172,10 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 
 				lifeProposal.getProposalInsuredPersonList().add(createInsuredPerson(insuredPerson));
 
-				lifeProposal.setComplete(true);
+				lifeProposal.setComplete(false);
 //				lifeProposal.setStatus(false);
 				lifeProposal.setProposalType(ProposalType.UNDERWRITING);
 				lifeProposal.setSubmittedDate(shortTermEndowmentLifeDto.getSubmittedDate());
-
-				if (organizationOptional.isPresent()) {
-					lifeProposal.setOrganization(organizationOptional.get());
-				}
 
 				if (agentOptional.isPresent()) {
 					lifeProposal.setAgent(agentOptional.get());
@@ -226,9 +220,6 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 
 			Optional<Product> productOptional = productService.findById(shorttermLifeProductId);
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
-//			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-//			Optional<RiskyOccupation> riskyOccupationOptional = riskyOccupationService
-//					.findRiskyOccupationById(dto.getRiskoccupationID());
 
 			ResidentAddress residentAddress = new ResidentAddress();
 			residentAddress.setResidentAddress(dto.getResidentAddress());
@@ -243,42 +234,33 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 			insuredPerson.setInitialId(dto.getInitialId());
 			insuredPerson.setProposedSumInsured(dto.getProposedSumInsured());
 			insuredPerson.setProposedPremium(dto.getProposedPremium());
-//			insuredPerson.setApprovedSumInsured(dto.getApprovedSumInsured());
-//			insuredPerson.setBasicTermPremium(dto.getBasicTermPremium());
 			insuredPerson.setIdType(IdType.valueOf(dto.getIdType()));
 			insuredPerson.setIdNo(dto.getIdNo());
-//			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
-//			insuredPerson.setRejectReason(dto.getRejectReason());
 			insuredPerson.setFatherName(dto.getFatherName());
 			insuredPerson.setDateOfBirth(dto.getDateOfBirth());
 			insuredPerson.setAge(DateUtils.getAgeForNextYear(dto.getDateOfBirth()));
 			insuredPerson.setGender(Gender.valueOf(dto.getGender()));
 			insuredPerson.setResidentAddress(residentAddress);
-//			insuredPerson.setPhone(dto.getPhone());
 			insuredPerson.setName(name);
 
 			if (occupationOptional.isPresent()) {
 				insuredPerson.setOccupation(occupationOptional.get());
 			}
-//			if (riskyOccupationOptional.isPresent()) {
-//				insuredPerson.setRiskyOccupation(riskyOccupationOptional.get());
-//			}
-//			if (relationshipOptional.isPresent()) {
-//				insuredPerson.setRelationship(relationshipOptional.get());
-//			}
 			if (productOptional.isPresent()) {
 				insuredPerson.setProduct(productOptional.get());
 			}
 
 			String insPersonCodeNo = customIdRepo.getNextId("LIFE_INSUREDPERSON_CODENO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
-			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
-				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
-			});
 
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
 				insuredPerson.getKeyFactorValueList()
 						.add(lifeProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
+
+			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
+				insuredPerson.getInsuredPersonBeneficiariesList()
+						.add(createInsuredPersonBeneficiareis(beneficiary, insuredPerson));
 			});
 
 			return insuredPerson;
@@ -288,7 +270,8 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 	}
 
 	@Override
-	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto) {
+	public <T> InsuredPersonBeneficiaries createInsuredPersonBeneficiareis(T insuredPersonBeneficiariesDto,
+			ProposalInsuredPerson insuredPerson) {
 		try {
 
 			ShortTermProposalInsuredPersonBeneficiariesDTO dto = (ShortTermProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
@@ -307,6 +290,7 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 			beneficiary.setPercentage(dto.getPercentage());
 			beneficiary.setIdType(IdType.valueOf(dto.getIdType()));
 			beneficiary.setIdNo(dto.getIdNo());
+			beneficiary.setProposalInsuredPerson(insuredPerson);
 			beneficiary.setGender(Gender.valueOf(dto.getGender()));
 			beneficiary.setResidentAddress(residentAddress);
 			beneficiary.setName(name);
