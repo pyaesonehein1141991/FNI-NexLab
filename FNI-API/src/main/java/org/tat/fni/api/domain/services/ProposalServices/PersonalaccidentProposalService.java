@@ -164,7 +164,7 @@ public class PersonalaccidentProposalService extends BaseService implements ILif
 				Customer customer = lifeProposalService.checkCustomerAvailability(personalaccidentdto.getCustomer());
 
 				if (customer == null) {
-					lifeProposalService.createNewCustomer(personalaccidentdto.getCustomer());
+					lifeProposal.setCustomer(lifeProposalService.createNewCustomer(personalaccidentdto.getCustomer()));
 				} else {
 					lifeProposal.setCustomer(customer);
 				}

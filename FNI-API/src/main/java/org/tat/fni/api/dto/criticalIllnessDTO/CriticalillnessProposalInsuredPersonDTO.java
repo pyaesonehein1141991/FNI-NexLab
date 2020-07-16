@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.tat.fni.api.common.emumdata.Gender;
+import org.tat.fni.api.common.emumdata.IdType;
 import org.tat.fni.api.configuration.DateHandler;
 import org.tat.fni.api.dto.InsuredPersonAddOnDTO;
 
@@ -38,16 +39,11 @@ public class CriticalillnessProposalInsuredPersonDTO {
 	@ApiModelProperty(position = 4, example = "Aung", required = true)
 	private String lastName;
 
-	@ApiModelProperty(position = 5, example = "100000", required = true)
-	@NotNull(message = "premium is mandatory")
-	private double premium;// to remove
-
 	@ApiModelProperty(position = 6, example = "U Maung Maung", required = true)
 	@NotBlank(message = "fatherName is mandatory")
 	private String fatherName;
 
-	@ApiModelProperty(position = 7, example = "true", required = true)
-	@NotNull(message = "approve is mandatory")
+	@ApiModelProperty(position = 7, example = "true")
 	private boolean needMedicalCheckup;
 
 	@ApiModelProperty(position = 8, example = "1999-12-16", required = true)
@@ -55,13 +51,9 @@ public class CriticalillnessProposalInsuredPersonDTO {
 	@JsonDeserialize(using = DateHandler.class)
 	private Date dateOfBirth;
 
-	@ApiModelProperty(position = 9, example = "5", required = true)
+	@ApiModelProperty(position = 9, example = "1", required = true)
 	@NotNull(message = "unit is mandatory")
 	private int unit;
-
-	@ApiModelProperty(position = 10, example = "0996543423", required = true)
-	@NotNull(message = "phone is mandatory")
-	private String phone;
 
 	@ApiModelProperty(position = 11, example = "ISSYS0120001000000000129032013", required = true)
 	@NotBlank(message = "relationshipId is mandatory")
@@ -70,7 +62,7 @@ public class CriticalillnessProposalInsuredPersonDTO {
 
 	@ApiModelProperty(position = 12, example = "NRCNO", required = true)
 	@NotBlank(message = "idType is mandatory")
-	private String idType;
+	private IdType idType;
 
 	@ApiModelProperty(position = 13, example = "098166", required = true)
 	@NotBlank(message = "idType is mandatory")
@@ -94,11 +86,11 @@ public class CriticalillnessProposalInsuredPersonDTO {
 	@NotBlank(message = "gender is mandatory")
 	private Gender gender;
 
-	@ApiModelProperty(position = 18, example = "100000", required = true)
+	@ApiModelProperty(position = 18, example = "1000000", required = true)
 	@NotBlank(message = "proposedSumInsured is mandatory")
 	private double proposedSumInsured;
 
-	@ApiModelProperty(position = 19, example = "100000", required = true)
+	@ApiModelProperty(position = 19, example = "1000000", required = true)
 	@NotBlank(message = "proposedPremium is mandatory")
 	private double proposedPremium;
 

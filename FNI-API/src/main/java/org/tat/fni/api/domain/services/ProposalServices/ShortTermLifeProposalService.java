@@ -162,7 +162,7 @@ public class ShortTermLifeProposalService extends BaseService implements ILifePr
 						.checkCustomerAvailability(shortTermEndowmentLifeDto.getCustomer());
 
 				if (customer == null) {
-					lifeProposalService.createNewCustomer(shortTermEndowmentLifeDto.getCustomer());
+					lifeProposal.setCustomer(lifeProposalService.createNewCustomer(shortTermEndowmentLifeDto.getCustomer()));
 				} else {
 					lifeProposal.setCustomer(customer);
 				}

@@ -164,7 +164,7 @@ public class SnakeBiteProposalService extends BaseService implements ILifeProduc
 				Customer customer = lifeProposalService.checkCustomerAvailability(snakeBiteDTO.getCustomer());
 
 				if (customer == null) {
-					lifeProposalService.createNewCustomer(snakeBiteDTO.getCustomer());
+					lifeProposal.setCustomer(lifeProposalService.createNewCustomer(snakeBiteDTO.getCustomer()));
 				} else {
 					lifeProposal.setCustomer(customer);
 				}

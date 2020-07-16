@@ -167,7 +167,7 @@ public class FarmerLifeProposalService extends BaseService implements ILifeProdu
 				Customer customer = lifeProposalService.checkCustomerAvailability(farmerProposalDTO.getCustomer());
 
 				if (customer == null) {
-					lifeProposalService.createNewCustomer(farmerProposalDTO.getCustomer());
+					lifeProposal.setCustomer(lifeProposalService.createNewCustomer(farmerProposalDTO.getCustomer()));
 				} else {
 					lifeProposal.setCustomer(customer);
 				}

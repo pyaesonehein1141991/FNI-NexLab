@@ -15,6 +15,7 @@ import org.tat.fni.api.domain.lifeproposal.LifeProposal;
 import org.tat.fni.api.dto.InsuredPersonAddOnDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
+import org.tat.fni.api.dto.customerDTO.CustomerDto;
 
 public interface IMedicalProductsProposalService {
 
@@ -26,14 +27,12 @@ public interface IMedicalProductsProposalService {
 
 	public <T> MedicalProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO, T proposalDto);
 
-	public InsuredPersonKeyFactorValue createKeyFactorValue(KeyFactor keyfactor, ProposalInsuredPerson insuredPerson);
-
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto);
-
 	public <T> MedicalProposalInsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
 			T insuredPersonBeneficiariesDto);
 
 	public MedicalProposalInsuredPersonAddOn createInsuredPersonAddon(InsuredPersonAddOnDTO addOnDTO,
 			MedicalProposalInsuredPerson insuredPerson);
+	
+	public <T> CustomerDto getCustomerFromInsuredPerson(T proposalInsuredPersonDTO);
 
 }

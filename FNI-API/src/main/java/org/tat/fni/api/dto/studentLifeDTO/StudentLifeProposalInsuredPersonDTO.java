@@ -33,7 +33,7 @@ public class StudentLifeProposalInsuredPersonDTO {
 	@NotBlank(message = "fatherName is mandatory")
 	private String fatherName;
 
-	@ApiModelProperty(position = 5, example = "1999-12-16", required = true)
+	@ApiModelProperty(position = 5, example = "2014-12-16", required = true)
 	@NotNull(message = "dateOfBirth is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date dateOfBirth;
@@ -69,11 +69,11 @@ public class StudentLifeProposalInsuredPersonDTO {
 	@NotNull(message = "gender is mandatory")
 	private String gender;
 
-	@ApiModelProperty(position = 14, example = "100000", required = true)
+	@ApiModelProperty(position = 14, example = "1000000", required = true)
 	@NotNull(message = "proposedSumInsured is mandatory")
 	private double proposedSumInsured;
 
-	@ApiModelProperty(position = 17, example = "100000", required = true)
+	@ApiModelProperty(position = 17, example = "1000000", required = true)
 	@NotNull(message = "proposedPremium is mandatory")
 	private double proposedPremium;
 

@@ -164,7 +164,7 @@ public class SportManProposalService extends BaseService implements ILifeProduct
 				Customer customer = lifeProposalService.checkCustomerAvailability(sportMandto.getCustomer());
 
 				if (customer == null) {
-					lifeProposalService.createNewCustomer(sportMandto.getCustomer());
+					lifeProposal.setCustomer(lifeProposalService.createNewCustomer(sportMandto.getCustomer()));
 				} else {
 					lifeProposal.setCustomer(customer);
 				}

@@ -7,9 +7,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.tat.fni.api.common.emumdata.ClassificationOfHealth;
+import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.configuration.DateHandler;
-import org.tat.fni.api.domain.ProposalInsuredPerson;
+import org.tat.fni.api.domain.CustomerType;
+import org.tat.fni.api.domain.HealthType;
 import org.tat.fni.api.dto.customerDTO.CustomerDto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -24,9 +25,17 @@ public class GroupCriticalIllnessDTO {
 	@NotNull(message = "Period Month is mandatory")
 	private int periodMonth;
 
-	@ApiModelProperty(position = 1, example = "Agent", required = true)
-	@NotBlank(message = "SaleChannel Type is mandatory")
-	private String saleChannelType;
+	@ApiModelProperty(position = 1, example = "AGENT", required = true)
+	@NotNull(message = "SaleChannel Type is mandatory")
+	private SaleChannelType saleChannelType;
+	
+	@ApiModelProperty(position = 2, example = "CRITICALILLNESS", required = true)
+	@NotNull(message = "Health Type is mandatory")
+	private HealthType healthType;
+
+	@ApiModelProperty(position = 3, example = "CORPORATECUSTOMER", required = true)
+	@NotNull(message = "Customer Type is mandatory")
+	private CustomerType customerType;
 
 	@ApiModelProperty(position = 2, example = "ISSYS002001000000000103062019", required = true)
 	@NotBlank(message = "Agent ID is mandatory")
@@ -59,10 +68,6 @@ public class GroupCriticalIllnessDTO {
 	@NotNull(message = "EndDate is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date endDate;
-
-	@ApiModelProperty(position = 9, example = "ISSYS052001000000000101062019", required = true)
-	@NotBlank(message = "Sales Points ID is mandatory")
-	private String salesPointsId;
 	
 //	@ApiModelProperty(position = 10, example = "false", required = true)
 //	@NotNull(message = "status is mandatory")

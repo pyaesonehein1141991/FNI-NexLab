@@ -27,7 +27,6 @@ import org.tat.fni.api.domain.MedicalProposal;
 import org.tat.fni.api.domain.MedicalProposalInsuredPerson;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonAddOn;
 import org.tat.fni.api.domain.MedicalProposalInsuredPersonBeneficiaries;
-import org.tat.fni.api.domain.Occupation;
 import org.tat.fni.api.domain.Organization;
 import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.Product;
@@ -37,11 +36,8 @@ import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.Township;
 import org.tat.fni.api.domain.repository.LifeProposalRepository;
 import org.tat.fni.api.domain.repository.MedicalProposalRepository;
-import org.tat.fni.api.domain.services.AddOnService;
 import org.tat.fni.api.domain.services.AgentService;
 import org.tat.fni.api.domain.services.BranchService;
-import org.tat.fni.api.domain.services.CustomerService;
-import org.tat.fni.api.domain.services.OccupationService;
 import org.tat.fni.api.domain.services.OrganizationService;
 import org.tat.fni.api.domain.services.PaymentTypeService;
 import org.tat.fni.api.domain.services.ProductService;
@@ -56,6 +52,9 @@ import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPers
 import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.GroupCriticalIllnessDTO;
 import org.tat.fni.api.dto.criticalIllnessDTO.IndividualCriticalIllnessDTO;
+import org.tat.fni.api.dto.customerDTO.CustomerDto;
+import org.tat.fni.api.dto.customerDTO.ResidentAddressDto;
+import org.tat.fni.api.dto.retrieveDTO.NameDto;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -69,9 +68,6 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 
 	@Autowired
 	private BranchService branchService;
-
-	@Autowired
-	private CustomerService customerService;
 
 	@Autowired
 	private OrganizationService organizationService;
@@ -92,13 +88,10 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 	private TownShipService townShipService;
 
 	@Autowired
-	private OccupationService occupationService;
-
-	@Autowired
 	private RelationshipService relationshipService;
-
+	
 	@Autowired
-	private AddOnService addOnService;
+	private TownShipService townshipService;
 
 	@Autowired
 	private IMedicalProposalService medicalProposalService;
@@ -114,6 +107,12 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 
 	@Value("${groupCriticalillnessProductID}")
 	private String groupCriticalillnessProductID;
+	
+	@Value("${branchId}")
+	private String branchId;
+
+	@Value("${salespointId}")
+	private String salespointId;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -150,15 +149,12 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 		IndividualCriticalIllnessDTO criticalIllnessDTO = (IndividualCriticalIllnessDTO) proposalDto;
 
 		try {
-			Optional<Branch> branchOptional = branchService.findById(criticalIllnessDTO.getBranchId());
-			Optional<Organization> organizationOptional = organizationService
-					.findById(criticalIllnessDTO.getOrganizationId());
-			Optional<Customer> customerOptional = customerService.findById(criticalIllnessDTO.getCustomerId());
+			Optional<Branch> branchOptional = branchService.findById(branchId);
 			Optional<PaymentType> paymentTypeOptional = paymentTypeService
 					.findById(criticalIllnessDTO.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(criticalIllnessDTO.getAgentId());
 			Optional<SalesPoints> salesPointsOptional = salePointService
-					.findById(criticalIllnessDTO.getSalesPointsId());
+					.findById(salespointId);
 
 			criticalIllnessDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
 				MedicalProposal medicalProposal = new MedicalProposal();
@@ -166,7 +162,7 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 				Customer customer = medicalProposalService.checkCustomerAvailability(criticalIllnessDTO.getCustomer());
 
 				if (customer == null) {
-					medicalProposalService.createNewCustomer(criticalIllnessDTO.getCustomer());
+					medicalProposal.setCustomer(medicalProposalService.createNewCustomer(criticalIllnessDTO.getCustomer()));
 				} else {
 					medicalProposal.setCustomer(customer);
 				}
@@ -176,15 +172,13 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 
 				medicalProposal.getMedicalProposalInsuredPersonList()
 						.add(createInsuredPerson(insuredPerson, criticalIllnessDTO));
-				medicalProposal.setComplete(true);
+				medicalProposal.setComplete(false);
+				medicalProposal.setHealthType(criticalIllnessDTO.getHealthType());
+				medicalProposal.setCustomerType(criticalIllnessDTO.getCustomerType());
 //				medicalProposal.setStatus(false);
 				medicalProposal.setPeriodMonth(criticalIllnessDTO.getPeriodMonth());
 				medicalProposal.setProposalType(ProposalType.UNDERWRITING);
 				medicalProposal.setSubmittedDate(criticalIllnessDTO.getSubmittedDate());
-
-				if (organizationOptional.isPresent()) {
-					medicalProposal.setOrganization(organizationOptional.get());
-				}
 
 				if (agentOptional.isPresent()) {
 					medicalProposal.setAgent(agentOptional.get());
@@ -196,10 +190,6 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 				if (branchOptional.isPresent()) {
 					medicalProposal.setBranch(branchOptional.get());
 				}
-
-				if (customerOptional.isPresent()) {
-					medicalProposal.setCustomer(customerOptional.get());
-				}
 				if (salesPointsOptional.isPresent()) {
 					medicalProposal.setSalesPoints(salesPointsOptional.get());
 				}
@@ -207,7 +197,7 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 				String proposalNo = customIdRepo.getNextId("HEALTH_PROPOSAL_NO", null);
 				medicalProposal.setStartDate(criticalIllnessDTO.getStartDate());
 				medicalProposal.setEndDate(criticalIllnessDTO.getEndDate());
-				medicalProposal.setSaleChannelType(SaleChannelType.AGENT);
+				medicalProposal.setSaleChannelType(criticalIllnessDTO.getSaleChannelType());
 				medicalProposal.setPeriodMonth(criticalIllnessDTO.getPeriodMonth());
 				medicalProposal.setProposalNo(proposalNo);
 
@@ -234,18 +224,29 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 			Optional<PaymentType> paymentTypeOptional = paymentTypeService
 					.findById(criticalIllnessDTO.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(criticalIllnessDTO.getAgentId());
-			Optional<SalesPoints> salesPointsOptional = salePointService
-					.findById(criticalIllnessDTO.getSalesPointsId());
+			Optional<Branch> branchOptional = branchService.findById(branchId);
+			Optional<SalesPoints> salesPointsOptional = salePointService.findById(salespointId);
 
 			criticalIllnessDTO.getProposalInsuredPersonList().forEach(insuredPerson -> {
+				
 				MedicalProposal medicalProposal = new MedicalProposal();
+				
+				Customer customer = medicalProposalService.checkCustomerAvailability(criticalIllnessDTO.getCustomer());
+
+				if (customer == null) {
+					medicalProposal.setCustomer(medicalProposalService.createNewCustomer(criticalIllnessDTO.getCustomer()));
+				} else {
+					medicalProposal.setCustomer(customer);
+				}
 
 				medicalProposalService.setPeriodMonthForKeyFacterValue(criticalIllnessDTO.getPeriodMonth(),
 						criticalIllnessDTO.getPaymentTypeId());
 
 				medicalProposal.getMedicalProposalInsuredPersonList()
 						.add(createInsuredPerson(insuredPerson, criticalIllnessDTO));
-				medicalProposal.setComplete(true);
+				medicalProposal.setComplete(false);
+				medicalProposal.setHealthType(criticalIllnessDTO.getHealthType());
+				medicalProposal.setCustomerType(criticalIllnessDTO.getCustomerType());
 				medicalProposal.setPeriodMonth(criticalIllnessDTO.getPeriodMonth());
 				medicalProposal.setProposalType(ProposalType.UNDERWRITING);
 				medicalProposal.setSubmittedDate(criticalIllnessDTO.getSubmittedDate());
@@ -264,11 +265,14 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 				if (salesPointsOptional.isPresent()) {
 					medicalProposal.setSalesPoints(salesPointsOptional.get());
 				}
+				if (branchOptional.isPresent()) {
+					medicalProposal.setBranch(branchOptional.get());
+				}
 
 				String proposalNo = customIdRepo.getNextId("HEALTH_PROPOSAL_NO", null);
 				medicalProposal.setStartDate(criticalIllnessDTO.getStartDate());
 				medicalProposal.setEndDate(criticalIllnessDTO.getEndDate());
-				medicalProposal.setSaleChannelType(SaleChannelType.AGENT);
+				medicalProposal.setSaleChannelType(criticalIllnessDTO.getSaleChannelType());
 				medicalProposal.setPeriodMonth(criticalIllnessDTO.getPeriodMonth());
 				medicalProposal.setProposalNo(proposalNo);
 
@@ -293,44 +297,44 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 					? productService.findById(individualCriticalillnessProductID)
 					: productService.findById(groupCriticalillnessProductID);
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
-			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationID());
-			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 
 			MedicalProposalInsuredPerson insuredPerson = new MedicalProposalInsuredPerson();
 
 			insuredPerson.setAge(dto.getAge());
 			insuredPerson.setProduct(productOptional.get());
-			insuredPerson.setPremium(dto.getPremium());
 			insuredPerson.setUnit(dto.getUnit());
 			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
 
 			String insPersonCodeNo = customIdRepo.getNextId("HEALTH_INSUPERSON_CODE_NO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
-			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
-				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
-			});
+			
+			CustomerDto customerDto = getCustomerFromInsuredPerson(dto);
+			
+			Customer customer = medicalProposalService.checkCustomerAvailability(customerDto);
 
+			if (customer == null) {
+				insuredPerson.setCustomer(medicalProposalService.createNewCustomer(customerDto));
+			} else {
+				insuredPerson.setCustomer(customer);
+			}
+			
+			if(relationshipOptional.isPresent()) {
+				insuredPerson.setRelationship(relationshipOptional.get());
+			}
+			
 			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
 				insuredPerson.getKeyFactorValueList()
 						.add(medicalProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
+			
+			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
+				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
 
 			return insuredPerson;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
 		}
-	}
-
-	@Override
-	public InsuredPersonKeyFactorValue createKeyFactorValue(KeyFactor keyfactor, ProposalInsuredPerson insuredPerson) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -380,6 +384,34 @@ public class CriticalillnessProposalService implements IMedicalProductsProposalS
 			MedicalProposalInsuredPerson insuredPerson) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public <T> CustomerDto getCustomerFromInsuredPerson(T proposalInsuredPersonDTO) {
+		
+		CriticalillnessProposalInsuredPersonDTO dto = (CriticalillnessProposalInsuredPersonDTO) proposalInsuredPersonDTO;
+		
+		NameDto name = NameDto.builder()
+				.firstName(dto.getFirstName())
+				.middleName(dto.getMiddleName())
+				.lastName(dto.getLastName()).build();
+		
+		ResidentAddressDto residentAddress = new ResidentAddressDto();
+		residentAddress.setResidentAddress(dto.getResidentAddress());
+		residentAddress.setTownshipId(dto.getTownshipId());
+		
+		CustomerDto customer = new CustomerDto();
+		customer.setInitialId(dto.getInitialId());
+		customer.setName(name);
+		customer.setFatherName(dto.getFatherName());
+		customer.setDateOfBirth(dto.getDateOfBirth());
+		customer.setIdNo(dto.getIdNo());
+		customer.setIdType(dto.getIdType());
+		customer.setResidentAddress(residentAddress);
+		customer.setOccupationId(dto.getOccupationID());
+		customer.setGender(dto.getGender());
+		
+		return customer;
 	}
 
 }

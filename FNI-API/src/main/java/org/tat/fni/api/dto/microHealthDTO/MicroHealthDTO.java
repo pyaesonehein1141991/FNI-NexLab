@@ -7,7 +7,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.tat.fni.api.common.emumdata.SaleChannelType;
 import org.tat.fni.api.configuration.DateHandler;
+import org.tat.fni.api.domain.HealthType;
 import org.tat.fni.api.dto.customerDTO.CustomerDto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -22,40 +24,24 @@ public class MicroHealthDTO {
 	@NotNull(message = "Period Month is mandatory")
 	private int periodMonth;
 
-	@ApiModelProperty(position = 1, example = "Agent", required = true)
-	@NotBlank(message = "SaleChannel Type is mandatory")
-	private String saleChannelType;
+	@ApiModelProperty(position = 1, example = "AGENT", required = true)
+	@NotNull(message = "SaleChannel Type is mandatory")
+	private SaleChannelType saleChannelType;
 
-	@ApiModelProperty(position = 2, example = "MicroHealth", required = true)
-	@NotBlank(message = "Health Type is mandatory")
-	private String healthType;
+	@ApiModelProperty(position = 2, example = "MICROHEALTH", required = true)
+	@NotNull(message = "Health Type is mandatory")
+	private HealthType healthType;
 	
 	@Valid
 	@ApiModelProperty(position = 3, required = true)
 	@NotNull(message = "customer is mandatory")
 	private CustomerDto customer;
 
-	@ApiModelProperty(position = 4, example = "Corporate", required = true)
-	@NotBlank(message = "Customer Type is mandatory")
-	private String customerType;
-
 	@ApiModelProperty(position = 5, example = "ISSYS002001000000000103062019", required = true)
 	@NotBlank(message = "Agent ID is mandatory")
 	private String agentId;
 
-	@ApiModelProperty(position = 6, example = "BANCH00000000000000129032013", required = true)
-	@NotBlank(message = "Branch ID is mandatory")
-	private String branchId;
-
-	@ApiModelProperty(position = 7, example = "ISSYS001001000000000103062019", required = true)
-	@NotBlank(message = "Customer ID is mandatory")
-	private String customerId;
-
-	@ApiModelProperty(position = 8, example = "ISSYS033001000000000104062019", required = true)
-	@NotBlank(message = "Organization ID is mandatory")
-	private String organizationId;
-
-	@ApiModelProperty(position = 9, example = "ISSYS0090001000000000229032013", required = true)
+	@ApiModelProperty(position = 9, example = "ISSYS0090001000000000429032013", required = true)
 	@NotBlank(message = "Payment Type ID is mandatory")
 	private String paymentTypeId;
 
@@ -73,10 +59,6 @@ public class MicroHealthDTO {
 	@NotNull(message = "EndDate is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date endDate;
-
-	@ApiModelProperty(position = 13, example = "ISSYS052001000000000101062019", required = true)
-	@NotBlank(message = "Sales Points ID is mandatory")
-	private String salesPointsId;
 	
 //	@ApiModelProperty(position = 14, example = "false", required = true)
 //	@NotNull(message = "status is mandatory")

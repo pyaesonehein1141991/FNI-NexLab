@@ -17,6 +17,7 @@ import org.tat.fni.api.dto.retrieveDTO.NameDto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 @Data

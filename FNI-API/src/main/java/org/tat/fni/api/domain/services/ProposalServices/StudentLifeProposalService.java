@@ -157,7 +157,7 @@ public class StudentLifeProposalService extends BaseService implements ILifeProd
 				Customer customer = lifeProposalService.checkCustomerAvailability(studentLifeProposalDTO.getCustomer());
 
 				if (customer == null) {
-					lifeProposalService.createNewCustomer(studentLifeProposalDTO.getCustomer());
+					lifeProposal.setCustomer(lifeProposalService.createNewCustomer(studentLifeProposalDTO.getCustomer()));
 				} else {
 					lifeProposal.setCustomer(customer);
 				}

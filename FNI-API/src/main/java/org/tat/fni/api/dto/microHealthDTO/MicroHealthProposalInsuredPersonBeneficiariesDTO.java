@@ -30,21 +30,10 @@ public class MicroHealthProposalInsuredPersonBeneficiariesDTO {
 	@ApiModelProperty(position = 4, example = "Aung", required = true)
 	private String lastName;
 
-	@ApiModelProperty(position = 13, example = "Aung", required = true)
-	private String fatherName;
-
 	@ApiModelProperty(position = 5, example = "1999-12-16", required = true)
 	@NotNull(message = "dateOfBirth is mandatory")
 	@JsonDeserialize(using = DateHandler.class)
 	private Date dateOfBirth;
-
-	@ApiModelProperty(position = 6, example = "0996543423", required = true)
-	@NotNull(message = "phone is mandatory")
-	private int phone;
-
-	@ApiModelProperty(position = 7, example = "0996543423", required = true)
-	@NotNull(message = "mobile is mandatory")
-	private int mobile;
 
 	@ApiModelProperty(position = 7, example = "098166", required = true)
 	@NotBlank(message = "idNo is mandatory")
@@ -58,7 +47,7 @@ public class MicroHealthProposalInsuredPersonBeneficiariesDTO {
 	@NotBlank(message = "relationship is mandatory")
 	private String relationshipId;
 
-	@ApiModelProperty(position = 10, example = "5", required = true)
+	@ApiModelProperty(position = 10, example = "100", required = true)
 	@NotNull(message = "percentage is mandatory")
 	private float percentage;
 

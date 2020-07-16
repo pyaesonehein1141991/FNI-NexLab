@@ -20,8 +20,6 @@ public interface IQualificationService {
 
 	public void deleteQualification(Qualification qualification);
 
-	public Qualification findQualificationById(String id);
-
 	public List<Qualification> findAllQualification();
 
 	public List<Qualification> findByCriteria(String criteria);

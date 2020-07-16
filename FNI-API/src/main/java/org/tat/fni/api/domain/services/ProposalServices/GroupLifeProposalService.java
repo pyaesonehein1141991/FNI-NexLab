@@ -161,7 +161,7 @@ public class GroupLifeProposalService extends BaseService implements ILifeProduc
 				Customer customer = lifeProposalService.checkCustomerAvailability(groupLifeDTO.getCustomer());
 
 				if (customer == null) {
-					lifeProposalService.createNewCustomer(groupLifeDTO.getCustomer());
+					lifeProposal.setCustomer(lifeProposalService.createNewCustomer(groupLifeDTO.getCustomer()));
 				} else {
 					lifeProposal.setCustomer(customer);
 				}

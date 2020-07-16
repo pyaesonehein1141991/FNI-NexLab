@@ -318,9 +318,7 @@ public class LifeProposalService implements ILifeProposalService {
 			CustomerDto dto = (CustomerDto) customerDto;
 
 			Optional<Religion> religionOptional = religionService.findById(dto.getReligionId());
-			Optional<Qualification> qualificationOptional = Optional
-					.of(qualificationService.findQualificationById(dto.getQualificationId()));
-
+			Optional<Qualification> qualificationOptional = qualificationService.findById(dto.getQualificationId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationId());
 			Optional<Country> countryOptional = countryService.findById(dto.getCountryId());
 			Optional<Township> officeTownshipOptional = townshipService
@@ -360,8 +358,7 @@ public class LifeProposalService implements ILifeProposalService {
 
 				Optional<RelationShip> relationshipOptional = relationshipService
 						.findById(familydto.getRelationShipId());
-				Optional<Industry> industryOptional = Optional
-						.of(industryService.findIndustryById(familydto.getIndustryId()));
+				Optional<Industry> industryOptional = industryService.findById(familydto.getIndustryId());
 				Optional<Occupation> familyOccupationOptional = occupationService.findById(familydto.getOccupationId());
 
 				Name familyName = new Name();

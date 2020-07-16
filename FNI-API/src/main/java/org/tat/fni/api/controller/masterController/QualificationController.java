@@ -34,7 +34,7 @@ public class QualificationController {
 
 		List<Qualification> resultList = new ArrayList<Qualification>();
 
-		resultList = qualificationService.findAllQualification();
+		resultList = qualificationService.findAll();
 
 		List<QualificationDTO> qualificationList = new ArrayList<QualificationDTO>();
 

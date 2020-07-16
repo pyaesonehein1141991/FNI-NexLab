@@ -57,7 +57,7 @@ public class MedicalProposalService implements IMedicalProposalService {
 
 	@Resource(name = "PremiumCalculatorService")
 	private IPremiumCalculatorService premiumCalculatorService;
-	
+
 	@Autowired
 	private QualificationService qualificationService;
 
@@ -217,70 +217,74 @@ public class MedicalProposalService implements IMedicalProposalService {
 			CustomerDto dto = (CustomerDto) customerDto;
 
 			Optional<Religion> religionOptional = religionService.findById(dto.getReligionId());
-			Optional<Qualification> qualificationOptional = Optional
-					.of(qualificationService.findQualificationById(dto.getQualificationId()));
-
+			Optional<Qualification> qualificationOptional = qualificationService.findById(dto.getQualificationId());
 			Optional<Occupation> occupationOptional = occupationService.findById(dto.getOccupationId());
 			Optional<Country> countryOptional = countryService.findById(dto.getCountryId());
 			Optional<Township> officeTownshipOptional = townshipService
-					.findById(dto.getOfficeAddress().getTownshipId());
+					.findById(dto.getOfficeAddress() == null ? null : dto.getOfficeAddress().getTownshipId());
 			Optional<Township> permanentTownshipOptional = townshipService
-					.findById(dto.getPermanentAddress().getTownshipId());
+					.findById(dto.getPermanentAddress() == null ? null : dto.getPermanentAddress().getTownshipId());
 			Optional<Township> residentTownshipOptional = townshipService
-					.findById(dto.getResidentAddress().getTownshipId());
+					.findById(dto.getResidentAddress() == null ? null : dto.getResidentAddress().getTownshipId());
 
 			OfficeAddress officeAddress = new OfficeAddress();
-			officeAddress.setOfficeAddress(dto.getOfficeAddress().getOfficeAddress());
+			officeAddress.setOfficeAddress(
+					dto.getOfficeAddress() == null ? null : dto.getOfficeAddress().getOfficeAddress());
 			officeAddress.setTownship(officeTownshipOptional.isPresent() ? officeTownshipOptional.get() : null);
 
 			PermanentAddress permanentAddress = new PermanentAddress();
-			permanentAddress.setPermanentAddress(dto.getPermanentAddress().getPermanentAddress());
+			permanentAddress.setPermanentAddress(
+					dto.getPermanentAddress() == null ? null : dto.getPermanentAddress().getPermanentAddress());
 			permanentAddress
 					.setTownship(permanentTownshipOptional.isPresent() ? permanentTownshipOptional.get() : null);
 
 			ResidentAddress residentAddress = new ResidentAddress();
-			residentAddress.setResidentAddress(dto.getResidentAddress().getResidentAddress());
+			residentAddress.setResidentAddress(
+					dto.getResidentAddress() == null ? null : dto.getResidentAddress().getResidentAddress());
 			residentAddress.setTownship(residentTownshipOptional.isPresent() ? residentTownshipOptional.get() : null);
 
 			ContentInfo contentInfo = new ContentInfo();
-			contentInfo.setEmail(dto.getContentInfo().getEmail());
-			contentInfo.setFax(dto.getContentInfo().getFax());
-			contentInfo.setMobile(dto.getContentInfo().getMobile());
-			contentInfo.setPhone(dto.getContentInfo().getPhone());
+			contentInfo.setEmail(dto.getContentInfo() == null ? null : dto.getContentInfo().getEmail());
+			contentInfo.setFax(dto.getContentInfo() == null ? null : dto.getContentInfo().getFax());
+			contentInfo.setMobile(dto.getContentInfo() == null ? null : dto.getContentInfo().getMobile());
+			contentInfo.setPhone(dto.getContentInfo() == null ? null : dto.getContentInfo().getPhone());
 
 			Name name = new Name();
-			name.setFirstName(dto.getName().getFirstName());
-			name.setMiddleName(dto.getName().getMiddleName());
-			name.setLastName(dto.getName().getLastName());
+			name.setFirstName(dto.getName() == null ? null : dto.getName().getFirstName());
+			name.setMiddleName(dto.getName() == null ? null : dto.getName().getMiddleName());
+			name.setLastName(dto.getName() == null ? null : dto.getName().getLastName());
 
 			List<FamilyInfo> familyInfo = new ArrayList<FamilyInfo>();
 
-			dto.getFamilyInfoList().forEach(familydto -> {
+			if (dto.getFamilyInfoList() != null) {
+				dto.getFamilyInfoList().forEach(familydto -> {
 
-				Optional<RelationShip> relationshipOptional = relationshipService
-						.findById(familydto.getRelationShipId());
-				Optional<Industry> industryOptional = Optional
-						.of(industryService.findIndustryById(familydto.getIndustryId()));
-				Optional<Occupation> familyOccupationOptional = occupationService.findById(familydto.getOccupationId());
+					Optional<RelationShip> relationshipOptional = relationshipService
+							.findById(familydto.getRelationShipId());
+					Optional<Industry> industryOptional = industryService.findById(familydto.getIndustryId());
+					Optional<Occupation> familyOccupationOptional = occupationService
+							.findById(familydto.getOccupationId());
 
-				Name familyName = new Name();
-				familyName.setFirstName(familydto.getName().getFirstName());
-				familyName.setMiddleName(familydto.getName().getMiddleName());
-				familyName.setLastName(familydto.getName().getLastName());
+					Name familyName = new Name();
 
-				FamilyInfo family = new FamilyInfo();
-				family.setInitialId(familydto.getInitialId());
-				family.setIdNo(familydto.getIdNo());
-				family.setDateOfBirth(familydto.getDateOfBirth());
-				family.setName(familyName);
-				family.setIdType(familydto.getIdType());
-				family.setRelationShip(relationshipOptional.isPresent() ? relationshipOptional.get() : null);
-				family.setIndustry(industryOptional.isPresent() ? industryOptional.get() : null);
-				family.setOccupation(familyOccupationOptional.isPresent() ? familyOccupationOptional.get() : null);
+					familyName.setFirstName(familydto.getName().getFirstName());
+					familyName.setMiddleName(familydto.getName().getMiddleName());
+					familyName.setLastName(familydto.getName().getLastName());
 
-				familyInfo.add(family);
+					FamilyInfo family = new FamilyInfo();
+					family.setInitialId(familydto.getInitialId());
+					family.setIdNo(familydto.getIdNo());
+					family.setDateOfBirth(familydto.getDateOfBirth());
+					family.setName(familyName);
+					family.setIdType(familydto.getIdType());
+					family.setRelationShip(relationshipOptional.isPresent() ? relationshipOptional.get() : null);
+					family.setIndustry(industryOptional.isPresent() ? industryOptional.get() : null);
+					family.setOccupation(familyOccupationOptional.isPresent() ? familyOccupationOptional.get() : null);
 
-			});
+					familyInfo.add(family);
+
+				});
+			}
 
 			Customer customer = new Customer();
 			customer.setInitialId(dto.getInitialId());

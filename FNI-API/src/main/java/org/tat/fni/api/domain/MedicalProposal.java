@@ -34,7 +34,7 @@ import org.tat.fni.api.common.utils.Utils;
 
 
 @Entity
-@Table(name = TableName.MEDICALPROPOSALTEMP)
+@Table(name = TableName.MEDICALPROPOSAL)
 @TableGenerator(name = "MEDICALPROPOSAL_GEN", table = "ID_GEN", pkColumnName = "GEN_NAME",
     valueColumnName = "GEN_VAL", pkColumnValue = "MEDICALPROPOSAL_GEN", allocationSize = 10)
 @NamedQueries(value = {
@@ -49,7 +49,7 @@ public class MedicalProposal {
   private String proposalNo;
 
   private boolean complete;
-  private boolean status;
+//  private boolean status;
 
   private int periodMonth;
   private int paymentTerm;
@@ -420,13 +420,13 @@ public class MedicalProposal {
   
   
 
-  public boolean isStatus() {
-	return status;
-}
-
-public void setStatus(boolean status) {
-	this.status = status;
-}
+//  public boolean isStatus() {
+//	return status;
+//}
+//
+//public void setStatus(boolean status) {
+//	this.status = status;
+//}
 
 /*****************************
    * System Generated Method

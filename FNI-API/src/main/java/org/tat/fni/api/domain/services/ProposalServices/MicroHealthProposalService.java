@@ -52,9 +52,13 @@ import org.tat.fni.api.domain.services.Interfaces.ICustomIdGenerator;
 import org.tat.fni.api.domain.services.Interfaces.IMedicalProductsProposalService;
 import org.tat.fni.api.domain.services.Interfaces.IMedicalProposalService;
 import org.tat.fni.api.dto.InsuredPersonAddOnDTO;
+import org.tat.fni.api.dto.criticalIllnessDTO.CriticalillnessProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.customerDTO.CustomerDto;
+import org.tat.fni.api.dto.customerDTO.ResidentAddressDto;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonBeneficiariesDTO;
 import org.tat.fni.api.dto.microHealthDTO.MicroHealthProposalInsuredPersonDTO;
+import org.tat.fni.api.dto.retrieveDTO.NameDto;
 import org.tat.fni.api.exception.DAOException;
 import org.tat.fni.api.exception.SystemException;
 
@@ -95,7 +99,7 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 
 	@Autowired
 	private RelationshipService relationshipService;
-	
+
 	@Autowired
 	private IMedicalProposalService medicalProposalService;
 
@@ -108,14 +112,21 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 	@Value("${microHealthProductId}")
 	private String microHealthProductId;
 
+	@Value("${branchId}")
+	private String branchId;
+
+	@Value("${salespointId}")
+	private String salespointId;
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public <T> List<MedicalProposal> createDtoToProposal(T proposalDto) {
 		try {
 			MicroHealthDTO microHealthInsuranceDTO = (MicroHealthDTO) proposalDto;
-			
+
 			// convert MicroHealthProposalDTO to lifeproposal
-			List<MedicalProposal> microHealthProposalList = convertIndividualProposalDTOToProposal(microHealthInsuranceDTO);
+			List<MedicalProposal> microHealthProposalList = convertIndividualProposalDTOToProposal(
+					microHealthInsuranceDTO);
 			medicalProposalRepo.saveAll(microHealthProposalList);
 
 			String id = DateUtils.formattedSqlDate(new Date()).concat(microHealthProposalList.get(0).getProposalNo());
@@ -136,41 +147,38 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 
 	@Override
 	public <T> List<MedicalProposal> convertIndividualProposalDTOToProposal(T proposalDto) {
-		
+
 		List<MedicalProposal> medicalProposalList = new ArrayList<>();
 		MicroHealthDTO microHealthInsuranceDTO = (MicroHealthDTO) proposalDto;
 		try {
-			Optional<Branch> branchOptional = branchService.findById(microHealthInsuranceDTO.getBranchId());
-			Optional<Organization> organizationOptional = organizationService.findById(microHealthInsuranceDTO.getOrganizationId());
-			Optional<Customer> customerOptional = customerService.findById(microHealthInsuranceDTO.getCustomerId());
-			Optional<PaymentType> paymentTypeOptional = paymentTypeService.findById(microHealthInsuranceDTO.getPaymentTypeId());
+			Optional<Branch> branchOptional = branchService.findById(branchId);
+			Optional<PaymentType> paymentTypeOptional = paymentTypeService
+					.findById(microHealthInsuranceDTO.getPaymentTypeId());
 			Optional<Agent> agentOptional = agentService.findById(microHealthInsuranceDTO.getAgentId());
-			Optional<SalesPoints> salesPointsOptional = salePointService.findById(microHealthInsuranceDTO.getSalesPointsId());
+			Optional<SalesPoints> salesPointsOptional = salePointService.findById(salespointId);
 
 			microHealthInsuranceDTO.getMicrohealthproposalInsuredPersonList().forEach(insuredPerson -> {
 				MedicalProposal medicalProposal = new MedicalProposal();
-				
-				Customer customer = medicalProposalService.checkCustomerAvailability(microHealthInsuranceDTO.getCustomer());
+
+				Customer customer = medicalProposalService
+						.checkCustomerAvailability(microHealthInsuranceDTO.getCustomer());
 
 				if (customer == null) {
-					medicalProposalService.createNewCustomer(microHealthInsuranceDTO.getCustomer());
+					medicalProposal.setCustomer(medicalProposalService.createNewCustomer(microHealthInsuranceDTO.getCustomer()));
 				} else {
 					medicalProposal.setCustomer(customer);
 				}
-				
-				medicalProposalService.setPeriodMonthForKeyFacterValue(
-						microHealthInsuranceDTO.getPeriodMonth(), microHealthInsuranceDTO.getPaymentTypeId());
+
+				medicalProposalService.setPeriodMonthForKeyFacterValue(microHealthInsuranceDTO.getPeriodMonth(),
+						microHealthInsuranceDTO.getPaymentTypeId());
 
 				medicalProposal.getMedicalProposalInsuredPersonList()
-					.add(createInsuredPerson(insuredPerson, microHealthInsuranceDTO));
-				medicalProposal.setComplete(true);
+						.add(createInsuredPerson(insuredPerson, microHealthInsuranceDTO));
+				medicalProposal.setComplete(false);
+				medicalProposal.setHealthType(microHealthInsuranceDTO.getHealthType());
 //				medicalProposal.setStatus(false);
 				medicalProposal.setProposalType(ProposalType.UNDERWRITING);
 				medicalProposal.setSubmittedDate(microHealthInsuranceDTO.getSubmittedDate());
-
-				if (organizationOptional.isPresent()) {
-					medicalProposal.setOrganization(organizationOptional.get());
-				}
 
 				if (agentOptional.isPresent()) {
 					medicalProposal.setAgent(agentOptional.get());
@@ -182,10 +190,6 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 				if (branchOptional.isPresent()) {
 					medicalProposal.setBranch(branchOptional.get());
 				}
-
-				if (customerOptional.isPresent()) {
-					medicalProposal.setCustomer(customerOptional.get());
-				}
 				if (salesPointsOptional.isPresent()) {
 					medicalProposal.setSalesPoints(salesPointsOptional.get());
 				}
@@ -193,13 +197,13 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 				String proposalNo = customIdRepo.getNextId("HEALTH_PROPOSAL_NO", null);
 				medicalProposal.setStartDate(microHealthInsuranceDTO.getStartDate());
 				medicalProposal.setEndDate(microHealthInsuranceDTO.getEndDate());
-				medicalProposal.setSaleChannelType(SaleChannelType.DIRECTMARKETING);
+				medicalProposal.setSaleChannelType(microHealthInsuranceDTO.getSaleChannelType());
 				medicalProposal.setPeriodMonth(microHealthInsuranceDTO.getPeriodMonth());
 				medicalProposal.setProposalNo(proposalNo);
-				
+
 				medicalProposal = medicalProposalService.calculatePremium(medicalProposal);
 				medicalProposalService.calculateTermPremium(medicalProposal);
-				
+
 				medicalProposalList.add(medicalProposal);
 			});
 		} catch (DAOException e) {
@@ -216,32 +220,47 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 
 	@Override
 	public <T> MedicalProposalInsuredPerson createInsuredPerson(T proposalInsuredPersonDTO, T proposalDto) {
-		
+
 		try {
 			MicroHealthProposalInsuredPersonDTO dto = (MicroHealthProposalInsuredPersonDTO) proposalInsuredPersonDTO;
-			
+
 			Optional<Product> productOptional = productService.findById(microHealthProductId);
 			Optional<RelationShip> relationShipOptional = relationshipService.findById(dto.getRelationshipId());
-			Optional<MedicalProposalInsuredPersonGuardian> guardianOptional = guardainService.findById(dto.getGuardianId());
+			Optional<MedicalProposalInsuredPersonGuardian> guardianOptional = guardainService
+					.findById(dto.getGuardianId());
 
 			MedicalProposalInsuredPerson insuredPerson = new MedicalProposalInsuredPerson();
 			insuredPerson.setAge(dto.getAge());
 			insuredPerson.setProduct(productOptional.get());
-			insuredPerson.setPremium(dto.getPremium());
 			insuredPerson.setUnit(dto.getUnit());
 			insuredPerson.setNeedMedicalCheckup(dto.isNeedMedicalCheckup());
 			insuredPerson.setGuardian(guardianOptional.get());
-			insuredPerson.setRejectReason(dto.getRejectReason());
 
 			String insPersonCodeNo = customIdRepo.getNextId("HEALTH_INSUPERSON_CODE_NO", null);
 			insuredPerson.setInsPersonCodeNo(insPersonCodeNo);
+
+			CustomerDto customerDto = getCustomerFromInsuredPerson(dto);
+
+			Customer customer = medicalProposalService.checkCustomerAvailability(customerDto);
+
+			if (customer == null) {
+				insuredPerson.setCustomer(medicalProposalService.createNewCustomer(customerDto));
+			} else {
+				insuredPerson.setCustomer(customer);
+			}
+
+			if (relationShipOptional.isPresent()) {
+				insuredPerson.setRelationship(relationShipOptional.get());
+			}
+
+			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
+				insuredPerson.getKeyFactorValueList()
+						.add(medicalProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
+			});
 			dto.getInsuredPersonBeneficiariesList().forEach(beneficiary -> {
 				insuredPerson.getInsuredPersonBeneficiariesList().add(createInsuredPersonBeneficiareis(beneficiary));
 			});
-			insuredPerson.getProduct().getKeyFactorList().forEach(keyfactor -> {
-				insuredPerson.getKeyFactorValueList().add(medicalProposalService.createKeyFactorValue(keyfactor, insuredPerson, dto));
-			});
-			
+
 			return insuredPerson;
 		} catch (DAOException e) {
 			throw new SystemException(e.getErrorCode(), e.getMessage());
@@ -249,24 +268,11 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 	}
 
 	@Override
-	public InsuredPersonKeyFactorValue createKeyFactorValue(KeyFactor keyfactor, ProposalInsuredPerson insuredPerson) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Customer createNewCustomer(ProposalInsuredPerson insuredPersonDto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public <T> MedicalProposalInsuredPersonBeneficiaries createInsuredPersonBeneficiareis(
 			T insuredPersonBeneficiariesDto) {
 		try {
-			MicroHealthProposalInsuredPersonBeneficiariesDTO dto = 
-					(MicroHealthProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
-			
+			MicroHealthProposalInsuredPersonBeneficiariesDTO dto = (MicroHealthProposalInsuredPersonBeneficiariesDTO) insuredPersonBeneficiariesDto;
+
 			Optional<Township> townshipOptional = townShipService.findById(dto.getTownshipId());
 			Optional<RelationShip> relationshipOptional = relationshipService.findById(dto.getRelationshipId());
 			ResidentAddress residentAddress = new ResidentAddress();
@@ -280,7 +286,6 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 			beneficiary.setInitialId(dto.getInitialId());
 			beneficiary.setPercentage(dto.getPercentage());
 			beneficiary.setIdType(IdType.valueOf(dto.getIdType()));
-			beneficiary.setFatherName(dto.getFatherName());
 			beneficiary.setIdNo(dto.getIdNo());
 			beneficiary.setResidentAddress(residentAddress);
 			beneficiary.setName(name);
@@ -300,6 +305,32 @@ public class MicroHealthProposalService implements IMedicalProductsProposalServi
 			MedicalProposalInsuredPerson insuredPerson) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public <T> CustomerDto getCustomerFromInsuredPerson(T proposalInsuredPersonDTO) {
+
+		MicroHealthProposalInsuredPersonDTO dto = (MicroHealthProposalInsuredPersonDTO) proposalInsuredPersonDTO;
+
+		NameDto name = NameDto.builder().firstName(dto.getFirstName()).middleName(dto.getMiddleName())
+				.lastName(dto.getLastName()).build();
+
+		ResidentAddressDto residentAddress = new ResidentAddressDto();
+		residentAddress.setResidentAddress(dto.getResidentAddress());
+		residentAddress.setTownshipId(dto.getTownshipId());
+
+		CustomerDto customer = new CustomerDto();
+		customer.setInitialId(dto.getInitialId());
+		customer.setName(name);
+		customer.setFatherName(dto.getFatherName());
+		customer.setDateOfBirth(dto.getDateOfBirth());
+		customer.setIdNo(dto.getIdNo());
+		customer.setIdType(dto.getIdType());
+		customer.setResidentAddress(residentAddress);
+		customer.setOccupationId(dto.getOccupationID());
+		customer.setGender(dto.getGender());
+
+		return customer;
 	}
 
 }
