@@ -21,7 +21,7 @@ public class PolicyService implements IPolicyService {
 	private IPolicyDataService medicalPolicyDataService;
 	
 	ResponseDataDTO responseLifeData;
-	List<ResponseDataDTO> responseMedicalDataList = new ArrayList<ResponseDataDTO>();
+	ResponseDataDTO responseMedicalData;
 	
 	
 	@Override
@@ -34,8 +34,8 @@ public class PolicyService implements IPolicyService {
 				responseLifeData = lifePolicyDataService.getResponseData(policyData.getProposalNo());
 				responseDataList.add((T) responseLifeData);
 			}else if(policyData.getProductType().equals(ProductType.MEDICAL)) {
-				responseMedicalDataList = medicalPolicyDataService.getResponseData(policyData.getProposalNo());
-				responseDataList.add((T) responseMedicalDataList);
+				responseMedicalData = medicalPolicyDataService.getResponseData(policyData.getProposalNo());
+				responseDataList.add((T) responseMedicalData);
 			}
 		});
 		

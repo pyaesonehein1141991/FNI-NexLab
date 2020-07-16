@@ -128,6 +128,7 @@ public class MedicalPolicyService implements IPolicyDataService {
 					.agentCommission(lifePolicy.getAgentCommission()).date(start.toString())
 					.paid(!(i > paidTimes)).build();
 			remainingDates.add(remainingDate);
+			if (month == 0) break;
 			start = start.plusMonths(month);
 			i++;
 		}
