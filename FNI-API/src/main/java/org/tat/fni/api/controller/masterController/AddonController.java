@@ -7,13 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.tat.fni.api.domain.Agent;
 import org.tat.fni.api.domain.addon.AddOn;
 import org.tat.fni.api.domain.services.AddOnService;
-import org.tat.fni.api.domain.services.AgentService;
 import org.tat.fni.api.dto.ResponseDTO;
 import org.tat.fni.api.dto.masterDTO.AddonDTO;
-import org.tat.fni.api.dto.masterDTO.AgentDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

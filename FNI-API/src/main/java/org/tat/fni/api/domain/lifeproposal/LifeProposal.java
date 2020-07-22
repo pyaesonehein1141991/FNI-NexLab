@@ -51,6 +51,9 @@ import org.tat.fni.api.domain.PaymentType;
 import org.tat.fni.api.domain.ProposalInsuredPerson;
 import org.tat.fni.api.domain.SalesPoints;
 import org.tat.fni.api.domain.SurveyQuestionAnswer;
+import org.tat.fni.api.domain.lifepolicy.LifePolicy;
+import org.tat.fni.api.domain.lifepolicy.LifePolicyAttachment;
+import org.tat.fni.api.domain.lifepolicy.PolicyInsuredPerson;
 
 import lombok.Data;
 
@@ -123,9 +126,9 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 	@JoinColumn(name = "AGENTID", referencedColumnName = "ID")
 	private Agent agent;
 
-	// @OneToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "LIFEPOLICYID", referencedColumnName = "ID")
-	// private LifePolicy lifePolicy;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "LIFEPOLICYID", referencedColumnName = "ID")
+	private LifePolicy lifePolicy;
 
 	// TODO FIXME THK
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -151,31 +154,31 @@ public class LifeProposal implements Serializable, IDataModel, IProposal {
 	public LifeProposal() {
 	}
 
-	// public LifeProposal(LifePolicy lifePolicy) {
-	// this.agent = lifePolicy.getAgent();
-	// this.branch = lifePolicy.getBranch();
-	// this.salesPoints = lifePolicy.getSalesPoints();
-	// this.customer = lifePolicy.getCustomer();
-	// this.saleBank = lifePolicy.getSaleBank();
-	// this.saleChannelType = lifePolicy.getSaleChannelType();
-	// this.paymentType = lifePolicy.getPaymentType();
-	// this.organization = lifePolicy.getOrganization();
-	// this.specialDiscount = lifePolicy.getSpecialDiscount();
-	// this.submittedDate = lifePolicy.getCommenmanceDate();
-	// this.startDate = lifePolicy.getActivedPolicyStartDate();
-	// this.endDate = lifePolicy.getActivedPolicyEndDate();
-	// this.periodMonth = lifePolicy.getPeriodOfInsurance();
-	// this.paymentTerm = lifePolicy.getLastPaymentTerm();
-	// this.currencyRate = lifePolicy.getCurrencyRate();
-	// this.lifePolicy = lifePolicy;
-	//
-	// for (PolicyInsuredPerson iPerson : lifePolicy.getInsuredPersonInfo()) {
-	// addInsuredPerson(new ProposalInsuredPerson(iPerson));
-	// }
-	// for (LifePolicyAttachment attachment : lifePolicy.getAttachmentList()) {
-	// addAttachment(new LifeProposalAttachment(attachment));
-	// }
-	// }
+//	public LifeProposal(LifePolicy lifePolicy) {
+//		this.agent = lifePolicy.getAgent();
+//		this.branch = lifePolicy.getBranch();
+//		this.salesPoints = lifePolicy.getSalesPoints();
+//		this.customer = lifePolicy.getCustomer();
+//		this.saleBank = lifePolicy.getSaleBank();
+//		this.saleChannelType = lifePolicy.getSaleChannelType();
+//		this.paymentType = lifePolicy.getPaymentType();
+//		this.organization = lifePolicy.getOrganization();
+//		this.specialDiscount = lifePolicy.getSpecialDiscount();
+//		this.submittedDate = lifePolicy.getCommenmanceDate();
+//		this.startDate = lifePolicy.getActivedPolicyStartDate();
+//		this.endDate = lifePolicy.getActivedPolicyEndDate();
+//		this.periodMonth = lifePolicy.getPeriodOfInsurance();
+//		this.paymentTerm = lifePolicy.getLastPaymentTerm();
+//		this.currencyRate = lifePolicy.getCurrencyRate();
+//		this.lifePolicy = lifePolicy;
+//
+//		for (PolicyInsuredPerson iPerson : lifePolicy.getInsuredPersonInfo()) {
+//			addInsuredPerson(new ProposalInsuredPerson(iPerson));
+//		}
+//		for (LifePolicyAttachment attachment : lifePolicy.getAttachmentList()) {
+//			addAttachment(new LifeProposalAttachment(attachment));
+//		}
+//	}
 
 	public int getPeriodOfInsurance() {
 		if (KeyFactorChecker.isPersonalAccident(proposalInsuredPersonList.get(0).getProduct())) {
